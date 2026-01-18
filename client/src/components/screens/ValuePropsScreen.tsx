@@ -44,7 +44,7 @@ const memberBenefits = [
   {
     icon: Zap,
     title: "Earn First, Verify Later",
-    description: "DeFi protocols enable instant rewards—KYC only when you're ready to spend",
+    description: "DeFi protocols enable instant rewards—KYC later",
   },
 ];
 
