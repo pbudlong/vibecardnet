@@ -103,24 +103,24 @@ export function WhyNowScreen() {
               className="flex-shrink-0"
             >
               <Card
-                className={`p-4 w-40 md:w-48 ${
+                className={`p-3 w-36 md:w-40 ${
                   item.status === "ready"
                     ? "border-primary border-2 bg-primary/5"
                     : ""
                 }`}
               >
-                <div className="text-center mb-3">
+                <div className="text-center mb-2">
                   <Badge
                     variant={item.status === "ready" ? "default" : "secondary"}
-                    className="text-lg font-display font-bold px-3 py-1"
+                    className="text-base font-display font-bold px-2 py-0.5"
                   >
                     {item.year}
                   </Badge>
                 </div>
-                <h3 className="font-semibold text-sm text-center mb-3 min-h-[2.5rem]">
+                <h3 className="font-semibold text-xs text-center mb-2 leading-tight">
                   {item.title}
                 </h3>
-                <ul className="space-y-1.5">
+                <ul className="space-y-1">
                   {item.items.map((listItem, idx) => (
                     <li
                       key={idx}
