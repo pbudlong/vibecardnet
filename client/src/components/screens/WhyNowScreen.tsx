@@ -93,7 +93,7 @@ export function WhyNowScreen() {
       </motion.div>
 
       <div className="w-full max-w-6xl">
-        <div className="flex gap-2 md:gap-4 justify-center mb-12 overflow-x-auto pb-4">
+        <div className="flex gap-2 md:gap-4 justify-center mb-6 overflow-x-auto pb-4">
           {timelineData.map((item, index) => (
             <motion.div
               key={item.year}
@@ -151,7 +151,7 @@ export function WhyNowScreen() {
           className="text-center mb-8"
         >
           <h2 className="font-display text-2xl font-semibold text-foreground mb-6">
-            The Three Enablers
+            The 3 Primary Enablers
           </h2>
           <div className="flex flex-wrap justify-center gap-6">
             {enablers.map((enabler, index) => (
