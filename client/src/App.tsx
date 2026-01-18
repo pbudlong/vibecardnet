@@ -7,6 +7,7 @@ import { Presentation } from "@/components/Presentation";
 import { CoverScreen } from "@/components/screens/CoverScreen";
 import { WhyNowScreen } from "@/components/screens/WhyNowScreen";
 import { ValuePropsScreen } from "@/components/screens/ValuePropsScreen";
+import { PublisherIntegrationScreen } from "@/components/screens/PublisherIntegrationScreen";
 import { PlaceholderScreen } from "@/components/screens/PlaceholderScreen";
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
           <CoverScreen onStart={handleStart} />
           <WhyNowScreen />
           <ValuePropsScreen />
-          <PlaceholderScreen title="Publisher Integration" screenNumber={4} />
+          <PublisherIntegrationScreen />
           <PlaceholderScreen title="Live Demo" screenNumber={5} />
           <PlaceholderScreen title="Viral Projection" screenNumber={6} />
           <PlaceholderScreen title="Network Vision" screenNumber={7} />
