@@ -79,7 +79,7 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
             className="mb-6 px-4 py-1.5 text-sm font-medium border-accent bg-accent/10 text-accent-foreground"
             data-testid="badge-hackathon"
           >
-            Arc Hackathon 2025
+            Agentic Commerce On Arc Hackathon - Jan 9 - 23, 2026
           </Badge>
         </motion.div>
 
@@ -139,11 +139,7 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
         >
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-primary" />
-            <span>Best Vibecoded Application</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-accent" />
-            <span>Best Product Design</span>
+            <span>Best Vibecoded Application Track</span>
           </div>
         </motion.div>
       </div>
