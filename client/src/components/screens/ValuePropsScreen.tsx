@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Building2, Users, Zap, TrendingUp, Wallet, Clock, DollarSign, Share2 } from "lucide-react";
+import { Building2, Users, Zap, TrendingUp, Wallet, Clock, DollarSign, Share2, ShieldCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 const publisherBenefits = [
@@ -40,6 +40,11 @@ const memberBenefits = [
     icon: Users,
     title: "One Wallet, All Rewards",
     description: "Earnings from every publisher in one place",
+  },
+  {
+    icon: Zap,
+    title: "Earn First, Verify Later",
+    description: "DeFi protocols enable instant rewards—KYC only when you're ready to spend",
   },
 ];
 
@@ -117,7 +122,7 @@ export function ValuePropsScreen() {
                 For Members
               </h2>
             </div>
-            <div className="space-y-4 mb-6">
+            <div className="space-y-4">
               {memberBenefits.map((benefit, index) => (
                 <motion.div
                   key={benefit.title}
@@ -140,35 +145,9 @@ export function ValuePropsScreen() {
                 </motion.div>
               ))}
             </div>
-            
-            {/* KYC Quote */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.7 }}
-              className="border-l-4 border-primary pl-4 py-2 bg-primary/5 rounded-r-md"
-            >
-              <p className="text-sm font-medium text-foreground italic">
-                "People will KYC to SPEND $50, not to EARN $0.80"
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Crypto lets members earn first, verify later.
-              </p>
-            </motion.div>
           </Card>
         </motion.div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.8 }}
-        className="mt-8 text-center"
-      >
-        <p className="text-sm text-muted-foreground">
-          Powered by <span className="font-semibold text-primary">USDC on Arc</span>
-        </p>
-      </motion.div>
     </div>
   );
 }

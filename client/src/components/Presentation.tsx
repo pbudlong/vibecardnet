@@ -78,19 +78,24 @@ export function Presentation({ children, currentScreen, onScreenChange }: Presen
         </Button>
       )}
 
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-50">
-        {Array.from({ length: totalScreens }).map((_, index) => (
-          <button
-            key={index}
-            onClick={() => onScreenChange(index)}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              index === currentScreen
-                ? "w-8 bg-primary"
-                : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
-            }`}
-            data-testid={`button-dot-${index}`}
-          />
-        ))}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50">
+        <div className="flex gap-2">
+          {Array.from({ length: totalScreens }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => onScreenChange(index)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                index === currentScreen
+                  ? "w-8 bg-primary"
+                  : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+              }`}
+              data-testid={`button-dot-${index}`}
+            />
+          ))}
+        </div>
+        <span className="text-xs text-muted-foreground">
+          {currentScreen + 1} / {totalScreens}
+        </span>
       </div>
     </div>
   );
