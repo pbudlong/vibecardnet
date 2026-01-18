@@ -1,0 +1,96 @@
+# VibeCard - Viral Rewards Network
+
+## Overview
+
+VibeCard is a viral rewards platform that pays content participants (creators, sharers, remixers) in USDC for driving engagement and conversions. Publishers fund incentive pools, and rewards are distributed through crypto payment rails using atomic multi-party splits (x402 protocol). The project is built for the Arc Hackathon (Jan 9-23, 2026) targeting "Best Vibecoded Application" and "Best Product Design" tracks.
+
+The current implementation is a presentation/pitch deck application showcasing the VibeCard concept with animated slides explaining the value proposition, integration flow, viral mechanics, and network vision.
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
+
+## System Architecture
+
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite with custom build configuration
+- **Styling**: Tailwind CSS with CSS variables for theming (forest green/money theme)
+- **UI Components**: shadcn/ui component library (New York style)
+- **Animation**: Framer Motion for slide transitions and micro-interactions
+- **State Management**: TanStack React Query for server state, React useState for local state
+
+### Presentation System
+The app is structured as a slideshow presentation with these screens:
+1. Cover Screen - Title and hackathon info
+2. Why Now Screen - Timeline showing crypto infrastructure maturity
+3. Value Props Screen - Benefits for publishers and participants
+4. Publisher Integration Screen - SDK code snippet showcase
+5. Live Demo Screen - Interactive viral reward simulation
+6. Viral Projection Screen - K-factor comparison and growth metrics
+7. Network Vision Screen - Multi-platform roadmap
+
+### Backend Architecture
+- **Runtime**: Node.js with Express
+- **Language**: TypeScript (ESM modules)
+- **API Pattern**: RESTful endpoints under `/api` prefix
+- **Session Management**: express-session with PostgreSQL store option
+
+### Data Storage
+- **ORM**: Drizzle ORM with PostgreSQL dialect
+- **Schema Location**: `shared/schema.ts`
+- **Current Schema**: Basic users table (id, username, password)
+- **Storage Pattern**: Abstracted storage interface (`IStorage`) with in-memory implementation for development
+
+### Project Structure
+```
+├── client/           # React frontend
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── screens/    # Presentation slides
+│   │   │   └── ui/         # shadcn components
+│   │   ├── hooks/
+│   │   ├── lib/
+│   │   └── pages/
+├── server/           # Express backend
+├── shared/           # Shared types and schema
+└── attached_assets/  # Design docs and planning
+```
+
+### Design System
+- **Typography**: Inter (UI) + Space Grotesk (display/headlines)
+- **Theme**: Forest green color palette representing money/growth
+- **Reference Style**: Stripe + Linear + Coinbase hybrid aesthetic
+- **Component Philosophy**: Professional credibility for publishers, engaging simplicity for participants
+
+## External Dependencies
+
+### Database
+- PostgreSQL (via `DATABASE_URL` environment variable)
+- Drizzle Kit for migrations (`db:push` script)
+
+### Frontend Libraries
+- @tanstack/react-query - Data fetching and caching
+- framer-motion - Animations
+- react-icons - Icon library
+- embla-carousel-react - Carousel functionality
+- react-day-picker - Date picking
+- recharts - Charting library
+- react-hook-form + zod - Form validation
+
+### Backend Libraries
+- express-session + connect-pg-simple - Session management
+- drizzle-orm + drizzle-zod - Database ORM and validation
+- passport + passport-local - Authentication (not yet implemented)
+
+### Build & Development
+- Vite with React plugin
+- esbuild for server bundling
+- @replit/vite-plugin-runtime-error-modal - Error overlay
+- @replit/vite-plugin-cartographer - Replit integration
+
+### Planned Integrations (from design docs)
+- Circle USDC - Stablecoin payments
+- x402 Protocol - Atomic multi-party payment splits
+- Arc Network - Blockchain infrastructure
+- Virtual card issuance for spending rewards
