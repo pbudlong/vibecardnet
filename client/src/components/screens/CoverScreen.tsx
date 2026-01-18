@@ -52,7 +52,7 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
           transition={{ duration: 0.6, delay: 0.3 }}
           data-testid="text-tagline"
         >
-          The first viral rewards network powered by stablecoins.
+          The first viral growth network powered by stablecoin rewards.
           <br />
           Get paid to share. Powered by USDC on Arc.
         </motion.p>
