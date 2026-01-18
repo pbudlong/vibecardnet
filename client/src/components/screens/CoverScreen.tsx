@@ -7,67 +7,9 @@ interface CoverScreenProps {
   onStart: () => void;
 }
 
-function FloatingNode({ delay, x, y, size }: { delay: number; x: string; y: string; size: number }) {
-  return (
-    <motion.div
-      className="absolute rounded-full bg-primary/10 border border-primary/20"
-      style={{ left: x, top: y, width: size, height: size }}
-      animate={{
-        y: [0, -20, 0],
-        opacity: [0.3, 0.6, 0.3],
-      }}
-      transition={{
-        duration: 4,
-        delay,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
-    />
-  );
-}
-
-function ConnectionLine({ x1, y1, x2, y2, delay }: { x1: string; y1: string; x2: string; y2: string; delay: number }) {
-  return (
-    <motion.div
-      className="absolute h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent"
-      style={{
-        left: x1,
-        top: y1,
-        width: `calc(${x2} - ${x1})`,
-        transformOrigin: "left center",
-      }}
-      animate={{
-        opacity: [0, 0.5, 0],
-        scaleX: [0, 1, 0],
-      }}
-      transition={{
-        duration: 3,
-        delay,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
-    />
-  );
-}
-
 export function CoverScreen({ onStart }: CoverScreenProps) {
   return (
     <div className="relative h-full w-full flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <FloatingNode delay={0} x="10%" y="20%" size={60} />
-        <FloatingNode delay={0.5} x="85%" y="15%" size={40} />
-        <FloatingNode delay={1} x="75%" y="70%" size={50} />
-        <FloatingNode delay={1.5} x="15%" y="75%" size={35} />
-        <FloatingNode delay={2} x="50%" y="10%" size={45} />
-        <FloatingNode delay={2.5} x="90%" y="45%" size={30} />
-        <FloatingNode delay={0.8} x="5%" y="50%" size={55} />
-        <FloatingNode delay={1.2} x="60%" y="85%" size={38} />
-        
-        <ConnectionLine x1="15%" y1="22%" x2="50%" y2="12%" delay={0.3} />
-        <ConnectionLine x1="52%" y1="12%" x2="85%" y2="17%" delay={1.2} />
-        <ConnectionLine x1="78%" y1="72%" x2="92%" y2="47%" delay={2.1} />
-      </div>
-
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
