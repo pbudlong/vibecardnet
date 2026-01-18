@@ -93,7 +93,7 @@ export function WhyNowScreen() {
       </motion.div>
 
       <div className="w-full max-w-6xl">
-        <div className="flex gap-2 md:gap-4 justify-center mb-6 overflow-x-auto pb-4">
+        <div className="flex gap-2 md:gap-4 justify-center mb-3 overflow-x-auto pb-2">
           {timelineData.map((item, index) => (
             <motion.div
               key={item.year}
