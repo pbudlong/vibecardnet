@@ -10,7 +10,7 @@ import { ValuePropsScreen } from "@/components/screens/ValuePropsScreen";
 import { PublisherIntegrationScreen } from "@/components/screens/PublisherIntegrationScreen";
 import { LiveDemoScreen } from "@/components/screens/LiveDemoScreen";
 import { ViralProjectionScreen } from "@/components/screens/ViralProjectionScreen";
-import { PlaceholderScreen } from "@/components/screens/PlaceholderScreen";
+import { NetworkVisionScreen } from "@/components/screens/NetworkVisionScreen";
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState(0);
@@ -29,7 +29,7 @@ function App() {
           <PublisherIntegrationScreen />
           <LiveDemoScreen />
           <ViralProjectionScreen />
-          <PlaceholderScreen title="Network Vision" screenNumber={7} />
+          <NetworkVisionScreen />
         </Presentation>
         <Toaster />
       </TooltipProvider>
