@@ -54,7 +54,7 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
         >
           The first viral growth network backed by stablecoins.
           <br />
-          Get paid to create and share.
+          Get paid to create, share and remix.
           <br />
           Powered by USDC on Arc.
         </motion.p>
