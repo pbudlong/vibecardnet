@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Presentation } from "@/components/Presentation";
 import { CoverScreen } from "@/components/screens/CoverScreen";
 import { WhyNowScreen } from "@/components/screens/WhyNowScreen";
+import { ValuePropsScreen } from "@/components/screens/ValuePropsScreen";
 import { PlaceholderScreen } from "@/components/screens/PlaceholderScreen";
 
 function App() {
@@ -21,12 +22,11 @@ function App() {
         <Presentation currentScreen={currentScreen} onScreenChange={setCurrentScreen}>
           <CoverScreen onStart={handleStart} />
           <WhyNowScreen />
-          <PlaceholderScreen title="The KYC Insight" screenNumber={3} />
-          <PlaceholderScreen title="Value Props" screenNumber={4} />
-          <PlaceholderScreen title="Publisher Integration" screenNumber={5} />
-          <PlaceholderScreen title="Live Demo" screenNumber={6} />
-          <PlaceholderScreen title="Viral Projection" screenNumber={7} />
-          <PlaceholderScreen title="Network Vision" screenNumber={8} />
+          <ValuePropsScreen />
+          <PlaceholderScreen title="Publisher Integration" screenNumber={4} />
+          <PlaceholderScreen title="Live Demo" screenNumber={5} />
+          <PlaceholderScreen title="Viral Projection" screenNumber={6} />
+          <PlaceholderScreen title="Network Vision" screenNumber={7} />
         </Presentation>
         <Toaster />
       </TooltipProvider>
