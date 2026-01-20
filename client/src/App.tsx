@@ -5,8 +5,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Presentation } from "@/components/Presentation";
 import { CoverScreen } from "@/components/screens/CoverScreen";
-import { WhyNowScreen } from "@/components/screens/WhyNowScreen";
+import { HighlightProblemScreen } from "@/components/screens/HighlightProblemScreen";
 import { ValuePropsScreen } from "@/components/screens/ValuePropsScreen";
+import { WhyNowScreen } from "@/components/screens/WhyNowScreen";
 import { PublisherIntegrationScreen } from "@/components/screens/PublisherIntegrationScreen";
 import { LiveDemoScreen } from "@/components/screens/LiveDemoScreen";
 import { ViralProjectionScreen } from "@/components/screens/ViralProjectionScreen";
@@ -24,8 +25,9 @@ function App() {
       <TooltipProvider>
         <Presentation currentScreen={currentScreen} onScreenChange={setCurrentScreen}>
           <CoverScreen onStart={handleStart} />
-          <WhyNowScreen />
+          <HighlightProblemScreen />
           <ValuePropsScreen />
+          <WhyNowScreen />
           <PublisherIntegrationScreen />
           <LiveDemoScreen />
           <ViralProjectionScreen />
