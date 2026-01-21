@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Building2, Users, Zap, TrendingUp, Wallet, Clock, User } from "lucide-react";
+import { Building2, Users, Zap, TrendingUp, Wallet, Clock, User, Share2, CreditCard } from "lucide-react";
 import { SiReplit } from "react-icons/si";
 import { Code, FileText, Calculator, ListChecks, BookOpen, Wrench, BarChart3, Users2 } from "lucide-react";
 
@@ -140,31 +140,38 @@ export function ValuePropsScreen() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex-1 max-w-md"
+          className="max-w-sm ml-auto mr-4"
         >
-          <h2 className="font-display text-2xl font-bold text-foreground mb-6">
+          <h2 className="font-display text-xl font-bold text-foreground mb-4">
             Everyone Wins
           </h2>
           
           {/* For Platforms & Content Owners */}
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-3">
-              <Building2 className="h-5 w-5 text-primary" />
-              <h3 className="font-semibold text-foreground">For Platforms & Content Owners</h3>
+          <div className="mb-5">
+            <div className="flex items-center gap-2 mb-2">
+              <Building2 className="h-4 w-4 text-primary" />
+              <h3 className="font-medium text-foreground text-sm">For Platforms & Content Owners</h3>
             </div>
-            <div className="space-y-3 pl-7">
+            <div className="space-y-2 pl-6">
               <div className="flex items-start gap-2">
-                <TrendingUp className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                <Share2 className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <span className="text-sm font-medium text-foreground">Pay for Results</span>
-                  <span className="text-sm text-muted-foreground"> - Budget flows to actual conversions</span>
+                  <span className="text-xs font-medium text-foreground">New Growth Channel</span>
+                  <span className="text-xs text-muted-foreground"> - UGPC spreads brand</span>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Zap className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                <TrendingUp className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <span className="text-sm font-medium text-foreground">Simplifies Admin</span>
-                  <span className="text-sm text-muted-foreground"> - Atomic, multi-party payouts</span>
+                  <span className="text-xs font-medium text-foreground">Pay for Results</span>
+                  <span className="text-xs text-muted-foreground"> - Budget flows to actual conversions</span>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <Zap className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <span className="text-xs font-medium text-foreground">Simplifies Admin</span>
+                  <span className="text-xs text-muted-foreground"> - Atomic, multi-party payouts</span>
                 </div>
               </div>
             </div>
@@ -172,23 +179,30 @@ export function ValuePropsScreen() {
 
           {/* For Participants */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <Users className="h-5 w-5 text-primary" />
-              <h3 className="font-semibold text-foreground">For Participants</h3>
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="h-4 w-4 text-primary" />
+              <h3 className="font-medium text-foreground text-sm">For Participants</h3>
             </div>
-            <div className="space-y-3 pl-7">
+            <div className="space-y-2 pl-6">
               <div className="flex items-start gap-2">
-                <Wallet className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                <Wallet className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <span className="text-sm font-medium text-foreground">Instant Earnings</span>
-                  <span className="text-sm text-muted-foreground"> - No minimums, instant withdrawal</span>
+                  <span className="text-xs font-medium text-foreground">Instant Earnings</span>
+                  <span className="text-xs text-muted-foreground"> - No minimums, instant withdrawal</span>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Clock className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                <Clock className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <span className="text-sm font-medium text-foreground">Deferred Onboarding</span>
-                  <span className="text-sm text-muted-foreground"> - KYC only once have rewards</span>
+                  <span className="text-xs font-medium text-foreground">Deferred Onboarding</span>
+                  <span className="text-xs text-muted-foreground"> - KYC only once have rewards</span>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <CreditCard className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <span className="text-xs font-medium text-foreground">One Card</span>
+                  <span className="text-xs text-muted-foreground"> - aggregates earnings across platforms</span>
                 </div>
               </div>
             </div>
