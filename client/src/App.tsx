@@ -8,6 +8,7 @@ import { CoverScreen } from "@/components/screens/CoverScreen";
 import { HighlightProblemScreen } from "@/components/screens/HighlightProblemScreen";
 import { ValuePropsScreen } from "@/components/screens/ValuePropsScreen";
 import { WhyNowScreen } from "@/components/screens/WhyNowScreen";
+import { SystemArchitectureScreen } from "@/components/screens/SystemArchitectureScreen";
 import { PublisherIntegrationScreen } from "@/components/screens/PublisherIntegrationScreen";
 import { LiveDemoScreen } from "@/components/screens/LiveDemoScreen";
 import { ViralProjectionScreen } from "@/components/screens/ViralProjectionScreen";
@@ -28,6 +29,7 @@ function App() {
           <HighlightProblemScreen />
           <ValuePropsScreen />
           <WhyNowScreen />
+          <SystemArchitectureScreen />
           <PublisherIntegrationScreen />
           <LiveDemoScreen />
           <ViralProjectionScreen />
