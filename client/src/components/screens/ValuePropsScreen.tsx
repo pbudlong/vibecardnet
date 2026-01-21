@@ -1,22 +1,26 @@
 import { motion } from "framer-motion";
-import { Building2, Users, Zap, TrendingUp, Wallet, Clock, Code, FileText, Calculator, ListChecks } from "lucide-react";
-import { SiReplit, SiOpenai } from "react-icons/si";
+import { Building2, Users, Zap, TrendingUp, Wallet, Clock, Code, FileText, Calculator, ListChecks, BookOpen, Wrench, BarChart3, Users2 } from "lucide-react";
+import { SiReplit } from "react-icons/si";
 import { Card } from "@/components/ui/card";
 
 const platforms = [
-  { name: "Replit", icon: SiReplit },
-  { name: "Lovable", icon: null },
-  { name: "Bolt", icon: null },
-  { name: "Cursor", icon: null },
-  { name: "Claude", icon: SiOpenai },
-  { name: "Circle CAB", icon: null },
+  { name: "Replit", icon: SiReplit, color: "text-orange-500" },
+  { name: "Lovable", initial: "L", color: "text-pink-500" },
+  { name: "Bolt", initial: "B", color: "text-yellow-500" },
+  { name: "Cursor", initial: "C", color: "text-blue-500" },
+  { name: "Claude", initial: "C", color: "text-amber-600" },
+  { name: "Circle App Builder", initial: "◎", color: "text-emerald-500" },
 ];
 
-const useCases = [
+const useCasesWithPeople = [
   { icon: ListChecks, label: "Trackers" },
+  { icon: Users2, label: "Teams" },
   { icon: FileText, label: "Planners" },
+  { icon: BarChart3, label: "Dashboards" },
   { icon: Calculator, label: "Calculators" },
+  { icon: BookOpen, label: "Learning" },
   { icon: Code, label: "Guides" },
+  { icon: Wrench, label: "Tools" },
 ];
 
 const publisherBenefits = [
@@ -52,9 +56,9 @@ export function ValuePropsScreen() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-6"
+        className="text-center mb-4"
       >
-        <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4">
+        <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-3">
           The AI Loops Solution
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -66,60 +70,87 @@ export function ValuePropsScreen() {
         </p>
       </motion.div>
 
-      {/* Network Diagram */}
+      {/* Circular Network Diagram */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 0.15 }}
-        className="w-full max-w-4xl mb-6"
+        className="w-full max-w-3xl mb-4"
       >
         <Card className="p-6">
-          <div className="relative flex flex-col items-center">
-            {/* Outer Ring - Use Cases */}
-            <div className="flex justify-center gap-4 mb-4">
-              {useCases.map((useCase, index) => (
-                <motion.div
-                  key={useCase.label}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
-                  className="flex flex-col items-center p-2 rounded-lg bg-muted/30 w-20"
-                >
-                  <useCase.icon className="h-4 w-4 text-muted-foreground mb-1" />
-                  <span className="text-xs text-muted-foreground">{useCase.label}</span>
-                </motion.div>
-              ))}
+          <div className="relative flex items-center justify-center" style={{ minHeight: "280px" }}>
+            {/* Outer Ring - Use Cases with People feeling */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative w-72 h-72 md:w-80 md:h-80">
+                {useCasesWithPeople.map((useCase, index) => {
+                  const angle = (index * 360) / useCasesWithPeople.length - 90;
+                  const radius = 140;
+                  const x = Math.cos((angle * Math.PI) / 180) * radius;
+                  const y = Math.sin((angle * Math.PI) / 180) * radius;
+                  return (
+                    <motion.div
+                      key={useCase.label}
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
+                      className="absolute flex flex-col items-center"
+                      style={{
+                        left: `calc(50% + ${x}px - 24px)`,
+                        top: `calc(50% + ${y}px - 24px)`,
+                      }}
+                    >
+                      <div className="p-2 rounded-full bg-muted/50">
+                        <useCase.icon className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground mt-0.5">{useCase.label}</span>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Middle Ring - Platforms */}
-            <div className="flex flex-wrap justify-center gap-3 mb-4">
-              {platforms.map((platform, index) => (
-                <motion.div
-                  key={platform.name}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
-                  className="flex flex-col items-center p-3 rounded-lg bg-muted/50 w-20"
-                >
-                  {platform.icon ? (
-                    <platform.icon className="h-5 w-5 text-foreground mb-1" />
-                  ) : (
-                    <span className="text-sm font-bold text-foreground mb-1">{platform.name.charAt(0)}</span>
-                  )}
-                  <span className="text-xs text-muted-foreground">{platform.name}</span>
-                </motion.div>
-              ))}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative w-48 h-48 md:w-56 md:h-56">
+                {platforms.map((platform, index) => {
+                  const angle = (index * 360) / platforms.length - 90;
+                  const radius = 90;
+                  const x = Math.cos((angle * Math.PI) / 180) * radius;
+                  const y = Math.sin((angle * Math.PI) / 180) * radius;
+                  return (
+                    <motion.div
+                      key={platform.name}
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: 0.3 + index * 0.08 }}
+                      className="absolute flex flex-col items-center"
+                      style={{
+                        left: `calc(50% + ${x}px - 22px)`,
+                        top: `calc(50% + ${y}px - 22px)`,
+                      }}
+                    >
+                      <div className="p-2 rounded-lg bg-card border shadow-sm">
+                        {platform.icon ? (
+                          <platform.icon className={`h-5 w-5 ${platform.color}`} />
+                        ) : (
+                          <span className={`text-lg font-bold ${platform.color}`}>{platform.initial}</span>
+                        )}
+                      </div>
+                      <span className="text-[9px] text-muted-foreground mt-0.5 whitespace-nowrap max-w-14 truncate">{platform.name}</span>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Center - VibeCard */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: 0.6 }}
-              className="flex flex-col items-center p-4 rounded-xl bg-primary/10 border-2 border-primary"
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="relative z-10 flex flex-col items-center p-5 rounded-full bg-primary/10 border-2 border-primary"
             >
-              <span className="font-display text-xl font-bold text-primary">VibeCard</span>
-              <span className="text-xs text-muted-foreground">Rewards Hub</span>
+              <span className="font-display text-lg font-bold text-primary">VibeCard</span>
             </motion.div>
           </div>
         </Card>
@@ -129,10 +160,10 @@ export function ValuePropsScreen() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
         className="w-full max-w-4xl"
       >
-        <h2 className="font-display text-xl font-bold text-foreground mb-4 text-center">
+        <h2 className="font-display text-xl font-bold text-foreground mb-3 text-center">
           Everyone Wins
         </h2>
         <div className="grid md:grid-cols-2 gap-4">
