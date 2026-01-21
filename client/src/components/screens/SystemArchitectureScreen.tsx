@@ -133,7 +133,7 @@ export function SystemArchitectureScreen() {
           >
             <Card className="p-4 w-40 text-center">
               <CreditCard className="h-8 w-8 mx-auto mb-2 text-[#635BFF]" />
-              <p className="text-xs font-medium text-foreground whitespace-nowrap">Stripe/Lithic Issuance</p>
+              <p className="text-xs font-medium text-foreground whitespace-nowrap">Stripe Issuance</p>
               <p className="text-[10px] text-muted-foreground">VibeCard Member</p>
             </Card>
           </motion.div>
