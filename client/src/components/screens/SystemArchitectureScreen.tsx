@@ -15,8 +15,8 @@ export function SystemArchitectureScreen() {
         <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-3">
           System Architecture
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          End-to-end payment flow from campaign funding to participant rewards
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-12">
+          End-to-end payment flow from reward pool funding to participant issuance of Vibe Card
         </p>
       </motion.div>
 
@@ -49,8 +49,8 @@ export function SystemArchitectureScreen() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.4 }}
           >
-            <Card className="p-4 w-32 text-center border-emerald-500/50">
-              <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-emerald-500 flex items-center justify-center">
+            <Card className="p-4 w-32 text-center border-blue-500/50">
+              <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-blue-500 flex items-center justify-center">
                 <span className="text-white font-bold text-lg">◎</span>
               </div>
               <p className="text-xs font-medium text-foreground">Circle Mint</p>
@@ -94,8 +94,8 @@ export function SystemArchitectureScreen() {
 
                 {/* Bottom row - Circle Embedded Wallets */}
                 <div className="flex justify-center">
-                  <div className="bg-card border rounded-md px-3 py-2 text-center w-36 border-emerald-500/30">
-                    <div className="h-4 w-4 mx-auto mb-1 rounded-full bg-emerald-500 flex items-center justify-center">
+                  <div className="bg-card border rounded-md px-3 py-2 text-center w-36 border-blue-500/30">
+                    <div className="h-4 w-4 mx-auto mb-1 rounded-full bg-blue-500 flex items-center justify-center">
                       <span className="text-white text-[8px] font-bold">◎</span>
                     </div>
                     <p className="text-[10px] font-medium">Embedded Wallets</p>
@@ -114,8 +114,8 @@ export function SystemArchitectureScreen() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.6 }}
           >
-            <Card className="p-4 w-32 text-center border-emerald-500/50">
-              <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-emerald-500 flex items-center justify-center">
+            <Card className="p-4 w-32 text-center border-blue-500/50">
+              <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-blue-500 flex items-center justify-center">
                 <span className="text-white font-bold text-lg">◎</span>
               </div>
               <p className="text-xs font-medium text-foreground">Circle Mint</p>
@@ -132,7 +132,7 @@ export function SystemArchitectureScreen() {
             transition={{ duration: 0.4, delay: 0.7 }}
           >
             <Card className="p-4 w-32 text-center">
-              <CreditCard className="h-8 w-8 mx-auto mb-2 text-primary" />
+              <CreditCard className="h-8 w-8 mx-auto mb-2 text-[#635BFF]" />
               <p className="text-xs font-medium text-foreground">Stripe or Lithic</p>
               <p className="text-[10px] text-muted-foreground">Card Issuance</p>
             </Card>
@@ -152,7 +152,7 @@ export function SystemArchitectureScreen() {
           <span>Fiat Rails</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-emerald-500" />
+          <div className="h-3 w-3 rounded-full bg-blue-500" />
           <span>Circle / USDC</span>
         </div>
         <div className="flex items-center gap-2">
