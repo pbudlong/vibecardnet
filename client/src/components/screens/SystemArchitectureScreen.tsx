@@ -37,7 +37,7 @@ export function SystemArchitectureScreen() {
             <Card className="p-4 w-32 text-center">
               <SiStripe className="h-8 w-8 mx-auto mb-2 text-[#635BFF]" />
               <p className="text-xs font-medium text-foreground">Stripe Payments</p>
-              <p className="text-[10px] text-muted-foreground whitespace-nowrap">Platform/Content Owner</p>
+              <p className="text-[10px] text-muted-foreground whitespace-nowrap text-center">Platform/Content Owner</p>
             </Card>
           </motion.div>
 
