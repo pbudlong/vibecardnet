@@ -21,7 +21,7 @@ const problemPoints = [
   {
     icon: Lightbulb,
     era: "Andrew Chen (a16z)",
-    description: "Time to revive the discipline and adapt it for modern product-led growth and AI-era share loops.",
+    description: "Time to revive the discipline and adapt it for modern product-led growth and AI-era growth loops.",
   },
 ];
 

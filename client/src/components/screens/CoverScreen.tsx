@@ -69,7 +69,7 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
         >
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-primary" />
-            <span>AI-era growth loops.</span>
+            <span>Best Vibecoded Application Track</span>
           </div>
         </motion.div>
       </div>
