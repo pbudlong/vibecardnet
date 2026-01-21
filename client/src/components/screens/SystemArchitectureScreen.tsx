@@ -110,7 +110,7 @@ export function SystemArchitectureScreen() {
                   {/* Step 4 - Non-custodial Wallets */}
                   <div className="bg-card border rounded-md px-3 py-2 text-center w-36">
                     <Wallet className="h-4 w-4 mx-auto mb-1 text-primary" />
-                    <p className="text-[10px] font-medium">Non-custodial Wallets</p>
+                    <p className="text-[10px] font-medium">User Payouts</p>
                     <p className="text-[8px] text-muted-foreground">Circle Embedded Wallets</p>
                   </div>
                 </div>
