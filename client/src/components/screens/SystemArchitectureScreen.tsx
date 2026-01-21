@@ -84,7 +84,7 @@ export function SystemArchitectureScreen() {
                   <div className="bg-card border rounded-md px-3 py-2 text-center w-36">
                     <Wallet className="h-4 w-4 mx-auto mb-1 text-primary" />
                     <p className="text-[10px] font-medium">Reward Pool</p>
-                    <p className="text-[8px] text-muted-foreground">USDC Treasury</p>
+                    <p className="text-[8px] text-muted-foreground">Circle Developer Wallets</p>
                   </div>
                   
                   <ArrowDown className="h-3 w-3 text-primary/60" />
@@ -93,7 +93,7 @@ export function SystemArchitectureScreen() {
                   <div className="bg-card border rounded-md px-3 py-2 text-center w-36">
                     <GitBranch className="h-4 w-4 mx-auto mb-1 text-primary" />
                     <p className="text-[10px] font-medium">Viral Chain</p>
-                    <p className="text-[8px] text-muted-foreground">Attribution</p>
+                    <p className="text-[8px] text-muted-foreground">Arc Network</p>
                   </div>
                   
                   <ArrowDown className="h-3 w-3 text-primary/60" />
@@ -102,7 +102,7 @@ export function SystemArchitectureScreen() {
                   <div className="bg-card border rounded-md px-3 py-2 text-center w-36">
                     <Zap className="h-4 w-4 mx-auto mb-1 text-primary" />
                     <p className="text-[10px] font-medium">x402 Splits</p>
-                    <p className="text-[8px] text-muted-foreground">Atomic Payouts</p>
+                    <p className="text-[8px] text-muted-foreground">Circle Batching SDK</p>
                   </div>
                   
                   <ArrowDown className="h-3 w-3 text-primary/60" />
@@ -111,7 +111,7 @@ export function SystemArchitectureScreen() {
                   <div className="bg-card border rounded-md px-3 py-2 text-center w-36">
                     <Wallet className="h-4 w-4 mx-auto mb-1 text-primary" />
                     <p className="text-[10px] font-medium">Non-custodial Wallets</p>
-                    <p className="text-[8px] text-muted-foreground">Circle Embedded</p>
+                    <p className="text-[8px] text-muted-foreground">Circle Embedded Wallets</p>
                   </div>
                 </div>
               </Card>
