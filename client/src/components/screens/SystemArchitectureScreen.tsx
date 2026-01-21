@@ -107,13 +107,11 @@ export function SystemArchitectureScreen() {
                   
                   <ArrowDown className="h-3 w-3 text-primary/60" />
                   
-                  {/* Step 4 - Embedded Wallets */}
-                  <div className="bg-card border rounded-md px-3 py-2 text-center w-36 border-sky-400/30">
-                    <div className="h-4 w-4 mx-auto mb-1 rounded-full bg-sky-400 flex items-center justify-center">
-                      <span className="text-white text-[8px] font-bold">◎</span>
-                    </div>
-                    <p className="text-[10px] font-medium">Embedded Wallets</p>
-                    <p className="text-[8px] text-muted-foreground">USDC Payouts</p>
+                  {/* Step 4 - Non-custodial Wallets */}
+                  <div className="bg-card border rounded-md px-3 py-2 text-center w-36">
+                    <Wallet className="h-4 w-4 mx-auto mb-1 text-primary" />
+                    <p className="text-[10px] font-medium">Non-custodial Wallets</p>
+                    <p className="text-[8px] text-muted-foreground">Circle Embedded</p>
                   </div>
                 </div>
               </Card>
