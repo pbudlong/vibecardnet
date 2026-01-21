@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Building2, Users, Zap, TrendingUp, Wallet, Clock, Code, FileText, Calculator, ListChecks, BookOpen, Wrench, BarChart3, Users2 } from "lucide-react";
+import { Building2, Users, Zap, TrendingUp, Wallet, Clock, Code, FileText, Calculator, ListChecks, BookOpen, Wrench, BarChart3, Users2, User, ArrowLeftRight } from "lucide-react";
 import { SiReplit } from "react-icons/si";
 import { Card } from "@/components/ui/card";
 
@@ -93,16 +93,20 @@ export function ValuePropsScreen() {
                       initial={{ opacity: 0, scale: 0 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
-                      className="absolute flex flex-col items-center"
+                      className="absolute flex items-center gap-1"
                       style={{
-                        left: `calc(50% + ${x}px - 24px)`,
-                        top: `calc(50% + ${y}px - 24px)`,
+                        left: `calc(50% + ${x}px - 36px)`,
+                        top: `calc(50% + ${y}px - 16px)`,
                       }}
                     >
-                      <div className="p-2 rounded-full bg-muted/50">
-                        <useCase.icon className="h-4 w-4 text-muted-foreground" />
+                      <User className="h-4 w-4 text-muted-foreground/60" />
+                      <div className="flex flex-col items-center">
+                        <div className="p-1.5 rounded-full bg-muted/50">
+                          <useCase.icon className="h-3.5 w-3.5 text-muted-foreground" />
+                        </div>
+                        <span className="text-[9px] text-muted-foreground">{useCase.label}</span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground mt-0.5">{useCase.label}</span>
+                      <User className="h-4 w-4 text-muted-foreground/60" />
                     </motion.div>
                   );
                 })}
@@ -143,14 +147,15 @@ export function ValuePropsScreen() {
               </div>
             </div>
 
-            {/* Center - VibeCard */}
+            {/* Center - VibeCard stacked */}
             <motion.div
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="relative z-10 flex flex-col items-center p-5 rounded-full bg-primary/10 border-2 border-primary"
+              className="relative z-10 flex flex-col items-center justify-center w-24 h-24 rounded-full bg-primary/10 border-2 border-primary"
             >
-              <span className="font-display text-lg font-bold text-primary">VibeCard</span>
+              <span className="font-display text-lg font-bold text-primary leading-none">Vibe</span>
+              <span className="font-display text-lg font-bold text-primary leading-none">Card</span>
             </motion.div>
           </div>
         </Card>
