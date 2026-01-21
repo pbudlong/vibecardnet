@@ -35,7 +35,7 @@ export function HighlightProblemScreen() {
         className="text-center mb-8"
       >
         <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground">
-          The Problem
+          The Viral Problem
         </h1>
       </motion.div>
 
