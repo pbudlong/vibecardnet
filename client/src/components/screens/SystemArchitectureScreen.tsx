@@ -170,11 +170,11 @@ export function SystemArchitectureScreen() {
         </div>
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full bg-sky-400" />
-          <span>Circle / USDC</span>
+          <span>USDC Bridge</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full bg-primary" />
-          <span>VibeCard</span>
+          <span>Onchain Core</span>
         </div>
       </motion.div>
     </div>
