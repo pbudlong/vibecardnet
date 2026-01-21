@@ -45,20 +45,6 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
           Viral Rewards Network
         </motion.h2>
 
-        <motion.p
-          className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          data-testid="text-tagline"
-        >
-          The first viral growth network backed by stablecoins.
-          <br />
-          Members get paid to create, share and remix.
-          <br />
-          Powered by USDC on Arc.
-        </motion.p>
-
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
