@@ -34,10 +34,10 @@ export function SystemArchitectureScreen() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}
           >
-            <Card className="p-4 w-32 text-center">
+            <Card className="p-4 w-36 text-center">
               <SiStripe className="h-8 w-8 mx-auto mb-2 text-[#635BFF]" />
               <p className="text-xs font-medium text-foreground">Stripe Payments</p>
-              <p className="text-[10px] text-muted-foreground text-center">Platform/Content Owner</p>
+              <p className="text-[10px] text-muted-foreground text-center whitespace-nowrap">Platform/Content Owner</p>
             </Card>
           </motion.div>
 
@@ -131,9 +131,9 @@ export function SystemArchitectureScreen() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.7 }}
           >
-            <Card className="p-4 w-32 text-center">
+            <Card className="p-4 w-36 text-center">
               <CreditCard className="h-8 w-8 mx-auto mb-2 text-[#635BFF]" />
-              <p className="text-xs font-medium text-foreground whitespace-nowrap">Stripe Issuance</p>
+              <p className="text-xs font-medium text-foreground">Stripe Issuance</p>
               <p className="text-[10px] text-muted-foreground">VibeCard Member</p>
             </Card>
           </motion.div>
