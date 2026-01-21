@@ -131,7 +131,7 @@ export function SystemArchitectureScreen() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.7 }}
           >
-            <Card className="p-4 w-40 text-center">
+            <Card className="p-4 w-32 text-center">
               <CreditCard className="h-8 w-8 mx-auto mb-2 text-[#635BFF]" />
               <p className="text-xs font-medium text-foreground whitespace-nowrap">Stripe Issuance</p>
               <p className="text-[10px] text-muted-foreground">VibeCard Member</p>
