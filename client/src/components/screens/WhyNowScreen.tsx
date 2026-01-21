@@ -177,7 +177,7 @@ export function WhyNowScreen() {
           transition={{ duration: 0.5, delay: 1 }}
           className="text-center text-lg font-medium text-muted-foreground italic"
         >
-          "UGS powered by robot money will kick off a new wave of exponential viral growth."
+          "UGS and robot money will kick off a new wave of exponential viral growth."
         </motion.p>
       </div>
     </div>
