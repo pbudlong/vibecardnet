@@ -33,7 +33,7 @@ export function ValuePropsScreen() {
         className="text-center mb-4"
       >
         <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-3">
-          The AI Loops Solution
+          The AI-era Solution
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           The first viral growth network backed by stablecoins.

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -15,7 +15,14 @@ import { ViralProjectionScreen } from "@/components/screens/ViralProjectionScree
 import { NetworkVisionScreen } from "@/components/screens/NetworkVisionScreen";
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState(0);
+  const [currentScreen, setCurrentScreen] = useState(() => {
+    const saved = localStorage.getItem('vibecard-current-screen');
+    return saved ? parseInt(saved, 10) : 0;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('vibecard-current-screen', currentScreen.toString());
+  }, [currentScreen]);
 
   const handleStart = () => {
     setCurrentScreen(1);
