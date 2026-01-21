@@ -16,7 +16,7 @@ export function SystemArchitectureScreen() {
         <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-3">
           System Architecture
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-5">
           End-to-end payment flow from reward pool funding to issuance of VibeCard
         </p>
       </motion.div>
@@ -28,40 +28,43 @@ export function SystemArchitectureScreen() {
         transition={{ duration: 0.5, delay: 0.2 }}
         className="w-full max-w-6xl"
       >
-        <div className="flex items-center justify-center gap-3">
-          {/* Step 1: Stripe */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-          >
-            <Card className="p-4 w-36 text-center">
-              <SiStripe className="h-8 w-8 mx-auto mb-2 text-[#635BFF]" />
-              <p className="text-xs font-medium text-foreground">Stripe Payments</p>
-              <p className="text-[10px] text-muted-foreground text-center whitespace-nowrap">Platform/Content Owner</p>
-            </Card>
-          </motion.div>
+        <div className="flex justify-center gap-3">
+          {/* Left Column - Input flow (aligned to top) */}
+          <div className="flex items-start gap-3 pt-10">
+            {/* Step 1: Stripe */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
+              <Card className="p-4 w-36 text-center">
+                <SiStripe className="h-8 w-8 mx-auto mb-2 text-[#635BFF]" />
+                <p className="text-xs font-medium text-foreground">Stripe Payments</p>
+                <p className="text-[10px] text-muted-foreground text-center whitespace-nowrap">Platform/Content Owner</p>
+              </Card>
+            </motion.div>
 
-          <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-6" />
 
-          {/* Step 2: Circle Mint (In) */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.4 }}
-          >
-            <Card className="p-4 w-32 text-center border-sky-400/50">
-              <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-sky-400 flex items-center justify-center">
-                <span className="text-white font-bold text-lg">◎</span>
-              </div>
-              <p className="text-xs font-medium text-foreground">Circle Mint</p>
-              <p className="text-[10px] text-muted-foreground">Fiat → USDC</p>
-            </Card>
-          </motion.div>
+            {/* Step 2: Circle Mint (In) */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
+            >
+              <Card className="p-4 w-32 text-center border-sky-400/50">
+                <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-sky-400 flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">◎</span>
+                </div>
+                <p className="text-xs font-medium text-foreground">Circle Mint</p>
+                <p className="text-[10px] text-muted-foreground">Fiat → USDC</p>
+              </Card>
+            </motion.div>
 
-          <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-6" />
+          </div>
 
-          {/* Step 3: VibeCard Core */}
+          {/* Center - VibeCard Core */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -117,37 +120,40 @@ export function SystemArchitectureScreen() {
             </div>
           </motion.div>
 
-          <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+          {/* Right Column - Output flow (aligned to bottom) */}
+          <div className="flex items-end gap-3 pb-4">
+            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0 mb-6" />
 
-          {/* Step 4: Circle Mint (Out) */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.6 }}
-          >
-            <Card className="p-4 w-32 text-center border-sky-400/50">
-              <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-sky-400 flex items-center justify-center">
-                <span className="text-white font-bold text-lg">◎</span>
-              </div>
-              <p className="text-xs font-medium text-foreground">Circle Mint</p>
-              <p className="text-[10px] text-muted-foreground">USDC → Fiat</p>
-            </Card>
-          </motion.div>
+            {/* Step 4: Circle Mint (Out) */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.6 }}
+            >
+              <Card className="p-4 w-32 text-center border-sky-400/50">
+                <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-sky-400 flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">◎</span>
+                </div>
+                <p className="text-xs font-medium text-foreground">Circle Mint</p>
+                <p className="text-[10px] text-muted-foreground">USDC → Fiat</p>
+              </Card>
+            </motion.div>
 
-          <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0 mb-6" />
 
-          {/* Step 5: Stripe or Lithic */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.7 }}
-          >
-            <Card className="p-4 w-36 text-center">
-              <CreditCard className="h-8 w-8 mx-auto mb-2 text-[#635BFF]" />
-              <p className="text-xs font-medium text-foreground">Stripe Issuance</p>
-              <p className="text-[10px] text-muted-foreground">VibeCard Member</p>
-            </Card>
-          </motion.div>
+            {/* Step 5: Stripe Issuance */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.7 }}
+            >
+              <Card className="p-4 w-36 text-center">
+                <CreditCard className="h-8 w-8 mx-auto mb-2 text-[#635BFF]" />
+                <p className="text-xs font-medium text-foreground">Stripe Issuance</p>
+                <p className="text-[10px] text-muted-foreground">VibeCard Member</p>
+              </Card>
+            </motion.div>
+          </div>
         </div>
       </motion.div>
 
