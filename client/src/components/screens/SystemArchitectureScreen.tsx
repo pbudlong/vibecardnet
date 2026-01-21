@@ -30,7 +30,7 @@ export function SystemArchitectureScreen() {
       >
         <div className="flex justify-center gap-3">
           {/* Left Column - Input flow (aligned to Reward Pool) */}
-          <div className="flex items-center gap-3 mt-[52px]">
+          <div className="flex items-center gap-3 self-start mt-[42px]">
             {/* Step 1: Stripe */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -121,7 +121,7 @@ export function SystemArchitectureScreen() {
           </motion.div>
 
           {/* Right Column - Output flow (aligned to Embedded Wallets) */}
-          <div className="flex items-center gap-3 mb-[52px] self-end">
+          <div className="flex items-center gap-3 self-end mb-[4px]">
             <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
             {/* Step 4: Circle Mint (Out) */}
