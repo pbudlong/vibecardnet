@@ -15,7 +15,7 @@ export function SystemArchitectureScreen() {
         <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-3">
           VibeCard
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-12">
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
           End-to-end payment flow from reward pool funding to participant issuance of VibeCard
         </p>
       </motion.div>
