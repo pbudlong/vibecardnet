@@ -59,19 +59,16 @@ const timelineData = [
 
 const enablers = [
   {
-    name: "Arc",
-    description: "Native USDC blockchain",
-    detail: "No bridges, instant settlement",
+    name: "Content Growth",
+    description: "Vibe coding platforms are creating 100,000+ new apps per day.",
   },
   {
-    name: "Circle Wallets",
-    description: "Embedded wallet SDK",
-    detail: "No seed phrases, social login",
+    name: "Missing Reach",
+    description: "These builders can ship in minutes but need help marketing.",
   },
   {
-    name: "x402 Protocol",
-    description: "Micropayment standard",
-    detail: "Atomic multi-party splits",
+    name: "Crypto Leverage",
+    description: "VibeCard creates the distribution layer for the long tail of user-generated software.",
   },
 ];
 
@@ -150,9 +147,9 @@ export function WhyNowScreen() {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="text-center mb-8"
         >
-          <h2 className="font-display text-2xl font-semibold text-foreground mb-6">
-            The 3 Primary Enablers
-          </h2>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
+            The Cambrian Explosion of User-Generated Software
+          </p>
           <div className="flex flex-wrap justify-center gap-6">
             {enablers.map((enabler, index) => (
               <motion.div
@@ -161,15 +158,12 @@ export function WhyNowScreen() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: 0.7 + index * 0.1 }}
               >
-                <Card className="p-5 w-64 text-left">
-                  <h3 className="font-display font-bold text-xl text-primary mb-1">
+                <Card className="p-5 w-72 text-left">
+                  <h3 className="font-display font-bold text-lg text-primary mb-2">
                     {enabler.name}
                   </h3>
-                  <p className="font-medium text-foreground text-sm mb-1">
+                  <p className="text-sm text-muted-foreground">
                     {enabler.description}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {enabler.detail}
                   </p>
                 </Card>
               </motion.div>
