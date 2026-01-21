@@ -177,7 +177,7 @@ export function WhyNowScreen() {
           transition={{ duration: 0.5, delay: 1 }}
           className="text-center text-lg font-medium text-muted-foreground italic"
         >
-          "This was impossible before. Now it's inevitable."
+          "Just as UGC kicked off virality in the 2000s, UGS powered by robot money will do the same now."
         </motion.p>
       </div>
     </div>
