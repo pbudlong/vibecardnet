@@ -29,8 +29,8 @@ export function SystemArchitectureScreen() {
         className="w-full max-w-6xl"
       >
         <div className="flex justify-center gap-3">
-          {/* Left Column - Input flow (aligned to top) */}
-          <div className="flex items-start gap-3 pt-10">
+          {/* Left Column - Input flow (aligned to Reward Pool) */}
+          <div className="flex items-center gap-3 mt-[52px]">
             {/* Step 1: Stripe */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -44,7 +44,7 @@ export function SystemArchitectureScreen() {
               </Card>
             </motion.div>
 
-            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-6" />
+            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
             {/* Step 2: Circle Mint (In) */}
             <motion.div
@@ -61,7 +61,7 @@ export function SystemArchitectureScreen() {
               </Card>
             </motion.div>
 
-            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-6" />
+            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
           </div>
 
           {/* Center - VibeCard Core */}
@@ -120,9 +120,9 @@ export function SystemArchitectureScreen() {
             </div>
           </motion.div>
 
-          {/* Right Column - Output flow (aligned to bottom) */}
-          <div className="flex items-end gap-3 pb-4">
-            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0 mb-6" />
+          {/* Right Column - Output flow (aligned to Embedded Wallets) */}
+          <div className="flex items-center gap-3 mb-[52px] self-end">
+            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
             {/* Step 4: Circle Mint (Out) */}
             <motion.div
@@ -139,7 +139,7 @@ export function SystemArchitectureScreen() {
               </Card>
             </motion.div>
 
-            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0 mb-6" />
+            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
             {/* Step 5: Stripe Issuance */}
             <motion.div
