@@ -68,7 +68,7 @@ const enablers = [
   },
   {
     name: "Crypto Leverage",
-    description: "VibeCard creates the distribution layer for the long tail of user-generated software.",
+    description: "VibeCard creates the distribution layer for the long tail of UGS.",
   },
 ];
 
@@ -148,7 +148,7 @@ export function WhyNowScreen() {
           className="text-center mb-8"
         >
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-6">
-            The Cambrian Explosion of User-Generated Software
+            The Cambrian Explosion of User-Generated Software (UGS)
           </p>
           <div className="flex flex-wrap justify-center gap-6">
             {enablers.map((enabler, index) => (

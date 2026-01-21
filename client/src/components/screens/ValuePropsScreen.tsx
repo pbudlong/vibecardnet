@@ -157,7 +157,7 @@ export function ValuePropsScreen() {
                 <Share2 className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
                 <div>
                   <span className="text-xs font-medium text-foreground">New Growth Channel</span>
-                  <span className="text-xs text-muted-foreground"> - UGPC spreads brand</span>
+                  <span className="text-xs text-muted-foreground"> - Uses crowd to spread brand</span>
                 </div>
               </div>
               <div className="flex items-start gap-2">
