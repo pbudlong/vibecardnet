@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Wallet, GitBranch, Zap, CreditCard } from "lucide-react";
+import { ArrowRight, ArrowDown, Wallet, GitBranch, Zap, CreditCard } from "lucide-react";
 import { SiStripe } from "react-icons/si";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export function SystemArchitectureScreen() {
   return (
@@ -66,44 +67,54 @@ export function SystemArchitectureScreen() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.5 }}
           >
-            <Card className="p-4 border-2 border-primary bg-primary/5">
-              <p className="text-sm font-bold text-primary text-center mb-3">VibeCard Network Core</p>
-              <div className="flex flex-col gap-2">
-                {/* Top row - Reward Pool */}
-                <div className="flex justify-center">
+            <div className="relative">
+              <Badge 
+                variant="outline" 
+                className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] bg-background border-primary/50 text-primary whitespace-nowrap z-10"
+              >
+                ACOA Hackathon Build Scope
+              </Badge>
+              <Card className="p-4 border-2 border-primary bg-primary/5">
+                <p className="text-sm font-bold text-primary text-center mb-3">VibeCard Network Core</p>
+                <div className="flex flex-col items-center gap-1">
+                  {/* Step 1 - Reward Pool */}
                   <div className="bg-card border rounded-md px-3 py-2 text-center w-36">
                     <Wallet className="h-4 w-4 mx-auto mb-1 text-primary" />
                     <p className="text-[10px] font-medium">Reward Pool</p>
                     <p className="text-[8px] text-muted-foreground">USDC Treasury</p>
                   </div>
-                </div>
-                
-                {/* Middle row - Parallel: Viral Chain & x402 */}
-                <div className="flex gap-2 justify-center">
-                  <div className="bg-card border rounded-md px-3 py-2 text-center w-28">
+                  
+                  <ArrowDown className="h-3 w-3 text-primary/60" />
+                  
+                  {/* Step 2 - Viral Chain */}
+                  <div className="bg-card border rounded-md px-3 py-2 text-center w-36">
                     <GitBranch className="h-4 w-4 mx-auto mb-1 text-primary" />
                     <p className="text-[10px] font-medium">Viral Chain</p>
                     <p className="text-[8px] text-muted-foreground">Attribution</p>
                   </div>
-                  <div className="bg-card border rounded-md px-3 py-2 text-center w-28">
+                  
+                  <ArrowDown className="h-3 w-3 text-primary/60" />
+                  
+                  {/* Step 3 - x402 Splits */}
+                  <div className="bg-card border rounded-md px-3 py-2 text-center w-36">
                     <Zap className="h-4 w-4 mx-auto mb-1 text-primary" />
                     <p className="text-[10px] font-medium">x402 Splits</p>
                     <p className="text-[8px] text-muted-foreground">Atomic Payouts</p>
                   </div>
-                </div>
-
-                {/* Bottom row - Circle Embedded Wallets */}
-                <div className="flex justify-center">
+                  
+                  <ArrowDown className="h-3 w-3 text-primary/60" />
+                  
+                  {/* Step 4 - Embedded Wallets */}
                   <div className="bg-card border rounded-md px-3 py-2 text-center w-36 border-sky-400/30">
                     <div className="h-4 w-4 mx-auto mb-1 rounded-full bg-sky-400 flex items-center justify-center">
                       <span className="text-white text-[8px] font-bold">◎</span>
                     </div>
                     <p className="text-[10px] font-medium">Embedded Wallets</p>
-                    <p className="text-[8px] text-muted-foreground">Participant Custody</p>
+                    <p className="text-[8px] text-muted-foreground">USDC Payouts</p>
                   </div>
                 </div>
-              </div>
-            </Card>
+              </Card>
+            </div>
           </motion.div>
 
           <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
