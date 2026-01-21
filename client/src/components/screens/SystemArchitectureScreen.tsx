@@ -17,7 +17,7 @@ export function SystemArchitectureScreen() {
           System Architecture
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-5">
-          End-to-end payment flow from reward pool funding to issuance of VibeCard
+          End-to-end payment flow from reward pool funding to VibeCard funding
         </p>
       </motion.div>
 
@@ -78,7 +78,7 @@ export function SystemArchitectureScreen() {
                 ACOA Hackathon Build Scope
               </Badge>
               <Card className="p-4 border-2 border-primary bg-primary/5">
-                <p className="text-sm font-bold text-primary text-center mb-3">VibeCard Network Core</p>
+                <p className="text-sm font-bold text-primary text-center mb-3">VibeCard Onchain Core</p>
                 <div className="flex flex-col items-center gap-1">
                   {/* Step 1 - Reward Pool */}
                   <div className="bg-card border rounded-md px-3 py-2 text-center w-36">
@@ -92,8 +92,8 @@ export function SystemArchitectureScreen() {
                   {/* Step 2 - Viral Chain */}
                   <div className="bg-card border rounded-md px-3 py-2 text-center w-36">
                     <GitBranch className="h-4 w-4 mx-auto mb-1 text-primary" />
-                    <p className="text-[10px] font-medium">Viral Chain</p>
-                    <p className="text-[8px] text-muted-foreground">Arc Network</p>
+                    <p className="text-[10px] font-medium">Viral Network</p>
+                    <p className="text-[8px] text-muted-foreground">Arc Blockchain</p>
                   </div>
                   
                   <ArrowDown className="h-3 w-3 text-primary/60" />
