@@ -100,7 +100,7 @@ export function PublisherIntegrationScreen() {
               className="w-full h-60 object-cover object-top"
             />
             {/* Highlight overlay for entire share bar */}
-            <div className="absolute top-0 left-0 right-0 h-[32px] pointer-events-none ring-2 ring-red-500 ring-inset" />
+            <div className="absolute -top-[2px] left-0 right-0 h-[32px] pointer-events-none ring-2 ring-red-500 ring-inset" />
           </Card>
         </motion.div>
 
