@@ -1040,9 +1040,9 @@ export function LiveDemoScreen() {
   const projectedEarnings = (projectedReach100 * settings.conversionValue * 0.1).toFixed(0);
 
   return (
-    <div className="h-full w-full flex bg-[#0a0a0f] overflow-hidden pt-12">
-      <div className="w-[250px] flex-shrink-0 border-r border-border/30 bg-[#0c0c14] flex flex-col h-full overflow-hidden">
-        <div className="p-4 border-b border-border/30 flex-shrink-0">
+    <div className="h-full w-full flex bg-[#0a0a0f]">
+      <div className="w-[250px] flex-shrink-0 border-r border-border/30 bg-[#0c0c14] flex flex-col h-full overflow-y-auto">
+        <div className="p-4 pt-10 border-b border-border/30 flex-shrink-0">
           <h1 className="font-display text-lg font-bold text-foreground">VibeCard</h1>
           <p className="text-xs text-muted-foreground mb-4">Viral Rewards Network</p>
           <div className="space-y-2">
@@ -1172,7 +1172,7 @@ export function LiveDemoScreen() {
         )}
       </div>
 
-      <div className="w-[280px] flex-shrink-0 border-l border-border/30 bg-[#0c0c14] h-full overflow-hidden">
+      <div className="w-[280px] flex-shrink-0 border-l border-border/30 bg-[#0c0c14] h-full overflow-y-auto">
         <TransactionPanel
           splits={demoState.latestSplits}
           transactionLogs={demoState.transactionLogs}
