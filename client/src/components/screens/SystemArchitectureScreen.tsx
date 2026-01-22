@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowDown, Wallet, GitBranch, Zap, CreditCard, Share2, Target, BarChart3, Cpu, Calculator, Send } from "lucide-react";
+import { ArrowRight, ArrowDown, CreditCard } from "lucide-react";
 import { SiStripe } from "react-icons/si";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -54,12 +54,12 @@ export function SystemArchitectureScreen() {
             <ArrowRight className="h-4 w-4 text-muted-foreground rotate-0" />
           </motion.div>
 
-          {/* Center - VibeCard Onchain Core (Expanded) */}
+          {/* Center - VibeCard Onchain Core (ASCII-style) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex-1 max-w-lg"
+            className="flex-1 max-w-xl"
           >
             <div className="relative">
               <Badge 
@@ -68,97 +68,120 @@ export function SystemArchitectureScreen() {
               >
                 ACOA Hackathon Build Scope
               </Badge>
-              <Card className="p-3 border-2 border-primary bg-primary/5">
-                <p className="text-xs font-bold text-primary text-center mb-2">VibeCard Onchain Core</p>
+              <Card className="p-4 border-2 border-primary bg-primary/5 font-mono text-[9px] leading-tight">
+                <div className="text-center text-primary font-bold mb-2 text-[10px]">VIBECARD ONCHAIN CORE</div>
                 
-                {/* Snippet Integration Layer */}
-                <div className="flex justify-center gap-2 mb-2">
-                  <div className="bg-card border rounded px-2 py-1 text-center flex-1">
-                    <Share2 className="h-3 w-3 mx-auto mb-0.5 text-primary" />
-                    <p className="text-[8px] font-medium">Share Button</p>
-                  </div>
-                  <div className="bg-card border rounded px-2 py-1 text-center flex-1">
-                    <Target className="h-3 w-3 mx-auto mb-0.5 text-primary" />
-                    <p className="text-[8px] font-medium">Conversion</p>
-                  </div>
-                  <div className="bg-card border rounded px-2 py-1 text-center flex-1">
-                    <BarChart3 className="h-3 w-3 mx-auto mb-0.5 text-primary" />
-                    <p className="text-[8px] font-medium">Status API</p>
+                {/* AI Creator's App */}
+                <div className="flex justify-center mb-1">
+                  <div className="border border-foreground/40 px-3 py-1 text-center">
+                    <div className="font-semibold">AI CREATOR'S</div>
+                    <div>APP / ARTIFACT</div>
                   </div>
                 </div>
-
-                <ArrowDown className="h-3 w-3 mx-auto text-primary/60" />
-
-                {/* VibeCard Backend */}
-                <div className="bg-card/50 border border-primary/30 rounded p-2 my-1">
-                  <p className="text-[8px] font-semibold text-primary text-center mb-1">VibeCard Backend</p>
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="flex items-center justify-center gap-1">
-                      <div className="bg-background border rounded px-1.5 py-1 text-center">
-                        <Cpu className="h-2.5 w-2.5 mx-auto mb-0.5 text-muted-foreground" />
-                        <p className="text-[7px]">Event</p>
-                      </div>
-                      <ArrowRight className="h-2 w-2 text-primary/40" />
-                      <div className="bg-background border rounded px-1.5 py-1 text-center">
-                        <Calculator className="h-2.5 w-2.5 mx-auto mb-0.5 text-muted-foreground" />
-                        <p className="text-[7px]">Reward</p>
-                      </div>
-                      <ArrowRight className="h-2 w-2 text-primary/40" />
-                      <div className="bg-background border rounded px-1.5 py-1 text-center">
-                        <Send className="h-2.5 w-2.5 mx-auto mb-0.5 text-muted-foreground" />
-                        <p className="text-[7px]">x402</p>
-                      </div>
-                    </div>
-                    <div className="bg-background border rounded px-2 py-0.5 text-center">
-                      <p className="text-[7px] text-muted-foreground">Conversion Attribution</p>
-                    </div>
-                  </div>
-                </div>
-
-                <ArrowDown className="h-3 w-3 mx-auto text-primary/60" />
-
-                {/* Circle Embedded Wallets - Reward Pool */}
-                <div className="bg-card border border-sky-400/50 rounded px-2 py-1.5 text-center mb-1">
-                  <Wallet className="h-3 w-3 mx-auto mb-0.5 text-sky-400" />
-                  <p className="text-[9px] font-medium">Reward Pool</p>
-                  <p className="text-[7px] text-sky-400">Circle Embedded Wallets</p>
-                </div>
-
-                <ArrowDown className="h-3 w-3 mx-auto text-primary/60" />
-
-                {/* Circle Batching SDK */}
-                <div className="bg-card border border-sky-400/50 rounded px-2 py-1.5 text-center mb-1">
-                  <Zap className="h-3 w-3 mx-auto mb-0.5 text-sky-400" />
-                  <p className="text-[9px] font-medium">x402 Atomic Splits</p>
-                  <p className="text-[7px] text-sky-400">Circle Batching SDK</p>
-                </div>
-
-                <ArrowDown className="h-3 w-3 mx-auto text-primary/60" />
-
-                {/* Circle Non-custodial Wallets - User Payouts */}
+                <div className="text-center text-foreground/60">│</div>
+                <div className="text-center text-foreground/60">┌──────────┼──────────┐</div>
+                <div className="text-center text-foreground/60">│{"          "}│{"          "}│</div>
+                <div className="text-center text-foreground/60">▼{"          "}▼{"          "}▼</div>
+                
+                {/* Three modules */}
                 <div className="flex justify-center gap-2 mb-1">
-                  <div className="bg-card border border-sky-400/30 rounded px-2 py-1 text-center flex-1">
-                    <p className="text-[8px] font-medium">Creator</p>
-                    <p className="text-[7px] text-emerald-500">40%</p>
+                  <div className="border border-foreground/40 px-2 py-1 text-center text-[8px]">
+                    <div>Share</div>
+                    <div>Button</div>
+                    <div className="text-muted-foreground">(visual)</div>
                   </div>
-                  <div className="bg-card border border-sky-400/30 rounded px-2 py-1 text-center flex-1">
-                    <p className="text-[8px] font-medium">Sharers</p>
-                    <p className="text-[7px] text-emerald-500">30%</p>
+                  <div className="border border-foreground/40 px-2 py-1 text-center text-[8px]">
+                    <div>Conversion</div>
+                    <div>Tracking</div>
+                    <div className="text-muted-foreground">(signup,</div>
+                    <div className="text-muted-foreground">purchase)</div>
                   </div>
-                  <div className="bg-card border border-sky-400/30 rounded px-2 py-1 text-center flex-1">
-                    <p className="text-[8px] font-medium">Actor</p>
-                    <p className="text-[7px] text-emerald-500">24%</p>
+                  <div className="border border-foreground/40 px-2 py-1 text-center text-[8px]">
+                    <div>Reward</div>
+                    <div>Status API</div>
+                    <div className="text-muted-foreground">(budget,</div>
+                    <div className="text-muted-foreground">trending)</div>
                   </div>
                 </div>
-                <p className="text-[7px] text-sky-400 text-center mb-1">Circle Non-custodial Wallets</p>
-
-                <ArrowDown className="h-3 w-3 mx-auto text-primary/60" />
-
+                
+                <div className="text-center text-foreground/60">│{"          "}│{"          "}│</div>
+                <div className="text-center text-foreground/60">└──────────┼──────────┘</div>
+                <div className="text-center text-foreground/60">│ Events</div>
+                <div className="text-center text-foreground/60">▼</div>
+                
+                {/* VibeCard Backend */}
+                <div className="border border-foreground/40 mx-4 p-2 mb-1">
+                  <div className="text-center font-semibold mb-1">VIBECARD BACKEND</div>
+                  <div className="flex justify-center items-center gap-1 text-[8px]">
+                    <div className="border border-foreground/30 px-1.5 py-0.5">
+                      <div>Event</div>
+                      <div>Processor</div>
+                    </div>
+                    <span>─▶</span>
+                    <div className="border border-foreground/30 px-1.5 py-0.5">
+                      <div>Reward</div>
+                      <div>Calculator</div>
+                    </div>
+                    <span>─▶</span>
+                    <div className="border border-foreground/30 px-1.5 py-0.5">
+                      <div>x402 Payment</div>
+                      <div>Trigger</div>
+                    </div>
+                  </div>
+                  <div className="text-center text-foreground/60 mt-1">│</div>
+                  <div className="text-center text-foreground/60">▼</div>
+                  <div className="flex justify-center">
+                    <div className="border border-foreground/30 px-2 py-0.5 text-[8px]">
+                      <div>Conversion Attribution</div>
+                      <div className="text-muted-foreground">(tracks CAC)</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-center text-foreground/60">│</div>
+                <div className="text-center text-foreground/60">▼</div>
+                
+                {/* Circle Batching SDK */}
+                <div className="flex justify-center mb-1">
+                  <div className="border border-sky-400/60 px-4 py-1 text-center">
+                    <div className="font-semibold text-sky-400">Circle Batching SDK</div>
+                    <div className="text-muted-foreground">(x402 atomic splits)</div>
+                  </div>
+                </div>
+                
+                <div className="text-center text-foreground/60">│</div>
+                <div className="text-center text-foreground/60">┌──────────┼──────────┐</div>
+                <div className="text-center text-foreground/60">│{"          "}│{"          "}│</div>
+                <div className="text-center text-foreground/60">▼{"          "}▼{"          "}▼</div>
+                
+                {/* Wallets */}
+                <div className="flex justify-center gap-2 mb-1">
+                  <div className="border border-sky-400/40 px-2 py-1 text-center text-[8px]">
+                    <div>Creator</div>
+                    <div>Wallet</div>
+                  </div>
+                  <div className="border border-sky-400/40 px-2 py-1 text-center text-[8px]">
+                    <div>Sharer</div>
+                    <div>Wallet</div>
+                  </div>
+                  <div className="border border-sky-400/40 px-2 py-1 text-center text-[8px]">
+                    <div>Actor</div>
+                    <div>Wallet</div>
+                  </div>
+                </div>
+                <div className="text-center text-sky-400 text-[8px] mb-1">Circle Non-custodial Wallets</div>
+                
+                <div className="text-center text-foreground/60">│{"          "}│{"          "}│</div>
+                <div className="text-center text-foreground/60">└──────────┼──────────┘</div>
+                <div className="text-center text-foreground/60">│</div>
+                <div className="text-center text-foreground/60">▼</div>
+                
                 {/* Arc Blockchain */}
-                <div className="bg-primary/10 border border-primary rounded px-2 py-1.5 text-center">
-                  <GitBranch className="h-3 w-3 mx-auto mb-0.5 text-primary" />
-                  <p className="text-[9px] font-medium text-primary">Arc Blockchain</p>
-                  <p className="text-[7px] text-muted-foreground">USDC Settlement</p>
+                <div className="flex justify-center">
+                  <div className="border border-primary px-4 py-1 text-center bg-primary/10">
+                    <div className="font-semibold text-primary">ARC BLOCKCHAIN</div>
+                    <div className="text-muted-foreground">(USDC Settlement)</div>
+                  </div>
                 </div>
               </Card>
             </div>
