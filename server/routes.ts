@@ -46,35 +46,20 @@ export async function registerRoutes(
     try {
       const wallet = await getDeveloperWalletBalance();
       if (wallet) {
-        let balance = wallet.balance.available;
-        
-        // If real balance is non-zero, cache it for demo persistence
-        if (parseFloat(balance) > 0) {
-          setDemoTreasuryBalance(balance);
-        } else {
-          // Use cached balance if real balance is 0
-          const cachedBalance = getDemoTreasuryBalance();
-          if (parseFloat(cachedBalance) > 0) {
-            balance = cachedBalance;
-            console.log('[Demo] Using cached treasury balance:', balance);
-          }
-        }
-        
+        // Real blockchain balance - no caching
         res.json({
           address: wallet.address,
-          balance: balance,
+          balance: wallet.balance.available,
           currency: wallet.balance.currency,
           blockchain: wallet.blockchain
         });
       } else {
-        // Even without wallet, try cached balance
-        const cachedBalance = getDemoTreasuryBalance();
         res.json({
           address: null,
-          balance: cachedBalance,
+          balance: '0',
           currency: 'USDC',
-          blockchain: 'BASE-SEPOLIA',
-          cached: true
+          blockchain: 'ARC-TESTNET',
+          error: 'No wallet found'
         });
       }
     } catch (error) {

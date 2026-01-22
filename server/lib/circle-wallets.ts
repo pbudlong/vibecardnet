@@ -1,6 +1,42 @@
 import { initiateDeveloperControlledWalletsClient } from '@circle-fin/developer-controlled-wallets';
 
 const CIRCLE_W3S_API_BASE = 'https://api.circle.com/v1/w3s';
+const ARC_TESTNET_RPC = 'https://arc-testnet.drpc.org';
+const ARC_USDC_CONTRACT = '0x3600000000000000000000000000000000000000';
+
+// Query real USDC balance from Arc blockchain directly
+export async function getArcUsdcBalance(address: string): Promise<string> {
+  try {
+    // ERC-20 balanceOf(address) selector: 0x70a08231
+    const data = '0x70a08231' + address.slice(2).padStart(64, '0');
+    
+    const response = await fetch(ARC_TESTNET_RPC, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'eth_call',
+        params: [
+          { to: ARC_USDC_CONTRACT, data },
+          'latest'
+        ]
+      })
+    });
+
+    const result = await response.json();
+    if (result.result) {
+      // Convert hex to decimal, divide by 10^6 for USDC decimals
+      const balanceWei = BigInt(result.result);
+      const balance = Number(balanceWei) / 1_000_000;
+      return balance.toFixed(2);
+    }
+    return '0';
+  } catch (error) {
+    console.error('[Arc RPC] Error fetching balance:', error);
+    return '0';
+  }
+}
 
 // Initialize Circle SDK client (lazy loaded)
 let circleClient: ReturnType<typeof initiateDeveloperControlledWalletsClient> | null = null;
@@ -64,28 +100,43 @@ export async function getDeveloperWalletBalance(): Promise<DeveloperWallet | nul
     }
 
     const data = await response.json();
-    console.log('[Circle] Wallets response:', JSON.stringify(data, null, 2));
     
     if (data.data?.wallets && data.data.wallets.length > 0) {
       const wallets = data.data.wallets;
       
-      const treasuryWallet = wallets.find((w: any) => 
-        w.refId === 'treasury' || w.name?.toLowerCase().includes('treasury')
+      // Prefer Arc treasury for gasless transfers
+      const arcTreasury = wallets.find((w: any) => 
+        w.blockchain === 'ARC-TESTNET' && 
+        (w.refId === 'arc-treasury' || w.name?.toLowerCase().includes('arc treasury'))
       );
       
-      const wallet = treasuryWallet || wallets[0];
-      console.log('[Circle] Selected wallet:', wallet.name || wallet.refId, wallet.address);
-      
-      const usdcBalance = wallet.balances?.find((b: any) => 
-        b.token?.symbol === 'USDC' || b.token?.name?.includes('USDC')
+      const baseTreasury = wallets.find((w: any) => 
+        w.blockchain === 'BASE-SEPOLIA' && 
+        (w.refId === 'treasury' || w.name?.toLowerCase().includes('treasury'))
       );
+      
+      const wallet = arcTreasury || baseTreasury || wallets[0];
+      console.log('[Circle] Selected wallet:', wallet.name || wallet.refId, wallet.address, wallet.blockchain);
+      
+      // Query REAL blockchain balance for Arc wallets
+      let realBalance = '0';
+      if (wallet.blockchain === 'ARC-TESTNET') {
+        realBalance = await getArcUsdcBalance(wallet.address);
+        console.log('[Arc RPC] Real USDC balance:', realBalance);
+      } else {
+        // For non-Arc, use Circle API balance
+        const usdcBalance = wallet.balances?.find((b: any) => 
+          b.token?.symbol === 'USDC' || b.token?.name?.includes('USDC')
+        );
+        realBalance = usdcBalance?.amount || '0';
+      }
       
       return {
         id: wallet.id,
         address: wallet.address,
         blockchain: wallet.blockchain || 'ARC-TESTNET',
         balance: {
-          available: usdcBalance?.amount || '0',
+          available: realBalance,
           currency: 'USDC'
         }
       };
