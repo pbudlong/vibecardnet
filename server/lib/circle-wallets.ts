@@ -232,6 +232,12 @@ export async function getAllWalletsWithBalances(): Promise<WalletWithBalance[]> 
   }
 }
 
+// Known USDC contract addresses for supported testnets
+const USDC_CONTRACTS: Record<string, string> = {
+  'BASE-SEPOLIA': '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
+  'ETH-SEPOLIA': '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
+};
+
 export async function transferUSDC(
   fromWalletId: string, 
   toAddress: string, 
@@ -249,33 +255,20 @@ export async function transferUSDC(
     return { success: false, error: 'No entity secret configured' };
   }
 
+  const usdcContract = USDC_CONTRACTS[blockchain];
+  if (!usdcContract) {
+    return { success: false, error: `USDC contract not configured for ${blockchain}` };
+  }
+
+  // Convert amount to USDC base units (6 decimals)
+  const amountInBaseUnits = Math.floor(parseFloat(amount) * 1_000_000).toString();
+
+  console.log(`[Circle] Transferring ${amount} USDC from wallet ${fromWalletId} to ${toAddress}`);
+  console.log(`[Circle] Using USDC contract: ${usdcContract} (${amountInBaseUnits} base units)`);
+
   try {
-    // Get USDC token ID for the blockchain
-    const tokenResponse = await fetch(`${CIRCLE_W3S_API_BASE}/tokens?blockchain=${blockchain}`, {
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!tokenResponse.ok) {
-      const errorText = await tokenResponse.text();
-      console.error('[Circle] Failed to get tokens:', tokenResponse.status, errorText);
-      return { success: false, error: 'Failed to get token info' };
-    }
-
-    const tokenData = await tokenResponse.json();
-    const usdcToken = tokenData.data?.tokens?.find((t: any) => t.symbol === 'USDC');
-    
-    if (!usdcToken) {
-      console.log('[Circle] Available tokens:', JSON.stringify(tokenData.data?.tokens, null, 2));
-      return { success: false, error: 'USDC token not found' };
-    }
-
-    console.log(`[Circle] Transferring ${amount} USDC from wallet ${fromWalletId} to ${toAddress}`);
-    console.log(`[Circle] Using token: ${usdcToken.id} (${usdcToken.symbol})`);
-    
-    const transferResponse = await fetch(`${CIRCLE_W3S_API_BASE}/developer/transactions/transfer`, {
+    // Use contract execution to call ERC-20 transfer function
+    const transferResponse = await fetch(`${CIRCLE_W3S_API_BASE}/developer/transactions/contractExecution`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -285,9 +278,9 @@ export async function transferUSDC(
         idempotencyKey: `transfer-${fromWalletId}-${Date.now()}`,
         entitySecretCiphertext: entitySecret,
         walletId: fromWalletId,
-        tokenId: usdcToken.id,
-        destinationAddress: toAddress,
-        amounts: [amount],
+        contractAddress: usdcContract,
+        abiFunctionSignature: 'transfer(address,uint256)',
+        abiParameters: [toAddress, amountInBaseUnits],
         feeLevel: 'LOW'
       })
     });
