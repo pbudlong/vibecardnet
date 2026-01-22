@@ -239,8 +239,14 @@ export async function transferUSDC(
   blockchain: string = 'BASE-SEPOLIA'
 ): Promise<{ success: boolean; txId?: string; error?: string }> {
   const apiKey = process.env.CIRCLE_API_KEY;
+  const entitySecret = process.env.CIRCLE_ENTITY_SECRET;
+  
   if (!apiKey) {
     return { success: false, error: 'No API key' };
+  }
+  
+  if (!entitySecret) {
+    return { success: false, error: 'No entity secret configured' };
   }
 
   try {
@@ -253,6 +259,8 @@ export async function transferUSDC(
     });
 
     if (!tokenResponse.ok) {
+      const errorText = await tokenResponse.text();
+      console.error('[Circle] Failed to get tokens:', tokenResponse.status, errorText);
       return { success: false, error: 'Failed to get token info' };
     }
 
@@ -260,10 +268,12 @@ export async function transferUSDC(
     const usdcToken = tokenData.data?.tokens?.find((t: any) => t.symbol === 'USDC');
     
     if (!usdcToken) {
+      console.log('[Circle] Available tokens:', JSON.stringify(tokenData.data?.tokens, null, 2));
       return { success: false, error: 'USDC token not found' };
     }
 
     console.log(`[Circle] Transferring ${amount} USDC from wallet ${fromWalletId} to ${toAddress}`);
+    console.log(`[Circle] Using token: ${usdcToken.id} (${usdcToken.symbol})`);
     
     const transferResponse = await fetch(`${CIRCLE_W3S_API_BASE}/developer/transactions/transfer`, {
       method: 'POST',
@@ -273,6 +283,7 @@ export async function transferUSDC(
       },
       body: JSON.stringify({
         idempotencyKey: `transfer-${fromWalletId}-${Date.now()}`,
+        entitySecretCiphertext: entitySecret,
         walletId: fromWalletId,
         tokenId: usdcToken.id,
         destinationAddress: toAddress,
