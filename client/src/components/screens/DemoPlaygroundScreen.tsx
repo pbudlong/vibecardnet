@@ -47,10 +47,10 @@ function getInitialLogs(status: IntegrationStatus | undefined): Array<{time: str
     logs.push({ time: "00:00:02", type: "warn", message: "Circle Wallets: Not configured" });
   }
 
-  if (status.x402Batching.configured) {
-    logs.push({ time: "00:00:02", type: "warn", message: "x402 Batching SDK: Configured (pending install)" });
+  if (status.x402Batching.status === 'connected') {
+    logs.push({ time: "00:00:02", type: "success", message: "x402 Protocol: Connected (atomic splits)" });
   } else {
-    logs.push({ time: "00:00:02", type: "warn", message: "x402 Batching SDK: Not configured" });
+    logs.push({ time: "00:00:02", type: "warn", message: "x402 Protocol: Not configured" });
   }
 
   if (status.arcNetwork.status === 'connected') {
@@ -139,8 +139,8 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     // Add initial logs
     setLogs(prev => [
       ...prev,
-      { time: "00:00:04", type: "event", message: "Initiating real USDC transfer..." },
-      { time: "00:00:05", type: "info", message: "x402 Batching: Creator 60% | Sharer 25% | Platform 15%" },
+      { time: "00:00:04", type: "event", message: "x402 Payment Trigger activated..." },
+      { time: "00:00:05", type: "info", message: "Atomic split: Creator 60% | Sharer 25% | Platform 15%" },
     ]);
     
     // Execute real transfer after log animation

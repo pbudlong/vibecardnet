@@ -441,6 +441,39 @@ const USDC_CONTRACTS: Record<string, string> = {
   'ARC-TESTNET': '0x3600000000000000000000000000000000000000', // USDC is native gas on Arc!
 };
 
+export interface ArcWallet {
+  id: string;
+  name: string;
+  address: string;
+  balance: string;
+  isUser: boolean;
+}
+
+export async function getArcWallets(): Promise<{ treasury: ArcWallet | null; users: ArcWallet[] }> {
+  const allWallets = await getAllWalletsWithBalances();
+  const arcWallets = allWallets.filter(w => w.blockchain === 'ARC-TESTNET');
+  
+  const treasury = arcWallets.find(w => w.refId === 'arc-treasury');
+  const users = arcWallets.filter(w => w.refId.startsWith('arc-user-'));
+  
+  return {
+    treasury: treasury ? {
+      id: treasury.id,
+      name: treasury.name,
+      address: treasury.address,
+      balance: treasury.usdcBalance,
+      isUser: false
+    } : null,
+    users: users.map(u => ({
+      id: u.id,
+      name: u.name,
+      address: u.address,
+      balance: u.usdcBalance,
+      isUser: true
+    }))
+  };
+}
+
 // Generate a new entity secret (32 bytes hex)
 export function generateNewEntitySecret(): string {
   const bytes = new Uint8Array(32);

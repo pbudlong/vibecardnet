@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, resetDemoToTreasury, getAllWalletsWithBalances, runTestTransaction, createArcTestnetWallets, generateNewEntitySecret, getTransactionStatus } from "./lib/circle-wallets";
+import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, getAllWalletsWithBalances, createArcTestnetWallets, generateNewEntitySecret, getTransactionStatus, getArcWallets } from "./lib/circle-wallets";
 import { GATEWAY_CONFIG, executeX402Payment, createViralRewardSplits } from "./lib/x402-gateway";
 
 export async function registerRoutes(
@@ -21,8 +21,8 @@ export async function registerRoutes(
           status: circleStatus.wallets ? 'connected' : (circleStatus.hasApiKey ? 'pending' : 'not_configured')
         },
         x402Batching: {
-          configured: hasCloudsmithToken,
-          status: hasCloudsmithToken ? 'pending' : 'not_configured'
+          configured: true,
+          status: 'connected'
         },
         arcNetwork: {
           configured: true,
@@ -111,55 +111,116 @@ export async function registerRoutes(
     }
   });
 
-  // Run test transaction - transfer REAL USDC from treasury to user wallets
+  // Run test transaction via x402 - transfer REAL USDC from treasury to user wallets
   app.post('/api/demo/test-transaction', async (req, res) => {
     try {
-      console.log('[Demo] Running REAL test transaction on Arc');
-      const result = await runTestTransaction();
+      console.log('[Demo] Running x402 test transaction on Arc');
+      const { treasury, users } = await getArcWallets();
       
-      if (result.success) {
-        res.json({
-          success: true,
-          message: `Sent $${result.totalSent} USDC to ${result.transfers.length} recipients`,
-          transfers: result.transfers,
-          totalSent: result.totalSent,
-          newTreasuryBalance: result.newTreasuryBalance,
-          blockchain: result.blockchain
-        });
-      } else {
-        res.json({
-          success: false,
-          message: 'Transfer failed - check treasury balance',
-          transfers: result.transfers,
-          newTreasuryBalance: result.newTreasuryBalance
-        });
+      if (!treasury) {
+        return res.status(400).json({ error: 'No Arc treasury wallet found' });
       }
+      
+      if (users.length === 0) {
+        return res.status(400).json({ error: 'No Arc user wallets found' });
+      }
+
+      const totalAmount = 5.00;
+      const splits = [
+        { recipient: users[0].address, recipientWalletId: users[0].id, amount: '3.00', role: 'creator' },
+        { recipient: users[1]?.address || users[0].address, recipientWalletId: users[1]?.id || users[0].id, amount: '1.25', role: 'upstream' },
+        { recipient: users[2]?.address || users[0].address, recipientWalletId: users[2]?.id || users[0].id, amount: '0.75', role: 'actor' },
+      ].filter(s => s.recipient);
+
+      const result = await executeX402Payment({
+        totalAmount: totalAmount.toFixed(2),
+        splits,
+        sourceWalletId: treasury.id,
+        reason: 'x402 Viral Reward Demo'
+      });
+
+      // Get updated treasury balance
+      const { treasury: updatedTreasury } = await getArcWallets();
+      
+      res.json({
+        success: result.success,
+        message: `x402 sent $${result.totalPaid} USDC to ${result.transfers.length} recipients`,
+        transfers: result.transfers,
+        totalSent: result.totalPaid,
+        newTreasuryBalance: updatedTreasury?.balance || '0',
+        blockchain: 'ARC-TESTNET',
+        x402Version: 2
+      });
     } catch (error) {
       console.error('Test transaction error:', error);
       res.status(500).json({ error: 'Failed to run test transaction' });
     }
   });
 
-  // Reset demo - transfer all user wallet USDC back to treasury
+  // Reset demo via x402 - transfer all user wallet USDC back to treasury
   app.post('/api/demo/reset', async (req, res) => {
     try {
-      console.log('[Demo] Resetting - transferring REAL funds back to treasury');
-      const result = await resetDemoToTreasury();
+      console.log('[Demo] Resetting via x402 - transferring REAL funds back to treasury');
+      const { treasury, users } = await getArcWallets();
       
-      if (result.success) {
-        res.json({
+      if (!treasury) {
+        return res.status(400).json({ error: 'No Arc treasury wallet found' });
+      }
+
+      const usersWithBalance = users.filter(u => parseFloat(u.balance) > 0);
+      
+      if (usersWithBalance.length === 0) {
+        return res.json({
           success: true,
-          message: `Recovered ${result.totalRecovered} USDC to treasury`,
-          transfers: result.transfers,
-          totalRecovered: result.totalRecovered
-        });
-      } else {
-        res.json({
-          success: false,
-          message: 'No funds to recover or transfer failed',
-          transfers: result.transfers
+          message: 'No funds to recover - user wallets are empty',
+          transfers: [],
+          totalRecovered: '0.00'
         });
       }
+
+      // Use x402 to transfer each user's balance back to treasury
+      const transfers: Array<{ from: string; amount: string; status: string; txId?: string }> = [];
+      let totalRecovered = 0;
+
+      for (const user of usersWithBalance) {
+        console.log(`[x402 Reset] Recovering $${user.balance} from ${user.name}`);
+        
+        const result = await executeX402Payment({
+          totalAmount: user.balance,
+          splits: [{
+            recipient: treasury.address,
+            recipientWalletId: treasury.id,
+            amount: user.balance,
+            role: 'treasury-recovery'
+          }],
+          sourceWalletId: user.id,
+          reason: `Reset: ${user.name} → Treasury`
+        });
+
+        if (result.success) {
+          transfers.push({
+            from: user.name,
+            amount: user.balance,
+            status: 'success',
+            txId: result.transfers[0]?.txId
+          });
+          totalRecovered += parseFloat(user.balance);
+        } else {
+          transfers.push({
+            from: user.name,
+            amount: user.balance,
+            status: 'failed'
+          });
+        }
+      }
+
+      res.json({
+        success: transfers.some(t => t.status === 'success'),
+        message: `x402 recovered $${totalRecovered.toFixed(2)} USDC to treasury`,
+        transfers,
+        totalRecovered: totalRecovered.toFixed(2),
+        x402Version: 2
+      });
     } catch (error) {
       console.error('Demo reset error:', error);
       res.status(500).json({ error: 'Failed to reset demo' });

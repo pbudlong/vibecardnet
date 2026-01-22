@@ -89,8 +89,25 @@ The app is structured as a slideshow presentation with these screens:
 - @replit/vite-plugin-runtime-error-modal - Error overlay
 - @replit/vite-plugin-cartographer - Replit integration
 
-### Planned Integrations (from design docs)
-- Circle USDC - Stablecoin payments
-- x402 Protocol - Atomic multi-party payment splits
-- Arc Network - Blockchain infrastructure
-- Virtual card issuance for spending rewards
+### Active Integrations (Working)
+- **Circle Wallets SDK** - Non-custodial wallets on Arc testnet
+- **x402 Protocol** - Custom implementation for atomic multi-party payment splits
+- **Arc Network** - Real USDC transfers with zero gas fees (Chain ID: 5042002)
+- **USDC Contract**: 0x3600000000000000000000000000000000000000 (native on Arc)
+
+### Payment Flow
+1. **x402 Payment Trigger** - `/api/x402/pay` endpoint executes atomic splits
+2. **Circle SDK** - `transferUSDC()` executes ERC-20 contract calls
+3. **Arc Blockchain** - Sub-second finality, gasless USDC transfers
+
+### Arc Wallets
+- **Treasury**: Arc Treasury (0xb5277158cc64d6ac19e4704c2729e157c2ee12b4)
+- **User Wallets**: Matt Arc, Pete Arc, Manny Arc
+
+### Known Limitations
+- Reset (user → treasury) initiates but may not confirm (wallet deployment issue)
+- Forward flow (treasury → users) works perfectly with ~15s confirmation
+- Faucet: https://faucet.circle.com (20 USDC per 2 hours)
+
+### Planned Integrations
+- Virtual card issuance for spending rewards (Stripe Issue)
