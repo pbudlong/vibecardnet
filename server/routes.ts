@@ -142,6 +142,7 @@ export async function registerRoutes(
   });
 
   // Run test transaction - transfer USDC from treasury to user wallets
+  // Uses simulation mode when real transfers fail (e.g., no gas)
   app.post('/api/demo/test-transaction', async (req, res) => {
     try {
       console.log('[Demo] Running test transaction - sending rewards to users');
@@ -157,14 +158,30 @@ export async function registerRoutes(
           message: `Sent $${result.totalSent} USDC to ${result.transfers.length} recipients`,
           transfers: result.transfers,
           totalSent: result.totalSent,
-          newTreasuryBalance: result.newTreasuryBalance
+          newTreasuryBalance: result.newTreasuryBalance,
+          simulated: false
         });
       } else {
+        // Simulation mode - show realistic demo flow when real transfers fail
+        console.log('[Demo] Real transfer failed, using simulation mode');
+        const totalSent = "5.00";
+        const simulatedTransfers = [
+          { to: "Manny (Creator)", amount: "3.00", status: "success", simulated: true },
+          { to: "Pete (Sharer)", amount: "1.25", status: "success", simulated: true },
+          { to: "Matt P (Platform)", amount: "0.75", status: "success", simulated: true }
+        ];
+        const currentBalance = parseFloat(cachedBalance) || 20;
+        const newBalance = (currentBalance - parseFloat(totalSent)).toFixed(2);
+        setDemoTreasuryBalance(newBalance);
+        
         res.json({
-          success: false,
-          message: 'Transfer failed or no wallets available',
-          transfers: result.transfers,
-          newTreasuryBalance: result.newTreasuryBalance
+          success: true,
+          message: `[SIMULATED] Sent $${totalSent} USDC to 3 recipients`,
+          transfers: simulatedTransfers,
+          totalSent: totalSent,
+          newTreasuryBalance: newBalance,
+          simulated: true,
+          note: "Simulation mode - needs testnet ETH for live transactions"
         });
       }
     } catch (error) {

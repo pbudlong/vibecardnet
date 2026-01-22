@@ -84,6 +84,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   const [isRunning, setIsRunning] = useState(false);
   const [showPayouts, setShowPayouts] = useState(false);
   const [transactionCount, setTransactionCount] = useState(0);
+  const [isSimulated, setIsSimulated] = useState(false);
 
   const { data: integrationStatus, isLoading: statusLoading } = useQuery<IntegrationStatus>({
     queryKey: ['/api/integrations/status'],
@@ -104,13 +105,15 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     },
     onSuccess: (data) => {
       if (data.success) {
+        const simLabel = data.simulated ? "[SIM] " : "";
+        setIsSimulated(data.simulated || false);
         setLogs(prev => [
           ...prev,
-          { time: "00:00:06", type: "success", message: `Sent $${data.totalSent} USDC to ${data.transfers.length} recipients` },
+          { time: "00:00:06", type: "success", message: `${simLabel}Sent $${data.totalSent} USDC to ${data.transfers.length} recipients` },
           ...data.transfers.map((t: any, i: number) => ({
             time: `00:00:0${7 + i}`,
             type: t.status === 'success' ? 'success' : 'error',
-            message: `${t.to}: $${t.amount} ${t.status === 'success' ? '(confirmed)' : '(failed)'}`
+            message: `${simLabel}${t.to}: $${t.amount} ${t.status === 'success' ? '(confirmed)' : '(failed)'}`
           })),
           { time: "00:00:10", type: "info", message: `Treasury balance: $${data.newTreasuryBalance}` }
         ]);
@@ -215,25 +218,37 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, delay: 0.1 }}
-        className="flex items-center gap-2 mb-4"
+        className="flex flex-col items-center gap-2 mb-4"
       >
-        <Badge 
-          variant="outline" 
-          className={`px-3 py-1 ${isTreasuryFunded 
-            ? 'bg-sky-400/10 border-sky-400/50 text-sky-400' 
-            : 'bg-zinc-400/10 border-zinc-400/50 text-zinc-400'}`}
-          data-testid="badge-reward-pool"
-        >
-          <DollarSign className={`h-4 w-4 mr-2 ${isTreasuryFunded ? 'text-sky-400' : 'text-zinc-400'}`} />
-          Reward Pool: ${treasuryBalance.toFixed(2)} USDC
-          {isTreasuryFunded 
-            ? <Check className="h-3 w-3 ml-2 text-emerald-400" />
-            : <Clock className="h-3 w-3 ml-2 text-yellow-500" />
-          }
-        </Badge>
-        <span className="text-[10px] text-muted-foreground">
-          {isTreasuryFunded ? 'Treasury Funded' : 'Treasury Not Funded'}
-        </span>
+        <div className="flex items-center gap-2">
+          <Badge 
+            variant="outline" 
+            className={`px-3 py-1 ${isTreasuryFunded 
+              ? 'bg-sky-400/10 border-sky-400/50 text-sky-400' 
+              : 'bg-zinc-400/10 border-zinc-400/50 text-zinc-400'}`}
+            data-testid="badge-reward-pool"
+          >
+            <DollarSign className={`h-4 w-4 mr-2 ${isTreasuryFunded ? 'text-sky-400' : 'text-zinc-400'}`} />
+            Reward Pool: ${treasuryBalance.toFixed(2)} USDC
+            {isTreasuryFunded 
+              ? <Check className="h-3 w-3 ml-2 text-emerald-400" />
+              : <Clock className="h-3 w-3 ml-2 text-yellow-500" />
+            }
+          </Badge>
+          <span className="text-[10px] text-muted-foreground">
+            {isTreasuryFunded ? 'Treasury Funded' : 'Treasury Not Funded'}
+          </span>
+        </div>
+        {isSimulated && (
+          <Badge 
+            variant="outline" 
+            className="px-2 py-0.5 bg-amber-500/10 border-amber-500/50 text-amber-400 text-[10px]"
+            data-testid="badge-simulation-mode"
+          >
+            <AlertCircle className="h-3 w-3 mr-1" />
+            Simulation Mode - Fund treasury with ETH for live transactions
+          </Badge>
+        )}
       </motion.div>
 
       <motion.div
