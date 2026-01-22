@@ -104,10 +104,17 @@ The app is structured as a slideshow presentation with these screens:
 - **Treasury**: Arc Treasury (0xb5277158cc64d6ac19e4704c2729e157c2ee12b4)
 - **User Wallets**: Matt Arc, Pete Arc, Manny Arc
 
-### Known Limitations
-- Reset (user → treasury) initiates but may not confirm (wallet deployment issue)
-- Forward flow (treasury → users) works perfectly with ~15s confirmation
+### Technical Notes
+- **Arc USDC Precision**: Native balance uses 18 decimals, ERC-20 interface uses 6 decimals (same underlying balance)
+- **USDC is Gas Token**: Every transaction costs USDC (including failed ones)
+- **Transfer Limits**: Large single transfers (>$2) may fail; use chunked transfers ($1 max per transaction)
+- **Reset Flow**: Uses `getArcUsdcBalanceBaseUnits()` for exact balance, `transferUSDCExact()` for precision, transfers in $1 chunks with 3-second delays
+- **Gas Buffer**: $0.01 left in user wallets to cover potential gas costs
 - Faucet: https://faucet.circle.com (20 USDC per 2 hours)
+
+### Payment Flows
+- **Forward (Treasury → Users)**: Works perfectly with ~15s confirmation
+- **Reset (Users → Treasury)**: Works with chunked $1 transfers (~3s per chunk)
 
 ### Planned Integrations
 - Virtual card issuance for spending rewards (Stripe Issue)
