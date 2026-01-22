@@ -503,7 +503,6 @@ export function LiveDemoScreen() {
           };
         });
         
-        toast({ title: "Share tracked!", description: "SDK call completed - rewards distributed" });
       }
     } catch (error) {
       console.error("Demo error:", error);
@@ -636,10 +635,10 @@ export function LiveDemoScreen() {
                     <div><span className="text-emerald-400">success</span>: <span className="text-cyan-400">true</span></div>
                     <div><span className="text-emerald-400">actionId</span>: <span className="text-amber-300">"{demoState.participants[2]?.action?.id?.slice(0, 8) || 'share-001'}"</span></div>
                     <div><span className="text-emerald-400">chain</span>: <span className="text-white">[Matt P, Pete, Manny]</span></div>
-                    <div><span className="text-emerald-400">wallet</span>: <span className="text-cyan-400">{demoState.participants[2]?.wallet?.address?.slice(0, 10) || '0x...'}...</span></div>
+                    <div><span className="text-emerald-400">wallet</span>: <span className="text-cyan-400 text-[10px]">{demoState.participants[2]?.wallet?.address || '0x...'}</span></div>
                   </div>
                 ) : (
-                  <div className="text-white/30 italic">Waiting for action...</div>
+                  <div className="text-white/30 italic">Waiting...</div>
                 )}
               </div>
             </div>
