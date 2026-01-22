@@ -1,4 +1,26 @@
+import { initiateDeveloperControlledWalletsClient } from '@circle-fin/developer-controlled-wallets';
+
 const CIRCLE_W3S_API_BASE = 'https://api.circle.com/v1/w3s';
+
+// Initialize Circle SDK client (lazy loaded)
+let circleClient: ReturnType<typeof initiateDeveloperControlledWalletsClient> | null = null;
+
+function getCircleClient() {
+  if (!circleClient) {
+    const apiKey = process.env.CIRCLE_API_KEY;
+    const entitySecret = process.env.CIRCLE_ENTITY_SECRET;
+    
+    if (!apiKey || !entitySecret) {
+      return null;
+    }
+    
+    circleClient = initiateDeveloperControlledWalletsClient({
+      apiKey,
+      entitySecret
+    });
+  }
+  return circleClient;
+}
 
 export interface WalletBalance {
   available: string;
@@ -118,57 +140,56 @@ export async function createUserWallet(userId: string): Promise<UserWallet | nul
   }
 }
 
-// Create Arc testnet wallets for the demo (treasury + users)
+// Create Arc testnet wallets for the demo (treasury + users) using Circle SDK
 export async function createArcTestnetWallets(): Promise<{
   success: boolean;
   wallets: Array<{ name: string; address: string; refId: string }>;
   error?: string;
 }> {
-  const apiKey = process.env.CIRCLE_API_KEY;
-  const entitySecret = process.env.CIRCLE_ENTITY_SECRET;
+  const client = getCircleClient();
   
-  if (!apiKey || !entitySecret) {
-    return { success: false, wallets: [], error: 'Missing API key or entity secret' };
+  if (!client) {
+    return { success: false, wallets: [], error: 'Circle SDK not configured - check API key and entity secret' };
   }
 
   try {
     // First, get the existing wallet set ID
-    const walletsResponse = await fetch(`${CIRCLE_W3S_API_BASE}/wallets`, {
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!walletsResponse.ok) {
-      return { success: false, wallets: [], error: 'Failed to fetch existing wallets' };
-    }
-
-    const walletsData = await walletsResponse.json();
-    const existingWallets = walletsData.data?.wallets || [];
+    const existingWalletsResponse = await client.listWallets({});
+    const existingWallets = existingWalletsResponse.data?.wallets || [];
     
     // Check if Arc wallets already exist
     const arcWallets = existingWallets.filter((w: any) => w.blockchain === 'ARC-TESTNET');
     if (arcWallets.length >= 4) {
-      console.log('[Circle] Arc testnet wallets already exist');
+      console.log('[Circle SDK] Arc testnet wallets already exist');
       return {
         success: true,
         wallets: arcWallets.map((w: any) => ({
-          name: w.name,
+          name: w.name || '',
           address: w.address,
-          refId: w.refId
+          refId: w.refId || ''
         }))
       };
     }
 
-    // Get wallet set ID from existing wallet
-    const walletSetId = existingWallets[0]?.walletSetId;
+    // Get wallet set ID from existing wallet or create new one
+    let walletSetId = existingWallets[0]?.walletSetId;
+    
     if (!walletSetId) {
-      return { success: false, wallets: [], error: 'No wallet set found' };
+      // Create a new wallet set
+      console.log('[Circle SDK] Creating new wallet set for Arc');
+      const walletSetResponse = await client.createWalletSet({
+        name: 'VibeCard Arc Wallets'
+      });
+      walletSetId = walletSetResponse.data?.walletSet?.id;
+      
+      if (!walletSetId) {
+        return { success: false, wallets: [], error: 'Failed to create wallet set' };
+      }
     }
 
+    console.log('[Circle SDK] Creating Arc testnet wallets with wallet set:', walletSetId);
+
     // Create Arc testnet wallets: treasury + 3 users
-    // Note: Names cannot contain <>(){};* characters
     const walletConfigs = [
       { name: 'Arc Treasury', refId: 'arc-treasury' },
       { name: 'Manny Arc', refId: 'arc-user-Manny' },
@@ -179,38 +200,25 @@ export async function createArcTestnetWallets(): Promise<{
     const createdWallets: Array<{ name: string; address: string; refId: string }> = [];
 
     for (const config of walletConfigs) {
-      const idempotencyKey = crypto.randomUUID();
-      
-      const createResponse = await fetch(`${CIRCLE_W3S_API_BASE}/developer/wallets`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          idempotencyKey,
-          entitySecretCiphertext: entitySecret,
+      try {
+        const createResponse = await client.createWallets({
           blockchains: ['ARC-TESTNET'],
           count: 1,
           walletSetId,
           metadata: [{ name: config.name, refId: config.refId }]
-        })
-      });
+        });
 
-      if (createResponse.ok) {
-        const result = await createResponse.json();
-        const wallet = result.data?.wallets?.[0];
+        const wallet = createResponse.data?.wallets?.[0];
         if (wallet) {
           createdWallets.push({
             name: config.name,
             address: wallet.address,
             refId: config.refId
           });
-          console.log(`[Circle] Created Arc wallet: ${config.name} - ${wallet.address}`);
+          console.log(`[Circle SDK] Created Arc wallet: ${config.name} - ${wallet.address}`);
         }
-      } else {
-        const errorText = await createResponse.text();
-        console.error(`[Circle] Failed to create ${config.name}:`, errorText);
+      } catch (walletError) {
+        console.error(`[Circle SDK] Failed to create ${config.name}:`, walletError);
       }
     }
 
@@ -219,7 +227,7 @@ export async function createArcTestnetWallets(): Promise<{
       wallets: createdWallets
     };
   } catch (error) {
-    console.error('[Circle] Error creating Arc wallets:', error);
+    console.error('[Circle SDK] Error creating Arc wallets:', error);
     return { success: false, wallets: [], error: String(error) };
   }
 }
@@ -345,21 +353,23 @@ const USDC_CONTRACTS: Record<string, string> = {
   'ARC-TESTNET': '0x3600000000000000000000000000000000000000', // USDC is native gas on Arc!
 };
 
+// Generate a new entity secret (32 bytes hex)
+export function generateNewEntitySecret(): string {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 export async function transferUSDC(
   fromWalletId: string, 
   toAddress: string, 
   amount: string,
   blockchain: string = 'BASE-SEPOLIA'
 ): Promise<{ success: boolean; txId?: string; error?: string }> {
-  const apiKey = process.env.CIRCLE_API_KEY;
-  const entitySecret = process.env.CIRCLE_ENTITY_SECRET;
+  const client = getCircleClient();
   
-  if (!apiKey) {
-    return { success: false, error: 'No API key' };
-  }
-  
-  if (!entitySecret) {
-    return { success: false, error: 'No entity secret configured' };
+  if (!client) {
+    return { success: false, error: 'Circle SDK not configured - check API key and entity secret' };
   }
 
   const usdcContract = USDC_CONTRACTS[blockchain];
@@ -370,43 +380,24 @@ export async function transferUSDC(
   // Convert amount to USDC base units (6 decimals)
   const amountInBaseUnits = Math.floor(parseFloat(amount) * 1_000_000).toString();
 
-  console.log(`[Circle] Transferring ${amount} USDC from wallet ${fromWalletId} to ${toAddress}`);
-  console.log(`[Circle] Using USDC contract: ${usdcContract} (${amountInBaseUnits} base units)`);
-
-  // Generate a UUID v4 for idempotency
-  const idempotencyKey = crypto.randomUUID();
+  console.log(`[Circle SDK] Transferring ${amount} USDC from wallet ${fromWalletId} to ${toAddress}`);
+  console.log(`[Circle SDK] Using USDC contract: ${usdcContract} (${amountInBaseUnits} base units)`);
 
   try {
-    // Use contract execution to call ERC-20 transfer function
-    const transferResponse = await fetch(`${CIRCLE_W3S_API_BASE}/developer/transactions/contractExecution`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        idempotencyKey,
-        entitySecretCiphertext: entitySecret,
-        walletId: fromWalletId,
-        contractAddress: usdcContract,
-        abiFunctionSignature: 'transfer(address,uint256)',
-        abiParameters: [toAddress, amountInBaseUnits],
-        feeLevel: 'LOW'
-      })
+    // Use the SDK for contract execution
+    const result = await client.createContractExecutionTransaction({
+      walletId: fromWalletId,
+      contractAddress: usdcContract,
+      abiFunctionSignature: 'transfer(address,uint256)',
+      abiParameters: [toAddress, amountInBaseUnits],
+      fee: { type: 'level', config: { feeLevel: 'LOW' } }
     });
 
-    if (!transferResponse.ok) {
-      const errorText = await transferResponse.text();
-      console.error('[Circle] Transfer failed:', transferResponse.status, errorText);
-      return { success: false, error: errorText };
-    }
-
-    const result = await transferResponse.json();
-    console.log('[Circle] Transfer result:', JSON.stringify(result, null, 2));
+    console.log('[Circle SDK] Transfer result:', JSON.stringify(result.data, null, 2));
     return { success: true, txId: result.data?.id };
-  } catch (error) {
-    console.error('[Circle] Transfer error:', error);
-    return { success: false, error: String(error) };
+  } catch (error: any) {
+    console.error('[Circle SDK] Transfer error:', error?.message || error);
+    return { success: false, error: error?.message || String(error) };
   }
 }
 
@@ -415,18 +406,30 @@ export async function runTestTransaction(cachedTreasuryBalance?: string): Promis
   transfers: Array<{ to: string; amount: string; status: string; txId?: string }>;
   totalSent: string;
   newTreasuryBalance: string;
+  blockchain?: string;
 }> {
   const wallets = await getAllWalletsWithBalances();
   
-  // Find treasury wallet
-  const treasury = wallets.find(w => 
-    w.refId === 'treasury' || w.name?.toLowerCase().includes('treasury')
+  // Prefer Arc testnet wallets for gasless transfers
+  const arcTreasury = wallets.find(w => 
+    w.blockchain === 'ARC-TESTNET' && 
+    (w.refId === 'arc-treasury' || w.name?.toLowerCase().includes('arc treasury'))
   );
+  
+  // Fall back to Base Sepolia treasury if no Arc treasury
+  const baseTreasury = wallets.find(w => 
+    w.blockchain === 'BASE-SEPOLIA' && 
+    (w.refId === 'treasury' || w.name?.toLowerCase().includes('treasury'))
+  );
+  
+  const treasury = arcTreasury || baseTreasury;
   
   if (!treasury) {
     console.log('[Demo] No treasury wallet found');
     return { success: false, transfers: [], totalSent: '0', newTreasuryBalance: '0' };
   }
+  
+  console.log(`[Demo] Using treasury on ${treasury.blockchain}: ${treasury.address}`);
 
   // Use cached balance if Circle API returns 0 (balance not included in wallet list)
   let treasuryBalance = parseFloat(treasury.usdcBalance);
@@ -437,12 +440,13 @@ export async function runTestTransaction(cachedTreasuryBalance?: string): Promis
   
   if (treasuryBalance < 1) {
     console.log('[Demo] Treasury balance too low:', treasuryBalance);
-    return { success: false, transfers: [], totalSent: '0', newTreasuryBalance: String(treasuryBalance) };
+    return { success: false, transfers: [], totalSent: '0', newTreasuryBalance: String(treasuryBalance), blockchain: treasury.blockchain };
   }
 
-  // Find user wallets (non-treasury)
+  // Find user wallets on the same blockchain as treasury
   const userWallets = wallets.filter(w => 
-    w.refId !== 'treasury' && 
+    w.blockchain === treasury.blockchain &&
+    !w.refId?.includes('treasury') && 
     !w.name?.toLowerCase().includes('treasury')
   ).slice(0, 3); // Take up to 3 user wallets
 
@@ -493,7 +497,8 @@ export async function runTestTransaction(cachedTreasuryBalance?: string): Promis
     success: transfers.some(t => t.status === 'success'),
     transfers,
     totalSent: totalSent.toFixed(2),
-    newTreasuryBalance: newBalance
+    newTreasuryBalance: newBalance,
+    blockchain: treasury.blockchain
   };
 }
 

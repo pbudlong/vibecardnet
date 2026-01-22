@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage, getDemoTreasuryBalance, setDemoTreasuryBalance } from "./storage";
-import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, resetDemoToTreasury, getAllWalletsWithBalances, runTestTransaction, createArcTestnetWallets } from "./lib/circle-wallets";
+import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, resetDemoToTreasury, getAllWalletsWithBalances, runTestTransaction, createArcTestnetWallets, generateNewEntitySecret } from "./lib/circle-wallets";
 import { GATEWAY_CONFIG } from "./lib/x402-gateway";
 
 export async function registerRoutes(
@@ -159,6 +159,7 @@ export async function registerRoutes(
           transfers: result.transfers,
           totalSent: result.totalSent,
           newTreasuryBalance: result.newTreasuryBalance,
+          blockchain: result.blockchain,
           simulated: false
         });
       } else {
@@ -241,6 +242,23 @@ export async function registerRoutes(
       console.error('Arc wallet setup error:', error);
       res.status(500).json({ error: 'Failed to create Arc wallets' });
     }
+  });
+
+  // Generate a new entity secret for Circle SDK
+  // User needs to copy this and register it at console.circle.com
+  app.get('/api/circle/generate-entity-secret', (req, res) => {
+    const newSecret = generateNewEntitySecret();
+    res.json({
+      entitySecret: newSecret,
+      instructions: [
+        '1. Copy this 64-character hex string',
+        '2. Go to console.circle.com/wallets/dev/configurator',
+        '3. Click "Register New Entity Secret"',
+        '4. Paste the secret and download the recovery file',
+        '5. Add the secret to CIRCLE_ENTITY_SECRET in your Replit secrets'
+      ],
+      note: 'This is a 32-byte (256-bit) hex-encoded secret. Keep it safe!'
+    });
   });
 
   return httpServer;
