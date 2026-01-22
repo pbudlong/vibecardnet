@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+import { transferUSDC } from './circle-wallets';
 
 const ARC_TESTNET_CHAIN_ID = 5042002;
 const ARC_TESTNET_RPC = 'https://arc-testnet.drpc.org';
@@ -15,6 +16,20 @@ export interface PaymentInfo {
   amount: string;
   network: string;
   transaction?: string;
+}
+
+export interface PaymentSplit {
+  recipient: string;
+  recipientWalletId: string;
+  amount: string;
+  role: string;
+}
+
+export interface X402PaymentRequest {
+  totalAmount: string;
+  splits: PaymentSplit[];
+  sourceWalletId: string;
+  reason: string;
 }
 
 declare global {
@@ -50,7 +65,7 @@ export function createGatewayMiddleware(config: GatewayConfig) {
               maxTimeoutSeconds: 60,
               asset: 'eip155:5042002/erc20:usdc',
               extra: {
-                name: 'GatewayWalletBatched',
+                name: 'VibeCardPayment',
                 version: '1',
               }
             }]
@@ -102,16 +117,118 @@ async function verifyPayment(
   };
 }
 
-export async function settlePayment(
-  payload: any,
-  requirements: any
-): Promise<{ success: boolean; transaction?: string; errorReason?: string }> {
-  console.log('[x402] Settling payment via Circle Gateway...');
+export async function executeX402Payment(request: X402PaymentRequest): Promise<{
+  success: boolean;
+  transfers: Array<{ to: string; amount: string; status: string; txId?: string; error?: string }>;
+  totalPaid: string;
+  error?: string;
+}> {
+  console.log(`[x402] Executing atomic payment: ${request.reason}`);
+  console.log(`[x402] Total amount: $${request.totalAmount} USDC`);
+  console.log(`[x402] Splits: ${request.splits.length} recipients`);
+
+  const transfers: Array<{ to: string; amount: string; status: string; txId?: string; error?: string }> = [];
+  let totalPaid = 0;
+
+  for (const split of request.splits) {
+    console.log(`[x402] Processing split: $${split.amount} to ${split.recipient} (${split.role})`);
+    
+    const result = await transferUSDC(
+      request.sourceWalletId,
+      split.recipient,
+      split.amount,
+      'ARC-TESTNET'
+    );
+
+    if (result.success) {
+      transfers.push({
+        to: split.recipient,
+        amount: split.amount,
+        status: 'success',
+        txId: result.txId
+      });
+      totalPaid += parseFloat(split.amount);
+      console.log(`[x402] Transfer success: ${result.txId}`);
+    } else {
+      transfers.push({
+        to: split.recipient,
+        amount: split.amount,
+        status: 'failed',
+        error: result.error
+      });
+      console.error(`[x402] Transfer failed: ${result.error}`);
+    }
+
+    // Add delay between transfers for blockchain processing
+    if (request.splits.indexOf(split) < request.splits.length - 1) {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+  }
+
+  const successCount = transfers.filter(t => t.status === 'success').length;
   
   return {
-    success: true,
-    transaction: `0x${Date.now().toString(16)}${'0'.repeat(40)}`
+    success: successCount === request.splits.length,
+    transfers,
+    totalPaid: totalPaid.toFixed(2),
+    error: successCount === 0 ? 'All transfers failed' : undefined
   };
+}
+
+export async function createViralRewardSplits(
+  totalReward: number,
+  creatorAddress: string,
+  creatorWalletId: string,
+  upstreamSharers: Array<{ address: string; walletId: string; name: string }>,
+  actorAddress: string,
+  actorWalletId: string
+): Promise<PaymentSplit[]> {
+  const splits: PaymentSplit[] = [];
+  
+  // VibeCard split ratios
+  const CREATOR_SHARE = 0.40;
+  const UPSTREAM_SHARE = 0.35;
+  const ACTOR_SHARE = 0.20;
+  const VIBECARD_FEE = 0.05;
+
+  // Creator gets 40%
+  splits.push({
+    recipient: creatorAddress,
+    recipientWalletId: creatorWalletId,
+    amount: (totalReward * CREATOR_SHARE).toFixed(2),
+    role: 'creator'
+  });
+
+  // Upstream sharers split 35% with decay
+  if (upstreamSharers.length > 0) {
+    const upstreamTotal = totalReward * UPSTREAM_SHARE;
+    const decayFactor = 0.5;
+    
+    let remaining = upstreamTotal;
+    for (let i = 0; i < upstreamSharers.length; i++) {
+      const isLast = i === upstreamSharers.length - 1;
+      const share = isLast ? remaining : remaining * decayFactor;
+      
+      splits.push({
+        recipient: upstreamSharers[i].address,
+        recipientWalletId: upstreamSharers[i].walletId,
+        amount: share.toFixed(2),
+        role: `upstream-${upstreamSharers[i].name}`
+      });
+      
+      remaining -= share;
+    }
+  }
+
+  // Actor gets 20%
+  splits.push({
+    recipient: actorAddress,
+    recipientWalletId: actorWalletId,
+    amount: (totalReward * ACTOR_SHARE).toFixed(2),
+    role: 'actor'
+  });
+
+  return splits;
 }
 
 export const GATEWAY_CONFIG = {

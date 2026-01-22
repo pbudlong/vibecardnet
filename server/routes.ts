@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, resetDemoToTreasury, getAllWalletsWithBalances, runTestTransaction, createArcTestnetWallets, generateNewEntitySecret, getTransactionStatus } from "./lib/circle-wallets";
-import { GATEWAY_CONFIG } from "./lib/x402-gateway";
+import { GATEWAY_CONFIG, executeX402Payment, createViralRewardSplits } from "./lib/x402-gateway";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -68,21 +68,6 @@ export async function registerRoutes(
     }
   });
 
-  // Manually set demo balance (for when Circle balance isn't updating)
-  app.post('/api/wallet/set-balance', async (req, res) => {
-    try {
-      const { balance } = req.body;
-      if (balance === undefined) {
-        return res.status(400).json({ error: 'Balance required' });
-      }
-      setDemoTreasuryBalance(String(balance));
-      console.log('[Demo] Manually set treasury balance to:', balance);
-      res.json({ success: true, balance: String(balance) });
-    } catch (error) {
-      console.error('Set balance error:', error);
-      res.status(500).json({ error: 'Failed to set balance' });
-    }
-  });
 
   app.post('/api/wallet/fund', async (req, res) => {
     try {
@@ -178,6 +163,38 @@ export async function registerRoutes(
     } catch (error) {
       console.error('Demo reset error:', error);
       res.status(500).json({ error: 'Failed to reset demo' });
+    }
+  });
+
+  // x402 Payment Trigger - Execute atomic multi-party payment splits
+  app.post('/api/x402/pay', async (req, res) => {
+    try {
+      const { totalAmount, splits, sourceWalletId, reason } = req.body;
+      
+      if (!totalAmount || !splits || !sourceWalletId) {
+        return res.status(400).json({ 
+          error: 'Missing required fields: totalAmount, splits, sourceWalletId' 
+        });
+      }
+
+      console.log(`[x402] Payment request: $${totalAmount} with ${splits.length} splits`);
+      
+      const result = await executeX402Payment({
+        totalAmount,
+        splits,
+        sourceWalletId,
+        reason: reason || 'Viral reward payment'
+      });
+
+      res.json({
+        x402Version: 2,
+        paymentType: 'atomic-split',
+        blockchain: 'ARC-TESTNET',
+        ...result
+      });
+    } catch (error) {
+      console.error('x402 payment error:', error);
+      res.status(500).json({ error: 'x402 payment execution failed' });
     }
   });
 
