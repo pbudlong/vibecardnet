@@ -26,31 +26,33 @@ export function SystemArchitectureScreen() {
         transition={{ duration: 0.5, delay: 0.2 }}
         className="w-full max-w-6xl"
       >
-        <div className="flex justify-center items-stretch gap-4">
-          {/* Left Column - Funding In (Stacked) */}
+        <div className="flex justify-center items-stretch gap-2">
+          {/* Left Column - Funding In (aligned to top) */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}
-            className="flex flex-col items-center justify-center gap-2"
+            className="flex items-start pt-12"
           >
-            <Card className="p-3 w-28 text-center">
-              <SiStripe className="h-6 w-6 mx-auto mb-1 text-[#635BFF]" />
-              <p className="text-[10px] font-medium text-foreground">Stripe</p>
-              <p className="text-[8px] text-muted-foreground">Fiat In</p>
-            </Card>
+            <div className="flex flex-col items-center gap-2">
+              <Card className="p-3 w-28 text-center">
+                <SiStripe className="h-6 w-6 mx-auto mb-1 text-[#635BFF]" />
+                <p className="text-[10px] font-medium text-foreground">Stripe</p>
+                <p className="text-[8px] text-muted-foreground">Fiat In</p>
+              </Card>
+              
+              <ArrowDown className="h-3 w-3 text-muted-foreground" />
+              
+              <Card className="p-3 w-28 text-center border-sky-400/50">
+                <div className="h-6 w-6 mx-auto mb-1 rounded-full bg-sky-400 flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">◎</span>
+                </div>
+                <p className="text-[10px] font-medium text-foreground">Circle Mint</p>
+                <p className="text-[8px] text-muted-foreground">USD → USDC</p>
+              </Card>
+            </div>
             
-            <ArrowDown className="h-3 w-3 text-muted-foreground" />
-            
-            <Card className="p-3 w-28 text-center border-sky-400/50">
-              <div className="h-6 w-6 mx-auto mb-1 rounded-full bg-sky-400 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">◎</span>
-              </div>
-              <p className="text-[10px] font-medium text-foreground">Circle Mint</p>
-              <p className="text-[8px] text-muted-foreground">USD → USDC</p>
-            </Card>
-
-            <ArrowRight className="h-4 w-4 text-muted-foreground rotate-0" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground mt-24 ml-1" />
           </motion.div>
 
           {/* Center - VibeCard Onchain Core (ASCII-style) */}
@@ -180,52 +182,33 @@ export function SystemArchitectureScreen() {
             </div>
           </motion.div>
 
-          {/* Right Column - Payout Out (Stacked) */}
+          {/* Right Column - Payout Out (aligned to bottom) */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
-            className="flex flex-col items-center justify-center gap-2"
+            className="flex items-end pb-12"
           >
-            <ArrowRight className="h-4 w-4 text-muted-foreground rotate-0" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground mb-24 mr-1" />
+            
+            <div className="flex flex-col items-center gap-2">
+              <Card className="p-3 w-28 text-center border-sky-400/50">
+                <div className="h-6 w-6 mx-auto mb-1 rounded-full bg-sky-400 flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">◎</span>
+                </div>
+                <p className="text-[10px] font-medium text-foreground">Circle Mint</p>
+                <p className="text-[8px] text-muted-foreground">USDC → USD</p>
+              </Card>
 
-            <Card className="p-3 w-28 text-center border-sky-400/50">
-              <div className="h-6 w-6 mx-auto mb-1 rounded-full bg-sky-400 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">◎</span>
-              </div>
-              <p className="text-[10px] font-medium text-foreground">Circle Mint</p>
-              <p className="text-[8px] text-muted-foreground">USDC → USD</p>
-            </Card>
+              <ArrowDown className="h-3 w-3 text-muted-foreground" />
 
-            <ArrowDown className="h-3 w-3 text-muted-foreground" />
-
-            <Card className="p-3 w-28 text-center">
-              <CreditCard className="h-6 w-6 mx-auto mb-1 text-[#635BFF]" />
-              <p className="text-[10px] font-medium text-foreground">Stripe Issue</p>
-              <p className="text-[8px] text-muted-foreground">VibeCard</p>
-            </Card>
+              <Card className="p-3 w-28 text-center">
+                <CreditCard className="h-6 w-6 mx-auto mb-1 text-[#635BFF]" />
+                <p className="text-[10px] font-medium text-foreground">Stripe Issue</p>
+                <p className="text-[8px] text-muted-foreground">VibeCard</p>
+              </Card>
+            </div>
           </motion.div>
-        </div>
-      </motion.div>
-
-      {/* Legend */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.7 }}
-        className="mt-4 flex gap-4 text-[10px] text-muted-foreground"
-      >
-        <div className="flex items-center gap-1.5">
-          <div className="h-2.5 w-2.5 rounded-full bg-[#635BFF]" />
-          <span>Fiat Rails</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="h-2.5 w-2.5 rounded-full bg-sky-400" />
-          <span>Circle/USDC</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="h-2.5 w-2.5 rounded-full bg-primary" />
-          <span>VibeCard Core</span>
         </div>
       </motion.div>
     </div>
