@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Circle, Play, RefreshCw, Wallet, ArrowDown, Zap, DollarSign } from "lucide-react";
+import { Check, Circle, Play, RefreshCw, Wallet, ArrowDown, Zap, DollarSign, Clock } from "lucide-react";
 import { SiStripe } from "react-icons/si";
 import { useState, useEffect } from "react";
 
@@ -12,10 +12,10 @@ interface DemoPlaygroundScreenProps {
 
 const initialLogs = [
   { time: "00:00:01", type: "info", message: "Initializing VibeCard Demo Environment..." },
-  { time: "00:00:02", type: "success", message: "Circle SDK v2.1.0 connected" },
-  { time: "00:00:02", type: "success", message: "x402 Protocol initialized" },
-  { time: "00:00:03", type: "info", message: "Reward pool treasury loaded: $500.00 USDC" },
-  { time: "00:00:03", type: "success", message: "All systems ready" },
+  { time: "00:00:02", type: "info", message: "Checking integrations..." },
+  { time: "00:00:02", type: "warn", message: "Circle SDK: Not configured" },
+  { time: "00:00:02", type: "warn", message: "x402 Protocol: Not configured" },
+  { time: "00:00:03", type: "info", message: "Waiting for integration setup..." },
 ];
 
 const testTransactionLogs = [
@@ -43,18 +43,20 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     setIsRunning(true);
     setShowPayouts(false);
     
-    let logIndex = 0;
-    const interval = setInterval(() => {
-      if (logIndex < testTransactionLogs.length) {
-        setLogs(prev => [...prev, testTransactionLogs[logIndex]]);
-        logIndex++;
+    let currentIndex = 0;
+    const addNextLog = () => {
+      if (currentIndex < testTransactionLogs.length) {
+        const logToAdd = testTransactionLogs[currentIndex];
+        setLogs(prev => [...prev, logToAdd]);
+        currentIndex++;
+        setTimeout(addNextLog, 600);
       } else {
-        clearInterval(interval);
         setIsRunning(false);
         setShowPayouts(true);
         setTransactionCount(prev => prev + 1);
       }
-    }, 600);
+    };
+    setTimeout(addNextLog, 600);
   };
 
   const resetDemo = () => {
@@ -87,12 +89,12 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         transition={{ duration: 0.3, delay: 0.1 }}
         className="flex items-center gap-2 mb-4"
       >
-        <Badge variant="outline" className="bg-sky-400/10 border-sky-400/50 text-sky-400 px-3 py-1" data-testid="badge-reward-pool">
-          <DollarSign className="h-4 w-4 mr-2 text-sky-400" />
-          Reward Pool: $500.00 USDC
-          <Check className="h-3 w-3 ml-2 text-emerald-400" />
+        <Badge variant="outline" className="bg-zinc-400/10 border-zinc-400/50 text-zinc-400 px-3 py-1" data-testid="badge-reward-pool">
+          <DollarSign className="h-4 w-4 mr-2 text-zinc-400" />
+          Reward Pool: $0.00 USDC
+          <Clock className="h-3 w-3 ml-2 text-yellow-500" />
         </Badge>
-        <span className="text-[10px] text-muted-foreground">Treasury Funded</span>
+        <span className="text-[10px] text-muted-foreground">Treasury Not Funded</span>
       </motion.div>
 
       <motion.div
@@ -103,31 +105,31 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       >
         <div className="flex gap-4">
           <div className="flex flex-col gap-2">
-            <Card className="p-3 border-emerald-500/30 bg-emerald-500/5" data-testid="card-integration-status">
+            <Card className="p-3 border-zinc-500/30 bg-zinc-500/5" data-testid="card-integration-status">
               <div className="flex items-center gap-2 mb-2">
-                <Zap className="h-4 w-4 text-emerald-400" />
+                <Zap className="h-4 w-4 text-zinc-400" />
                 <span className="text-xs font-medium text-foreground">Integration Status</span>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center gap-2" data-testid="status-stripe">
-                  <Check className="h-3 w-3 text-emerald-400" />
-                  <SiStripe className="h-3 w-3 text-[#635BFF]" />
-                  <span className="text-[10px] text-muted-foreground">Stripe Connected</span>
+                  <Clock className="h-3 w-3 text-yellow-500" />
+                  <SiStripe className="h-3 w-3 text-[#635BFF]/50" />
+                  <span className="text-[10px] text-muted-foreground">Stripe Pending</span>
                 </div>
                 <div className="flex items-center gap-2" data-testid="status-circle-sdk">
-                  <Check className="h-3 w-3 text-emerald-400" />
-                  <Circle className="h-3 w-3 text-sky-400 fill-sky-400" />
-                  <span className="text-[10px] text-muted-foreground">Circle SDK Ready</span>
+                  <Clock className="h-3 w-3 text-yellow-500" />
+                  <Circle className="h-3 w-3 text-sky-400/50" />
+                  <span className="text-[10px] text-muted-foreground">Circle SDK Pending</span>
                 </div>
                 <div className="flex items-center gap-2" data-testid="status-x402">
-                  <Check className="h-3 w-3 text-emerald-400" />
-                  <Circle className="h-3 w-3 text-sky-400" />
-                  <span className="text-[10px] text-muted-foreground">x402 Protocol Active</span>
+                  <Clock className="h-3 w-3 text-yellow-500" />
+                  <Circle className="h-3 w-3 text-sky-400/50" />
+                  <span className="text-[10px] text-muted-foreground">x402 Protocol Pending</span>
                 </div>
                 <div className="flex items-center gap-2" data-testid="status-arc">
-                  <Check className="h-3 w-3 text-emerald-400" />
-                  <Zap className="h-3 w-3 text-emerald-500" />
-                  <span className="text-[10px] text-muted-foreground">Arc Network Online</span>
+                  <Clock className="h-3 w-3 text-yellow-500" />
+                  <Zap className="h-3 w-3 text-emerald-500/50" />
+                  <span className="text-[10px] text-muted-foreground">Arc Network Pending</span>
                 </div>
               </div>
             </Card>
@@ -206,6 +208,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                     log.type === 'success' ? 'text-emerald-400' :
                     log.type === 'error' ? 'text-red-400' :
                     log.type === 'event' ? 'text-sky-400' :
+                    log.type === 'warn' ? 'text-yellow-500' :
                     'text-zinc-400'
                   }>
                     {log.message}
