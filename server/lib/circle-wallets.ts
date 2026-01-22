@@ -1,4 +1,4 @@
-const CIRCLE_API_BASE = 'https://api.circle.com/v1';
+const CIRCLE_W3S_API_BASE = 'https://api.circle.com/v1/w3s';
 
 export interface WalletBalance {
   available: string;
@@ -28,7 +28,7 @@ export async function getDeveloperWalletBalance(): Promise<DeveloperWallet | nul
   }
 
   try {
-    const response = await fetch(`${CIRCLE_API_BASE}/wallets`, {
+    const response = await fetch(`${CIRCLE_W3S_API_BASE}/wallets`, {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
@@ -36,25 +36,32 @@ export async function getDeveloperWalletBalance(): Promise<DeveloperWallet | nul
     });
 
     if (!response.ok) {
-      console.error('[Circle] Failed to fetch wallet:', response.status);
+      const errorText = await response.text();
+      console.error('[Circle] Failed to fetch wallets:', response.status, errorText);
       return null;
     }
 
     const data = await response.json();
+    console.log('[Circle] Wallets response:', JSON.stringify(data, null, 2));
     
-    if (data.data && data.data.length > 0) {
-      const wallet = data.data[0];
+    if (data.data?.wallets && data.data.wallets.length > 0) {
+      const wallet = data.data.wallets[0];
+      const usdcBalance = wallet.balances?.find((b: any) => 
+        b.token?.symbol === 'USDC' || b.token?.name?.includes('USDC')
+      );
+      
       return {
-        id: wallet.walletId || wallet.id,
+        id: wallet.id,
         address: wallet.address,
-        blockchain: wallet.blockchain || 'ARC',
+        blockchain: wallet.blockchain || 'ARC-TESTNET',
         balance: {
-          available: wallet.balances?.[0]?.amount || '0',
+          available: usdcBalance?.amount || '0',
           currency: 'USDC'
         }
       };
     }
 
+    console.log('[Circle] No wallets found in response');
     return null;
   } catch (error) {
     console.error('[Circle] Error fetching wallet:', error);
@@ -71,7 +78,7 @@ export async function createUserWallet(userId: string): Promise<UserWallet | nul
   }
 
   try {
-    const response = await fetch(`${CIRCLE_API_BASE}/wallets`, {
+    const response = await fetch(`${CIRCLE_W3S_API_BASE}/user/wallets`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -79,23 +86,23 @@ export async function createUserWallet(userId: string): Promise<UserWallet | nul
       },
       body: JSON.stringify({
         idempotencyKey: `user-${userId}-${Date.now()}`,
-        description: `VibeCard user wallet for ${userId}`,
-        blockchain: 'ARC'
+        blockchains: ['ARC-TESTNET']
       })
     });
 
     if (!response.ok) {
-      console.error('[Circle] Failed to create wallet:', response.status);
+      const errorText = await response.text();
+      console.error('[Circle] Failed to create wallet:', response.status, errorText);
       return null;
     }
 
     const data = await response.json();
     
     return {
-      id: data.data.walletId || data.data.id,
-      address: data.data.address,
+      id: data.data?.wallet?.id || data.data?.id,
+      address: data.data?.wallet?.address || data.data?.address,
       userId,
-      blockchain: 'ARC'
+      blockchain: 'ARC-TESTNET'
     };
   } catch (error) {
     console.error('[Circle] Error creating wallet:', error);
@@ -112,7 +119,7 @@ export async function fundFromFaucet(address: string): Promise<boolean> {
   }
 
   try {
-    const response = await fetch(`${CIRCLE_API_BASE}/faucet/drips`, {
+    const response = await fetch('https://api.circle.com/v1/faucet/drips', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -126,7 +133,13 @@ export async function fundFromFaucet(address: string): Promise<boolean> {
       })
     });
 
-    return response.ok;
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[Circle] Faucet error:', response.status, errorText);
+      return false;
+    }
+
+    return true;
   } catch (error) {
     console.error('[Circle] Faucet error:', error);
     return false;

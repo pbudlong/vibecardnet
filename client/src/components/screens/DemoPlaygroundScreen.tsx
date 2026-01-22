@@ -2,21 +2,67 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Circle, Play, RefreshCw, Wallet, ArrowDown, Zap, DollarSign, Clock } from "lucide-react";
+import { Check, Circle, Play, RefreshCw, Wallet, ArrowDown, Zap, DollarSign, Clock, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 interface DemoPlaygroundScreenProps {
   isActive: boolean;
 }
 
-const initialLogs = [
-  { time: "00:00:01", type: "info", message: "Initializing VibeCard Demo Environment..." },
-  { time: "00:00:02", type: "info", message: "Checking integrations..." },
-  { time: "00:00:02", type: "warn", message: "Circle Wallets: Not configured" },
-  { time: "00:00:02", type: "warn", message: "x402 Batching SDK: Not configured" },
-  { time: "00:00:02", type: "warn", message: "Viral Tracking: Pending (requires wallets + x402)" },
-  { time: "00:00:03", type: "info", message: "Waiting for integration setup..." },
-];
+interface IntegrationStatus {
+  circleWallets: { configured: boolean; connected: boolean; status: string };
+  x402Batching: { configured: boolean; status: string };
+  arcNetwork: { configured: boolean; chainId: number; rpcUrl: string; status: string };
+  viralTracking: { configured: boolean; status: string; dependencies: string[] };
+}
+
+interface WalletBalance {
+  address: string | null;
+  balance: string;
+  currency: string;
+  blockchain: string;
+  error?: string;
+}
+
+function getInitialLogs(status: IntegrationStatus | undefined): Array<{time: string; type: string; message: string}> {
+  if (!status) {
+    return [
+      { time: "00:00:01", type: "info", message: "Initializing VibeCard Demo Environment..." },
+      { time: "00:00:02", type: "info", message: "Fetching integration status..." },
+    ];
+  }
+  
+  const logs = [
+    { time: "00:00:01", type: "info", message: "Initializing VibeCard Demo Environment..." },
+    { time: "00:00:02", type: "info", message: "Checking integrations..." },
+  ];
+
+  if (status.circleWallets.status === 'connected') {
+    logs.push({ time: "00:00:02", type: "success", message: "Circle Wallets: Connected" });
+  } else if (status.circleWallets.configured) {
+    logs.push({ time: "00:00:02", type: "warn", message: "Circle Wallets: Configured (pending connection)" });
+  } else {
+    logs.push({ time: "00:00:02", type: "warn", message: "Circle Wallets: Not configured" });
+  }
+
+  if (status.x402Batching.configured) {
+    logs.push({ time: "00:00:02", type: "warn", message: "x402 Batching SDK: Configured (pending install)" });
+  } else {
+    logs.push({ time: "00:00:02", type: "warn", message: "x402 Batching SDK: Not configured" });
+  }
+
+  if (status.arcNetwork.status === 'connected') {
+    logs.push({ time: "00:00:02", type: "success", message: `Arc Network: Connected (Chain ${status.arcNetwork.chainId})` });
+  } else {
+    logs.push({ time: "00:00:02", type: "warn", message: "Arc Network: Not connected" });
+  }
+
+  logs.push({ time: "00:00:03", type: "info", message: "Viral Tracking: Pending (requires wallets + x402)" });
+  logs.push({ time: "00:00:03", type: "info", message: "Ready for testing..." });
+
+  return logs;
+}
 
 const testTransactionLogs = [
   { time: "00:00:04", type: "event", message: "Simulating viral share event..." },
@@ -33,10 +79,22 @@ const walletPayouts = [
 ];
 
 export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenProps) {
-  const [logs, setLogs] = useState(initialLogs);
+  const [logs, setLogs] = useState<Array<{time: string; type: string; message: string}>>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [showPayouts, setShowPayouts] = useState(false);
   const [transactionCount, setTransactionCount] = useState(0);
+
+  const { data: integrationStatus, isLoading: statusLoading } = useQuery<IntegrationStatus>({
+    queryKey: ['/api/integrations/status'],
+    enabled: isActive,
+    refetchInterval: 10000,
+  });
+
+  const { data: walletBalance } = useQuery<WalletBalance>({
+    queryKey: ['/api/wallet/balance'],
+    enabled: isActive,
+    refetchInterval: 15000,
+  });
 
   const runTestTransaction = () => {
     if (isRunning) return;
@@ -60,17 +118,26 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   };
 
   const resetDemo = () => {
-    setLogs(initialLogs);
+    setLogs(getInitialLogs(integrationStatus));
     setShowPayouts(false);
     setTransactionCount(0);
   };
 
   useEffect(() => {
-    if (isActive) {
-      setLogs(initialLogs);
+    if (isActive && integrationStatus) {
+      setLogs(getInitialLogs(integrationStatus));
       setShowPayouts(false);
     }
-  }, [isActive]);
+  }, [isActive, integrationStatus]);
+
+  const getStatusIcon = (status: string) => {
+    if (status === 'connected') return <Check className="h-3 w-3 text-emerald-400" />;
+    if (status === 'pending') return <Clock className="h-3 w-3 text-yellow-500" />;
+    return <AlertCircle className="h-3 w-3 text-red-400" />;
+  };
+
+  const treasuryBalance = walletBalance?.balance ? parseFloat(walletBalance.balance) : 0;
+  const isTreasuryFunded = treasuryBalance > 0;
 
   return (
     <div className="h-full flex flex-col items-center justify-start py-6 px-8 overflow-hidden">
@@ -89,12 +156,23 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         transition={{ duration: 0.3, delay: 0.1 }}
         className="flex items-center gap-2 mb-4"
       >
-        <Badge variant="outline" className="bg-zinc-400/10 border-zinc-400/50 text-zinc-400 px-3 py-1" data-testid="badge-reward-pool">
-          <DollarSign className="h-4 w-4 mr-2 text-zinc-400" />
-          Reward Pool: $0.00 USDC
-          <Clock className="h-3 w-3 ml-2 text-yellow-500" />
+        <Badge 
+          variant="outline" 
+          className={`px-3 py-1 ${isTreasuryFunded 
+            ? 'bg-sky-400/10 border-sky-400/50 text-sky-400' 
+            : 'bg-zinc-400/10 border-zinc-400/50 text-zinc-400'}`}
+          data-testid="badge-reward-pool"
+        >
+          <DollarSign className={`h-4 w-4 mr-2 ${isTreasuryFunded ? 'text-sky-400' : 'text-zinc-400'}`} />
+          Reward Pool: ${treasuryBalance.toFixed(2)} USDC
+          {isTreasuryFunded 
+            ? <Check className="h-3 w-3 ml-2 text-emerald-400" />
+            : <Clock className="h-3 w-3 ml-2 text-yellow-500" />
+          }
         </Badge>
-        <span className="text-[10px] text-muted-foreground">Treasury Not Funded</span>
+        <span className="text-[10px] text-muted-foreground">
+          {isTreasuryFunded ? 'Treasury Funded' : 'Treasury Not Funded'}
+        </span>
       </motion.div>
 
       <motion.div
@@ -105,30 +183,31 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       >
         <div className="flex gap-4 flex-1">
           <div className="flex flex-col gap-2 w-1/2">
-            <Card className="p-3 border-zinc-500/30 bg-zinc-500/5" data-testid="card-integration-status">
+            <Card className={`p-3 ${statusLoading ? 'border-zinc-500/30 bg-zinc-500/5' : 'border-emerald-500/30 bg-emerald-500/5'}`} data-testid="card-integration-status">
               <div className="flex items-center gap-2 mb-2">
-                <Zap className="h-4 w-4 text-zinc-400" />
+                <Zap className={`h-4 w-4 ${statusLoading ? 'text-zinc-400' : 'text-emerald-400'}`} />
                 <span className="text-xs font-medium text-foreground">Integration Status</span>
+                {statusLoading && <RefreshCw className="h-3 w-3 text-zinc-400 animate-spin" />}
               </div>
               <div className="space-y-2">
                 <div className="flex items-center gap-2" data-testid="status-circle-wallets">
-                  <Clock className="h-3 w-3 text-yellow-500" />
-                  <Wallet className="h-3 w-3 text-sky-400/50" />
+                  {getStatusIcon(integrationStatus?.circleWallets.status || 'pending')}
+                  <Wallet className={`h-3 w-3 ${integrationStatus?.circleWallets.status === 'connected' ? 'text-sky-400' : 'text-sky-400/50'}`} />
                   <span className="text-[10px] text-muted-foreground">Circle Wallets</span>
                 </div>
                 <div className="flex items-center gap-2" data-testid="status-x402">
-                  <Clock className="h-3 w-3 text-yellow-500" />
-                  <Circle className="h-3 w-3 text-sky-400/50" />
+                  {getStatusIcon(integrationStatus?.x402Batching.status || 'pending')}
+                  <Circle className={`h-3 w-3 ${integrationStatus?.x402Batching.status === 'connected' ? 'text-sky-400' : 'text-sky-400/50'}`} />
                   <span className="text-[10px] text-muted-foreground">x402 Batching SDK</span>
                 </div>
                 <div className="flex items-center gap-2" data-testid="status-arc">
-                  <Clock className="h-3 w-3 text-yellow-500" />
-                  <Zap className="h-3 w-3 text-emerald-500/50" />
+                  {getStatusIcon(integrationStatus?.arcNetwork.status || 'pending')}
+                  <Zap className={`h-3 w-3 ${integrationStatus?.arcNetwork.status === 'connected' ? 'text-emerald-500' : 'text-emerald-500/50'}`} />
                   <span className="text-[10px] text-muted-foreground">Arc Network</span>
                 </div>
                 <div className="flex items-center gap-2" data-testid="status-viral-tracking">
-                  <Clock className="h-3 w-3 text-yellow-500" />
-                  <ArrowDown className="h-3 w-3 text-emerald-500/50" />
+                  {getStatusIcon(integrationStatus?.viralTracking.status || 'pending')}
+                  <ArrowDown className={`h-3 w-3 ${integrationStatus?.viralTracking.status === 'connected' ? 'text-emerald-500' : 'text-emerald-500/50'}`} />
                   <span className="text-[10px] text-muted-foreground">Viral Tracking</span>
                 </div>
               </div>
