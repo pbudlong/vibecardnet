@@ -38,8 +38,8 @@ function App() {
           <WhyNowScreen />
           <SystemArchitectureScreen />
           <PublisherIntegrationScreen />
-          <LiveDemoScreen />
           <ViralProjectionScreen />
+          <LiveDemoScreen />
           <NetworkVisionScreen />
         </Presentation>
         <Toaster />
