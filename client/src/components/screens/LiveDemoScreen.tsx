@@ -338,6 +338,72 @@ export function LiveDemoScreen() {
     setTimeout(() => setIsAnimating(false), 1000);
   };
 
+  const runFullShareDemo = async () => {
+    setDemoState(prev => ({ ...prev, isLoading: true }));
+    setIsAnimating(true);
+    
+    try {
+      // Step 0: Initialize if needed
+      if (!demoState.initialized) {
+        const resetRes = await fetch("/api/demo/reset", { method: "POST" });
+        await resetRes.json();
+        
+        const initRes = await fetch("/api/demo/init", { method: "POST" });
+        const initData = await initRes.json();
+        logApiResponse("POST /api/demo/init", initData);
+        
+        if (initData.success) {
+          setDemoState(prev => ({
+            ...prev,
+            initialized: true,
+            treasury: initData.treasury,
+          }));
+        }
+      }
+
+      // Run steps 0, 1, 2 (Create, Remix, Share)
+      const endpoints = ["/api/demo/create", "/api/demo/remix", "/api/demo/share"];
+      const participants = DEMO_PARTICIPANTS;
+      
+      for (let i = 0; i <= 2; i++) {
+        const response = await fetch(endpoints[i], {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ actorName: participants[i].name }),
+        });
+        const data = await response.json();
+        logApiResponse(`POST ${endpoints[i]}`, data);
+        
+        if (data.success) {
+          setDemoState(prev => {
+            const newParticipants = [...prev.participants];
+            newParticipants[i] = {
+              ...newParticipants[i],
+              action: data.action,
+              wallet: data.wallet,
+            };
+            return {
+              ...prev,
+              participants: newParticipants,
+              currentStep: i,
+              latestSplits: data.splits || prev.latestSplits,
+            };
+          });
+        }
+        
+        // Small delay between steps for visual effect
+        await new Promise(r => setTimeout(r, 400));
+      }
+      
+      toast({ title: "Share tracked!", description: "SDK call completed - chain recorded" });
+    } catch (error) {
+      toast({ title: "Error", description: "Demo failed", variant: "destructive" });
+    }
+    
+    setDemoState(prev => ({ ...prev, isLoading: false }));
+    setTimeout(() => setIsAnimating(false), 1000);
+  };
+
   return (
     <div className="h-full w-full overflow-y-auto bg-[#0a0a0f] px-6 py-8">
       <div className="max-w-5xl mx-auto space-y-6">
@@ -374,27 +440,25 @@ export function LiveDemoScreen() {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Step 1: Button */}
-              <div className={`flex flex-col items-center justify-center p-4 rounded-lg border transition-all ${demoState.currentStep >= 1 && demoState.currentStep < 2 ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-slate-800/30 border-border/30'}`}>
+              <div className={`flex flex-col items-center justify-center p-4 rounded-lg border transition-all ${demoState.isLoading ? 'bg-amber-500/10 border-amber-500/50' : demoState.currentStep >= 2 ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-slate-800/30 border-border/30'}`}>
                 <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
                   <span className="w-4 h-4 rounded-full bg-slate-700 text-[10px] flex items-center justify-center">1</span>
                   User Action
                 </div>
                 <Button 
                   className="gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
-                  onClick={() => {
-                    if (demoState.initialized && demoState.currentStep >= 1 && demoState.currentStep < 2) {
-                      runStep(2);
-                    }
-                  }}
-                  disabled={!demoState.initialized || demoState.currentStep < 1 || demoState.currentStep >= 2 || demoState.isLoading}
+                  onClick={() => runFullShareDemo()}
+                  disabled={demoState.isLoading || demoState.currentStep >= 2}
                   data-testid="button-share-demo"
                 >
-                  {demoState.isLoading && demoState.currentStep === 1 ? (
+                  {demoState.isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : demoState.currentStep >= 2 ? (
+                    <CheckCircle className="h-4 w-4" />
                   ) : (
                     <Zap className="h-4 w-4" />
                   )}
-                  Share & Earn
+                  {demoState.currentStep >= 2 ? 'Shared!' : 'Share & Earn'}
                 </Button>
                 <p className="text-[10px] text-muted-foreground mt-2 text-center">Pete's Remix</p>
               </div>
