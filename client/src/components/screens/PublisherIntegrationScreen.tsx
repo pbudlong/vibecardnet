@@ -68,7 +68,7 @@ export function PublisherIntegrationScreen() {
               <Button size="sm" variant="outline" className="text-xs h-7 px-3 text-orange-500 border-orange-500">
                 View App
               </Button>
-              <Button size="sm" variant="outline" className="text-xs h-7 px-3">
+              <Button size="sm" variant="outline" className="text-xs h-7 px-3 ring-2 ring-primary ring-offset-2 ring-offset-background animate-pulse">
                 Remix Template
               </Button>
               <div className="flex items-center gap-3 ml-auto text-xs text-muted-foreground">
@@ -90,12 +90,14 @@ export function PublisherIntegrationScreen() {
           </Card>
 
           {/* 3iAtlas Example */}
-          <Card className="p-0 overflow-hidden bg-slate-950 border-slate-800">
+          <Card className="p-0 overflow-hidden bg-slate-950 border-slate-800 relative">
             <img 
               src={atlasImg} 
               alt="3iAtlas Provenance Tracker" 
               className="w-full h-60 object-cover object-top"
             />
+            {/* Highlight overlay for Share on X button */}
+            <div className="absolute top-[6px] left-[85px] w-[75px] h-[22px] rounded-sm ring-2 ring-primary animate-pulse pointer-events-none" />
           </Card>
         </motion.div>
 
