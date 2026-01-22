@@ -208,6 +208,11 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                 {statusLoading && <RefreshCw className="h-3 w-3 text-zinc-400 animate-spin" />}
               </div>
               <div className="space-y-2">
+                <div className="flex items-center gap-2" data-testid="status-viral-tracking">
+                  {getStatusIcon(integrationStatus?.viralTracking.status || 'pending')}
+                  <ArrowDown className={`h-3 w-3 ${integrationStatus?.viralTracking.status === 'connected' ? 'text-emerald-500' : 'text-emerald-500/50'}`} />
+                  <span className="text-[10px] text-muted-foreground">Viral Tracking</span>
+                </div>
                 <div className="flex items-center gap-2" data-testid="status-circle-wallets">
                   {getStatusIcon(integrationStatus?.circleWallets.status || 'pending')}
                   <Wallet className={`h-3 w-3 ${integrationStatus?.circleWallets.status === 'connected' ? 'text-sky-400' : 'text-sky-400/50'}`} />
@@ -216,17 +221,12 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                 <div className="flex items-center gap-2" data-testid="status-x402">
                   {getStatusIcon(integrationStatus?.x402Batching.status || 'pending')}
                   <Circle className={`h-3 w-3 ${integrationStatus?.x402Batching.status === 'connected' ? 'text-sky-400' : 'text-sky-400/50'}`} />
-                  <span className="text-[10px] text-muted-foreground">x402 Batching SDK</span>
+                  <span className="text-[10px] text-muted-foreground">x402 Protocol</span>
                 </div>
                 <div className="flex items-center gap-2" data-testid="status-arc">
                   {getStatusIcon(integrationStatus?.arcNetwork.status || 'pending')}
                   <Zap className={`h-3 w-3 ${integrationStatus?.arcNetwork.status === 'connected' ? 'text-emerald-500' : 'text-emerald-500/50'}`} />
                   <span className="text-[10px] text-muted-foreground">Arc Network</span>
-                </div>
-                <div className="flex items-center gap-2" data-testid="status-viral-tracking">
-                  {getStatusIcon(integrationStatus?.viralTracking.status || 'pending')}
-                  <ArrowDown className={`h-3 w-3 ${integrationStatus?.viralTracking.status === 'connected' ? 'text-emerald-500' : 'text-emerald-500/50'}`} />
-                  <span className="text-[10px] text-muted-foreground">Viral Tracking</span>
                 </div>
               </div>
             </Card>
