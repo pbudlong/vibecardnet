@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage, getDemoTreasuryBalance, setDemoTreasuryBalance } from "./storage";
+import { storage } from "./storage";
 import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, resetDemoToTreasury, getAllWalletsWithBalances, runTestTransaction, createArcTestnetWallets, generateNewEntitySecret } from "./lib/circle-wallets";
 import { GATEWAY_CONFIG } from "./lib/x402-gateway";
 
@@ -126,48 +126,27 @@ export async function registerRoutes(
     }
   });
 
-  // Run test transaction - transfer USDC from treasury to user wallets
-  // Uses simulation mode when real transfers fail (e.g., no gas)
+  // Run test transaction - transfer REAL USDC from treasury to user wallets
   app.post('/api/demo/test-transaction', async (req, res) => {
     try {
-      console.log('[Demo] Running test transaction - sending rewards to users');
-      const cachedBalance = getDemoTreasuryBalance();
-      const result = await runTestTransaction(cachedBalance);
+      console.log('[Demo] Running REAL test transaction on Arc');
+      const result = await runTestTransaction();
       
       if (result.success) {
-        // Update cached balance
-        setDemoTreasuryBalance(result.newTreasuryBalance);
-        
         res.json({
           success: true,
           message: `Sent $${result.totalSent} USDC to ${result.transfers.length} recipients`,
           transfers: result.transfers,
           totalSent: result.totalSent,
           newTreasuryBalance: result.newTreasuryBalance,
-          blockchain: result.blockchain,
-          simulated: false
+          blockchain: result.blockchain
         });
       } else {
-        // Simulation mode - show realistic demo flow when real transfers fail
-        console.log('[Demo] Real transfer failed, using simulation mode');
-        const totalSent = "5.00";
-        const simulatedTransfers = [
-          { to: "Manny (Creator)", amount: "3.00", status: "success", simulated: true },
-          { to: "Pete (Sharer)", amount: "1.25", status: "success", simulated: true },
-          { to: "Matt P (Platform)", amount: "0.75", status: "success", simulated: true }
-        ];
-        const currentBalance = parseFloat(cachedBalance) || 20;
-        const newBalance = (currentBalance - parseFloat(totalSent)).toFixed(2);
-        setDemoTreasuryBalance(newBalance);
-        
         res.json({
-          success: true,
-          message: `[SIMULATED] Sent $${totalSent} USDC to 3 recipients`,
-          transfers: simulatedTransfers,
-          totalSent: totalSent,
-          newTreasuryBalance: newBalance,
-          simulated: true,
-          note: "Simulation mode - needs testnet ETH for live transactions"
+          success: false,
+          message: 'Transfer failed - check treasury balance',
+          transfers: result.transfers,
+          newTreasuryBalance: result.newTreasuryBalance
         });
       }
     } catch (error) {
@@ -179,22 +158,15 @@ export async function registerRoutes(
   // Reset demo - transfer all user wallet USDC back to treasury
   app.post('/api/demo/reset', async (req, res) => {
     try {
-      console.log('[Demo] Resetting demo - transferring funds back to treasury');
+      console.log('[Demo] Resetting - transferring REAL funds back to treasury');
       const result = await resetDemoToTreasury();
       
       if (result.success) {
-        // Update cached balance by adding recovered amount
-        const currentBalance = parseFloat(getDemoTreasuryBalance()) || 0;
-        const newBalance = (currentBalance + parseFloat(result.totalRecovered)).toFixed(2);
-        setDemoTreasuryBalance(newBalance);
-        console.log(`[Demo] Updated treasury balance: ${currentBalance} + ${result.totalRecovered} = ${newBalance}`);
-        
         res.json({
           success: true,
           message: `Recovered ${result.totalRecovered} USDC to treasury`,
           transfers: result.transfers,
-          totalRecovered: result.totalRecovered,
-          newTreasuryBalance: newBalance
+          totalRecovered: result.totalRecovered
         });
       } else {
         res.json({

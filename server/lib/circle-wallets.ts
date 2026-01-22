@@ -378,19 +378,32 @@ export async function getAllWalletsWithBalances(): Promise<WalletWithBalance[]> 
     const data = await response.json();
     const wallets = data.data?.wallets || [];
     
-    return wallets.map((w: any) => {
-      const usdcBalance = w.balances?.find((b: any) => 
-        b.token?.symbol === 'USDC' || b.token?.name?.includes('USDC')
-      );
+    // Query real blockchain balances for Arc wallets
+    const walletsWithBalances = await Promise.all(wallets.map(async (w: any) => {
+      let usdcBalance = '0';
+      
+      if (w.blockchain === 'ARC-TESTNET') {
+        // Query real Arc blockchain balance
+        usdcBalance = await getArcUsdcBalance(w.address);
+      } else {
+        // Use Circle API balance for other chains
+        const balance = w.balances?.find((b: any) => 
+          b.token?.symbol === 'USDC' || b.token?.name?.includes('USDC')
+        );
+        usdcBalance = balance?.amount || '0';
+      }
+      
       return {
         id: w.id,
         name: w.name || '',
         refId: w.refId || '',
         address: w.address,
         blockchain: w.blockchain,
-        usdcBalance: usdcBalance?.amount || '0'
+        usdcBalance
       };
-    });
+    }));
+    
+    return walletsWithBalances;
   } catch (error) {
     console.error('[Circle] Error fetching all wallets:', error);
     return [];
@@ -452,7 +465,7 @@ export async function transferUSDC(
   }
 }
 
-export async function runTestTransaction(cachedTreasuryBalance?: string): Promise<{
+export async function runTestTransaction(): Promise<{
   success: boolean;
   transfers: Array<{ to: string; amount: string; status: string; txId?: string }>;
   totalSent: string;
@@ -482,12 +495,9 @@ export async function runTestTransaction(cachedTreasuryBalance?: string): Promis
   
   console.log(`[Demo] Using treasury on ${treasury.blockchain}: ${treasury.address}`);
 
-  // Use cached balance if Circle API returns 0 (balance not included in wallet list)
-  let treasuryBalance = parseFloat(treasury.usdcBalance);
-  if (treasuryBalance === 0 && cachedTreasuryBalance) {
-    treasuryBalance = parseFloat(cachedTreasuryBalance);
-    console.log('[Demo] Using cached treasury balance for transaction:', treasuryBalance);
-  }
+  // Use REAL blockchain balance
+  const treasuryBalance = parseFloat(treasury.usdcBalance);
+  console.log(`[Demo] Real treasury balance: $${treasuryBalance}`);
   
   if (treasuryBalance < 1) {
     console.log('[Demo] Treasury balance too low:', treasuryBalance);
@@ -579,33 +589,22 @@ export async function resetDemoToTreasury(): Promise<{
 
   console.log(`[Demo Reset] Using treasury on ${treasury.blockchain}: ${treasury.address}`);
 
-  // For Arc wallets, use expected payout amounts since Circle API doesn't return Arc balances
-  const expectedPayouts = [
-    { refIdPattern: 'Matt', amount: '3.00' },
-    { refIdPattern: 'Pete', amount: '1.25' },
-    { refIdPattern: 'Manny', amount: '0.75' }
-  ];
-
-  // Find user wallets on same blockchain as treasury
+  // Find user wallets on same blockchain as treasury with real balances
   const userWallets = wallets.filter(w => 
     w.blockchain === treasury.blockchain &&
     !w.refId?.includes('treasury') && 
-    !w.name?.toLowerCase().includes('treasury')
-  ).slice(0, 3);
+    !w.name?.toLowerCase().includes('treasury') &&
+    parseFloat(w.usdcBalance) > 0
+  );
+
+  console.log(`[Demo Reset] Found ${userWallets.length} user wallets with balances`);
 
   const transfers: Array<{ from: string; amount: string; status: string }> = [];
   let totalRecovered = 0;
 
   for (const userWallet of userWallets) {
-    // Use expected amount for Arc (API doesn't return balances), or actual balance for others
-    let amount = userWallet.usdcBalance;
-    if (treasury.blockchain === 'ARC-TESTNET') {
-      const expected = expectedPayouts.find(p => 
-        userWallet.name?.includes(p.refIdPattern) || userWallet.refId?.includes(p.refIdPattern)
-      );
-      amount = expected?.amount || '0';
-    }
-
+    // Use REAL blockchain balance
+    const amount = userWallet.usdcBalance;
     if (parseFloat(amount) <= 0) continue;
 
     console.log(`[Demo Reset] Recovering $${amount} from ${userWallet.name}`);
