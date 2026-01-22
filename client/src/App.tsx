@@ -11,6 +11,7 @@ import { WhyNowScreen } from "@/components/screens/WhyNowScreen";
 import { SystemArchitectureScreen } from "@/components/screens/SystemArchitectureScreen";
 import { PublisherIntegrationScreen } from "@/components/screens/PublisherIntegrationScreen";
 import { LiveDemoScreen } from "@/components/screens/LiveDemoScreen";
+import { ViralProjectionScreen } from "@/components/screens/ViralProjectionScreen";
 import { NetworkVisionScreen } from "@/components/screens/NetworkVisionScreen";
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <SystemArchitectureScreen />
           <PublisherIntegrationScreen />
           <LiveDemoScreen />
+          <ViralProjectionScreen />
           <NetworkVisionScreen />
         </Presentation>
         <Toaster />

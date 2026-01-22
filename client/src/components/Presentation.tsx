@@ -39,10 +39,8 @@ export function Presentation({ children, currentScreen, onScreenChange }: Presen
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [goNext, goPrev]);
 
-  const isLiveDemoScreen = currentScreen === 6;
-
   return (
-    <div className={`relative h-screen w-screen overflow-hidden ${isLiveDemoScreen ? 'bg-[#0a0a0f]' : 'bg-background'}`}>
+    <div className="relative h-screen w-screen overflow-hidden bg-background">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentScreen}
@@ -80,27 +78,25 @@ export function Presentation({ children, currentScreen, onScreenChange }: Presen
         </Button>
       )}
 
-      {currentScreen !== 6 && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50">
-          <div className="flex gap-2">
-            {Array.from({ length: totalScreens }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => onScreenChange(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentScreen
-                    ? "w-8 bg-primary"
-                    : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                }`}
-                data-testid={`button-dot-${index}`}
-              />
-            ))}
-          </div>
-          <span className="text-xs text-muted-foreground">
-            {currentScreen + 1} / {totalScreens}
-          </span>
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50">
+        <div className="flex gap-2">
+          {Array.from({ length: totalScreens }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => onScreenChange(index)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                index === currentScreen
+                  ? "w-8 bg-primary"
+                  : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+              }`}
+              data-testid={`button-dot-${index}`}
+            />
+          ))}
         </div>
-      )}
+        <span className="text-xs text-muted-foreground">
+          {currentScreen + 1} / {totalScreens}
+        </span>
+      </div>
     </div>
   );
 }
