@@ -540,46 +540,9 @@ function ControlPanel({
   isLoading: boolean;
   participants: DemoState['participants'];
 }) {
-  const calculateProjectedReach = (k: number, initialShares: number = 1, generations: number = 5) => {
-    let total = initialShares;
-    let current = initialShares;
-    for (let i = 0; i < generations; i++) {
-      current = current * k;
-      total += current;
-    }
-    return Math.round(total);
-  };
-
-  const projectedReach10 = calculateProjectedReach(settings.kFactor, 10, 5);
-  const projectedReach100 = calculateProjectedReach(settings.kFactor, 100, 5);
-  const projectedEarnings = (projectedReach100 * settings.conversionValue * 0.1).toFixed(0);
-
   return (
-    <div className="flex flex-col h-full p-4 space-y-5 overflow-y-auto">
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground uppercase tracking-wider">Avg Latency</span>
-          <span className="font-mono text-sm text-foreground">{stats.avgLatency}<span className="text-xs text-muted-foreground">ms</span></span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground uppercase tracking-wider">Total Paid</span>
-          <span className="font-mono text-sm text-cyan-400">${stats.totalDistributed.toFixed(2)}<span className="text-xs text-muted-foreground">USDC</span></span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground uppercase tracking-wider">Participants</span>
-          <span className="font-mono text-sm text-foreground">{stats.participantCount}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground uppercase tracking-wider">Proj. Reach (10)</span>
-          <span className={`font-mono text-sm ${settings.kFactor >= 1 ? 'text-primary' : 'text-muted-foreground'}`}>{projectedReach10.toLocaleString()}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground uppercase tracking-wider">Proj. Earnings</span>
-          <span className="font-mono text-sm text-emerald-400">${projectedEarnings}</span>
-        </div>
-      </div>
-
-      <div className="border-t border-border/50 pt-4">
+    <div className="flex flex-col flex-1 p-4 space-y-5 overflow-y-auto">
+      <div>
         <div className="flex items-center gap-2 mb-3">
           <Activity className="h-4 w-4 text-primary" />
           <span className="text-xs text-muted-foreground uppercase tracking-wider">K-Factor</span>
@@ -1062,12 +1025,48 @@ export function LiveDemoScreen() {
     setTimeout(() => setIsAnimating(false), 1000);
   };
 
+  const calculateProjectedReachMain = (k: number, initialShares: number = 1, generations: number = 5) => {
+    let total = initialShares;
+    let current = initialShares;
+    for (let i = 0; i < generations; i++) {
+      current = current * k;
+      total += current;
+    }
+    return Math.round(total);
+  };
+
+  const projectedReach10 = calculateProjectedReachMain(settings.kFactor, 10, 5);
+  const projectedReach100 = calculateProjectedReachMain(settings.kFactor, 100, 5);
+  const projectedEarnings = (projectedReach100 * settings.conversionValue * 0.1).toFixed(0);
+
   return (
-    <div className="h-full w-full flex bg-[#0a0a0f] pt-4">
-      <div className="w-[250px] flex-shrink-0 border-r border-border/30 bg-[#0c0c14]">
-        <div className="p-4 border-b border-border/30">
+    <div className="min-h-screen w-full flex bg-[#0a0a0f]">
+      <div className="w-[250px] flex-shrink-0 border-r border-border/30 bg-[#0c0c14] flex flex-col">
+        <div className="p-4 pt-6 border-b border-border/30">
           <h1 className="font-display text-lg font-bold text-foreground">VibeCard</h1>
-          <p className="text-xs text-muted-foreground">Viral Rewards Network</p>
+          <p className="text-xs text-muted-foreground mb-4">Viral Rewards Network</p>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Avg Latency</span>
+              <span className="font-mono text-sm text-foreground">{stats.avgLatency}<span className="text-xs text-muted-foreground">ms</span></span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Total Paid</span>
+              <span className="font-mono text-sm text-cyan-400">${stats.totalDistributed.toFixed(2)}<span className="text-xs text-muted-foreground">USDC</span></span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Participants</span>
+              <span className="font-mono text-sm text-foreground">{stats.participantCount}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Proj. Reach</span>
+              <span className={`font-mono text-sm ${settings.kFactor >= 1 ? 'text-emerald-400' : 'text-muted-foreground'}`}>{projectedReach10.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Proj. Earnings</span>
+              <span className="font-mono text-sm text-emerald-400">${projectedEarnings}</span>
+            </div>
+          </div>
         </div>
         <ControlPanel
           settings={settings}
