@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage, getDemoTreasuryBalance, setDemoTreasuryBalance } from "./storage";
-import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, resetDemoToTreasury, getAllWalletsWithBalances, runTestTransaction } from "./lib/circle-wallets";
+import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, resetDemoToTreasury, getAllWalletsWithBalances, runTestTransaction, createArcTestnetWallets } from "./lib/circle-wallets";
 import { GATEWAY_CONFIG } from "./lib/x402-gateway";
 
 export async function registerRoutes(
@@ -213,6 +213,33 @@ export async function registerRoutes(
     } catch (error) {
       console.error('Demo reset error:', error);
       res.status(500).json({ error: 'Failed to reset demo' });
+    }
+  });
+
+  // Create Arc testnet wallets for gasless USDC transfers
+  app.post('/api/wallets/setup-arc', async (req, res) => {
+    try {
+      console.log('[Setup] Creating Arc testnet wallets for gasless transfers');
+      const result = await createArcTestnetWallets();
+      
+      if (result.success) {
+        res.json({
+          success: true,
+          message: `Created ${result.wallets.length} Arc testnet wallets`,
+          wallets: result.wallets,
+          faucetUrl: 'https://faucet.circle.com',
+          note: 'Fund the Arc Treasury wallet from faucet.circle.com (select Arc Testnet)'
+        });
+      } else {
+        res.json({
+          success: false,
+          error: result.error || 'Failed to create Arc wallets',
+          wallets: result.wallets
+        });
+      }
+    } catch (error) {
+      console.error('Arc wallet setup error:', error);
+      res.status(500).json({ error: 'Failed to create Arc wallets' });
     }
   });
 

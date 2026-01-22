@@ -118,6 +118,112 @@ export async function createUserWallet(userId: string): Promise<UserWallet | nul
   }
 }
 
+// Create Arc testnet wallets for the demo (treasury + users)
+export async function createArcTestnetWallets(): Promise<{
+  success: boolean;
+  wallets: Array<{ name: string; address: string; refId: string }>;
+  error?: string;
+}> {
+  const apiKey = process.env.CIRCLE_API_KEY;
+  const entitySecret = process.env.CIRCLE_ENTITY_SECRET;
+  
+  if (!apiKey || !entitySecret) {
+    return { success: false, wallets: [], error: 'Missing API key or entity secret' };
+  }
+
+  try {
+    // First, get the existing wallet set ID
+    const walletsResponse = await fetch(`${CIRCLE_W3S_API_BASE}/wallets`, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!walletsResponse.ok) {
+      return { success: false, wallets: [], error: 'Failed to fetch existing wallets' };
+    }
+
+    const walletsData = await walletsResponse.json();
+    const existingWallets = walletsData.data?.wallets || [];
+    
+    // Check if Arc wallets already exist
+    const arcWallets = existingWallets.filter((w: any) => w.blockchain === 'ARC-TESTNET');
+    if (arcWallets.length >= 4) {
+      console.log('[Circle] Arc testnet wallets already exist');
+      return {
+        success: true,
+        wallets: arcWallets.map((w: any) => ({
+          name: w.name,
+          address: w.address,
+          refId: w.refId
+        }))
+      };
+    }
+
+    // Get wallet set ID from existing wallet
+    const walletSetId = existingWallets[0]?.walletSetId;
+    if (!walletSetId) {
+      return { success: false, wallets: [], error: 'No wallet set found' };
+    }
+
+    // Create Arc testnet wallets: treasury + 3 users
+    // Note: Names cannot contain <>(){};* characters
+    const walletConfigs = [
+      { name: 'Arc Treasury', refId: 'arc-treasury' },
+      { name: 'Manny Arc', refId: 'arc-user-Manny' },
+      { name: 'Pete Arc', refId: 'arc-user-Pete' },
+      { name: 'Matt Arc', refId: 'arc-user-Matt' }
+    ];
+
+    const createdWallets: Array<{ name: string; address: string; refId: string }> = [];
+
+    for (const config of walletConfigs) {
+      const idempotencyKey = crypto.randomUUID();
+      
+      const createResponse = await fetch(`${CIRCLE_W3S_API_BASE}/developer/wallets`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          idempotencyKey,
+          entitySecretCiphertext: entitySecret,
+          blockchains: ['ARC-TESTNET'],
+          count: 1,
+          walletSetId,
+          metadata: [{ name: config.name, refId: config.refId }]
+        })
+      });
+
+      if (createResponse.ok) {
+        const result = await createResponse.json();
+        const wallet = result.data?.wallets?.[0];
+        if (wallet) {
+          createdWallets.push({
+            name: config.name,
+            address: wallet.address,
+            refId: config.refId
+          });
+          console.log(`[Circle] Created Arc wallet: ${config.name} - ${wallet.address}`);
+        }
+      } else {
+        const errorText = await createResponse.text();
+        console.error(`[Circle] Failed to create ${config.name}:`, errorText);
+      }
+    }
+
+    return {
+      success: createdWallets.length > 0,
+      wallets: createdWallets
+    };
+  } catch (error) {
+    console.error('[Circle] Error creating Arc wallets:', error);
+    return { success: false, wallets: [], error: String(error) };
+  }
+}
+
 export async function fundFromFaucet(address: string, blockchain: string = 'BASE-SEPOLIA'): Promise<boolean> {
   const apiKey = process.env.CIRCLE_API_KEY;
   
