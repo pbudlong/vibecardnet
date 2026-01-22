@@ -497,8 +497,8 @@ export function LiveDemoScreen() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-3">VibeCard Live Demo (Testnet)</h1>
-          <p className="text-white/70">Viral Rewards Network powered by Circle USDC on Base Sepolia</p>
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-3">VibeCard Live Demo</h1>
+          <p className="text-white/70">Viral Rewards Network powered by Circle USDC on Base Sepolia Testnet</p>
         </motion.div>
 
         {/* SECTION 1: Tracking Mechanics */}
