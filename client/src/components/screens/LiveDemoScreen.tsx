@@ -355,19 +355,90 @@ export function LiveDemoScreen() {
           </Badge>
         </motion.div>
 
-        {/* Controls Section */}
+        {/* Visualization Section with Initialize Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
           <Card className="p-4 bg-[#0c0c14] border-border/30">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Banknote className="h-4 w-4 text-primary" />
+                USDC Flow Visualization
+              </h3>
+              <div className="flex items-center gap-3">
+                {stats.totalDistributed > 0 && (
+                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/50">
+                    Total: ${stats.totalDistributed.toFixed(2)} USDC
+                  </Badge>
+                )}
+                {!demoState.initialized ? (
+                  <Button onClick={initDemo} disabled={demoState.isLoading} className="gap-2" data-testid="button-init-demo">
+                    {demoState.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+                    Initialize Demo
+                  </Button>
+                ) : (
+                  <Button variant="outline" onClick={resetDemo} disabled={demoState.isLoading} className="gap-2" data-testid="button-reset-demo">
+                    <RotateCcw className="h-4 w-4" />
+                    Reset
+                  </Button>
+                )}
+              </div>
+            </div>
+            
+            <FlowVisualization
+              treasury={demoState.treasury}
+              participants={demoState.participants}
+              splits={demoState.latestSplits}
+              isAnimating={isAnimating}
+            />
+
+            {demoState.initialized && (
+              <div className="mt-4 pt-4 border-t border-border/30">
+                <div className="text-xs text-center text-muted-foreground mb-3">
+                  Treasury: <span className="text-cyan-400 font-mono">{demoState.treasury?.address.slice(0, 8)}...</span>
+                </div>
+                <div className="flex justify-center gap-3 flex-wrap">
+                  {DEMO_PARTICIPANTS.map((p, index) => (
+                    <Button
+                      key={p.name}
+                      onClick={() => runStep(index)}
+                      disabled={demoState.isLoading || demoState.currentStep >= index || (index > 0 && demoState.currentStep < index - 1)}
+                      variant={demoState.currentStep >= index ? "secondary" : "default"}
+                      className="gap-2"
+                      style={{ borderColor: demoState.currentStep >= index ? p.color : undefined }}
+                      data-testid={`button-step-${index}`}
+                    >
+                      {demoState.isLoading && demoState.currentStep === index - 1 ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : demoState.currentStep >= index ? (
+                        <CheckCircle className="h-4 w-4" style={{ color: p.color }} />
+                      ) : (
+                        <Zap className="h-4 w-4" />
+                      )}
+                      {p.name} ({p.role})
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </Card>
+        </motion.div>
+
+        {/* K-Factor Controls Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Card className="p-4 bg-[#0c0c14] border-border/30">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* K-Factor */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Activity className="h-4 w-4 text-primary" />
-                  <span className="text-xs text-muted-foreground uppercase">K-Factor</span>
+                  <span className="text-xs text-muted-foreground uppercase">K-Factor (Viral Coefficient)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setSettings(s => ({ ...s, kFactor: Math.max(0.5, s.kFactor - 0.1) }))} data-testid="button-kfactor-minus">
@@ -380,14 +451,14 @@ export function LiveDemoScreen() {
                     <Plus className="h-3 w-3" />
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground text-center mt-1">Reach: {projectedReach}</p>
+                <p className="text-xs text-muted-foreground text-center mt-1">Projected Reach: {projectedReach}</p>
               </div>
 
               {/* Conversion Value */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <DollarSign className="h-4 w-4 text-primary" />
-                  <span className="text-xs text-muted-foreground uppercase">Conversion</span>
+                  <span className="text-xs text-muted-foreground uppercase">Conversion Value</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setSettings(s => ({ ...s, conversionValue: Math.max(5, s.conversionValue - 5) }))} data-testid="button-conversion-minus">
@@ -405,90 +476,12 @@ export function LiveDemoScreen() {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <GitBranch className="h-4 w-4 text-primary" />
-                  <span className="text-xs text-muted-foreground uppercase">Decay</span>
+                  <span className="text-xs text-muted-foreground uppercase">Decay Rate</span>
                 </div>
                 <span className="font-mono text-xl font-bold block text-center text-foreground">{(settings.decayRate * 100).toFixed(0)}%</span>
                 <Slider value={[settings.decayRate]} min={0.3} max={0.7} step={0.05} onValueChange={([v]) => setSettings(s => ({ ...s, decayRate: v }))} className="mt-2" />
               </div>
-
-              {/* Initialize Button */}
-              <div className="flex flex-col gap-2">
-                {!demoState.initialized ? (
-                  <Button onClick={initDemo} disabled={demoState.isLoading} className="w-full gap-2" data-testid="button-init-demo">
-                    {demoState.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-                    Initialize Demo
-                  </Button>
-                ) : (
-                  <Button variant="outline" onClick={resetDemo} disabled={demoState.isLoading} className="w-full gap-2" data-testid="button-reset-demo">
-                    <RotateCcw className="h-4 w-4" />
-                    Reset
-                  </Button>
-                )}
-                {demoState.initialized && (
-                  <div className="text-xs text-center text-muted-foreground">
-                    Treasury: <span className="text-cyan-400 font-mono">{demoState.treasury?.address.slice(0, 8)}...</span>
-                  </div>
-                )}
-              </div>
             </div>
-          </Card>
-        </motion.div>
-
-        {/* Action Buttons */}
-        {demoState.initialized && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex justify-center gap-3 flex-wrap"
-          >
-            {DEMO_PARTICIPANTS.map((p, index) => (
-              <Button
-                key={p.name}
-                onClick={() => runStep(index)}
-                disabled={demoState.isLoading || demoState.currentStep >= index || (index > 0 && demoState.currentStep < index - 1)}
-                variant={demoState.currentStep >= index ? "secondary" : "default"}
-                className="gap-2"
-                style={{ borderColor: demoState.currentStep >= index ? p.color : undefined }}
-                data-testid={`button-step-${index}`}
-              >
-                {demoState.isLoading && demoState.currentStep === index - 1 ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : demoState.currentStep >= index ? (
-                  <CheckCircle className="h-4 w-4" style={{ color: p.color }} />
-                ) : (
-                  <Zap className="h-4 w-4" />
-                )}
-                {p.name} ({p.role})
-              </Button>
-            ))}
-          </motion.div>
-        )}
-
-        {/* Visualization Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card className="p-4 bg-[#0c0c14] border-border/30">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                <Banknote className="h-4 w-4 text-primary" />
-                USDC Flow Visualization
-              </h3>
-              {stats.totalDistributed > 0 && (
-                <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/50">
-                  Total: ${stats.totalDistributed.toFixed(2)} USDC
-                </Badge>
-              )}
-            </div>
-            <FlowVisualization
-              treasury={demoState.treasury}
-              participants={demoState.participants}
-              splits={demoState.latestSplits}
-              isAnimating={isAnimating}
-            />
           </Card>
         </motion.div>
 
