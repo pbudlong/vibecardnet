@@ -5,7 +5,6 @@ import { Eye, GitBranch } from "lucide-react";
 import { useState, useEffect } from "react";
 import andromedaImg from "@assets/Screen_Shot_2026-01-21_at_3.01.09_PM_1769047486512.png";
 import atlasImg from "@assets/Screen_Shot_2026-01-21_at_5.53.22_PM_1769047494023.png";
-import mattProfileImg from "@assets/Screen_Shot_2026-01-21_at_6.31.11_PM_1769049114232.png";
 
 const codeSnippet = `// Initialize VibeCard for your project
 import { VibeCard } from '@vibecard/sdk';
@@ -36,18 +35,29 @@ vibe.trackConversion({
 });`;
 
 export function PublisherIntegrationScreen() {
-  const [highlightPhase, setHighlightPhase] = useState<'remix' | 'share' | 'pause'>('remix');
+  const [highlightPhase, setHighlightPhase] = useState<'remix' | 'share' | 'pause' | 'done'>('remix');
+  const [rotationCount, setRotationCount] = useState(0);
   
   useEffect(() => {
+    if (rotationCount >= 3) {
+      setHighlightPhase('done');
+      return;
+    }
+    
     const cycle = () => {
       setHighlightPhase('remix');
       setTimeout(() => setHighlightPhase('share'), 2000);
-      setTimeout(() => setHighlightPhase('pause'), 4000);
+      setTimeout(() => {
+        setHighlightPhase('pause');
+        setRotationCount(prev => prev + 1);
+      }, 4000);
     };
     cycle();
-    const interval = setInterval(cycle, 7000);
+    const interval = setInterval(() => {
+      if (rotationCount < 2) cycle();
+    }, 7000);
     return () => clearInterval(interval);
-  }, []);
+  }, [rotationCount]);
 
   return (
     <div className="h-full w-full flex flex-col items-center justify-start px-8 py-6 overflow-y-auto">
@@ -75,14 +85,11 @@ export function PublisherIntegrationScreen() {
         >
           {/* Andromeda Example */}
           <Card className="p-4 overflow-hidden">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h3 className="font-display font-bold text-foreground text-base">Solar System Visualization</h3>
+            <div className="mb-3">
+              <h3 className="font-display font-bold text-foreground text-base">Solar System Visualization</h3>
+              <div className="flex items-center justify-between">
                 <p className="text-xs text-muted-foreground">Interactive 3D solar system visualization</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">Created by</span>
-                <img src={mattProfileImg} alt="Matt" className="h-6 rounded-full" />
+                <span className="text-xs text-muted-foreground">Created by Matt P.</span>
               </div>
             </div>
             <div className="flex items-center gap-2 mb-3">
@@ -117,8 +124,8 @@ export function PublisherIntegrationScreen() {
               alt="3iAtlas Provenance Tracker" 
               className="w-full h-60 object-cover object-top"
             />
-            {/* Highlight overlay for Share on X button */}
-            <div className={`absolute top-[5px] left-[72px] w-[82px] h-[24px] rounded-sm transition-all duration-300 pointer-events-none ${highlightPhase === 'share' ? 'ring-2 ring-red-500' : 'ring-0'}`} />
+            {/* Highlight overlay for entire share bar */}
+            <div className={`absolute top-0 left-0 right-0 h-[32px] transition-all duration-300 pointer-events-none ${highlightPhase === 'share' ? 'ring-2 ring-red-500 ring-inset' : ''}`} />
           </Card>
         </motion.div>
 
