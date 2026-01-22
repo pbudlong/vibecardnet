@@ -1063,9 +1063,9 @@ export function LiveDemoScreen() {
   };
 
   return (
-    <div className="h-full w-full flex bg-[#0a0a0f]">
+    <div className="h-full w-full flex bg-[#0a0a0f] pt-4">
       <div className="w-[250px] flex-shrink-0 border-r border-border/30 bg-[#0c0c14]">
-        <div className="p-4 pt-6 border-b border-border/30">
+        <div className="p-4 border-b border-border/30">
           <h1 className="font-display text-lg font-bold text-foreground">VibeCard</h1>
           <p className="text-xs text-muted-foreground">Viral Rewards Network</p>
         </div>

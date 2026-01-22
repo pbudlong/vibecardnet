@@ -39,8 +39,10 @@ export function Presentation({ children, currentScreen, onScreenChange }: Presen
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [goNext, goPrev]);
 
+  const isLiveDemoScreen = currentScreen === 6;
+
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-background">
+    <div className={`relative h-screen w-screen overflow-hidden ${isLiveDemoScreen ? 'bg-[#0a0a0f]' : 'bg-background'}`}>
       <AnimatePresence mode="wait">
         <motion.div
           key={currentScreen}
