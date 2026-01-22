@@ -236,6 +236,7 @@ export async function getAllWalletsWithBalances(): Promise<WalletWithBalance[]> 
 const USDC_CONTRACTS: Record<string, string> = {
   'BASE-SEPOLIA': '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
   'ETH-SEPOLIA': '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
+  'ARC-TESTNET': '0x3600000000000000000000000000000000000000', // USDC is native gas on Arc!
 };
 
 export async function transferUSDC(
