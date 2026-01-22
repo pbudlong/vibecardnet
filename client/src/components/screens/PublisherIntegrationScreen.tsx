@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Eye, GitBranch } from "lucide-react";
-import { useState, useEffect } from "react";
 import andromedaImg from "@assets/Screen_Shot_2026-01-21_at_3.01.09_PM_1769047486512.png";
 import atlasImg from "@assets/Screen_Shot_2026-01-21_at_5.53.22_PM_1769047494023.png";
 
@@ -35,30 +34,6 @@ vibe.trackConversion({
 });`;
 
 export function PublisherIntegrationScreen() {
-  const [highlightPhase, setHighlightPhase] = useState<'remix' | 'share' | 'pause' | 'done'>('remix');
-  const [rotationCount, setRotationCount] = useState(0);
-  
-  useEffect(() => {
-    if (rotationCount >= 3) {
-      setHighlightPhase('done');
-      return;
-    }
-    
-    const cycle = () => {
-      setHighlightPhase('remix');
-      setTimeout(() => setHighlightPhase('share'), 2000);
-      setTimeout(() => {
-        setHighlightPhase('pause');
-        setRotationCount(prev => prev + 1);
-      }, 4000);
-    };
-    cycle();
-    const interval = setInterval(() => {
-      if (rotationCount < 2) cycle();
-    }, 7000);
-    return () => clearInterval(interval);
-  }, [rotationCount]);
-
   return (
     <div className="h-full w-full flex flex-col items-center justify-start px-8 py-6 overflow-y-auto">
       <motion.div
@@ -96,7 +71,7 @@ export function PublisherIntegrationScreen() {
               <Button size="sm" variant="outline" className="text-xs h-8 px-4 text-orange-500 border-orange-500">
                 View App
               </Button>
-              <Button size="sm" variant="outline" className={`text-xs h-8 px-4 transition-all duration-300 ${highlightPhase === 'remix' ? 'ring-2 ring-red-500 ring-offset-2 ring-offset-background' : ''}`}>
+              <Button size="sm" variant="outline" className="text-xs h-8 px-4 ring-2 ring-red-500 ring-offset-2 ring-offset-background">
                 Remix Template
               </Button>
               <div className="flex items-center gap-3 ml-auto text-xs text-muted-foreground">
@@ -125,7 +100,7 @@ export function PublisherIntegrationScreen() {
               className="w-full h-60 object-cover object-top"
             />
             {/* Highlight overlay for entire share bar */}
-            <div className={`absolute top-0 left-0 right-0 h-[32px] transition-all duration-300 pointer-events-none ${highlightPhase === 'share' ? 'ring-2 ring-red-500 ring-inset' : ''}`} />
+            <div className="absolute top-0 left-0 right-0 h-[32px] pointer-events-none ring-2 ring-red-500 ring-inset" />
           </Card>
         </motion.div>
 
