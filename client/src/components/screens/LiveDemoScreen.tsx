@@ -563,7 +563,7 @@ export function LiveDemoScreen() {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Step 1: Button */}
-              <div className={`flex flex-col items-center justify-center p-4 rounded-lg border transition-all ${demoState.isLoading ? 'bg-amber-500/10 border-amber-500/50' : demoState.currentStep >= 2 ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-white/5 border-white/10'}`}>
+              <div className={`flex flex-col items-center justify-center p-4 rounded-lg border transition-all ${demoState.isLoading || demoState.currentStep >= 1 ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-white/5 border-white/10'}`}>
                 <div className="text-xs text-white/60 mb-2 flex items-center gap-1">
                   <span className="w-4 h-4 rounded-full bg-white/10 text-[10px] flex items-center justify-center text-white">1</span>
                   User Action
@@ -587,12 +587,12 @@ export function LiveDemoScreen() {
               </div>
               
               {/* Step 2: Code Executing */}
-              <div className={`font-mono text-[11px] rounded-lg p-3 border transition-all ${demoState.isLoading ? 'bg-amber-500/10 border-amber-500/50' : demoState.currentStep >= 2 ? 'bg-emerald-500/5 border-emerald-500/30' : 'bg-black/50 border-white/10'}`}>
+              <div className={`font-mono text-[11px] rounded-lg p-3 border transition-all ${demoState.currentStep >= 2 ? 'bg-emerald-500/10 border-emerald-500/50' : demoState.isLoading ? 'bg-emerald-500/5 border-emerald-500/30' : 'bg-black/50 border-white/10'}`}>
                 <div className="text-xs text-white/60 mb-2 flex items-center gap-1">
                   <span className="w-4 h-4 rounded-full bg-white/10 text-[10px] flex items-center justify-center text-white">2</span>
                   SDK Call
                   {demoState.isLoading && (
-                    <Loader2 className="h-3 w-3 animate-spin ml-auto text-amber-400" />
+                    <Loader2 className="h-3 w-3 animate-spin ml-auto text-emerald-400" />
                   )}
                 </div>
                 {(demoState.isLoading || demoState.currentStep >= 1) ? (
