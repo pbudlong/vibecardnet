@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { Building2, Users, Zap, TrendingUp, Wallet, Clock, User, Share2, CreditCard } from "lucide-react";
+import { User, ChevronDown, ChevronRight, Coins, Megaphone, Code2, Share2, RefreshCw } from "lucide-react";
 import { SiReplit } from "react-icons/si";
 import { Code, FileText, Calculator, ListChecks, BookOpen, Wrench, BarChart3, Users2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 const platforms = [
   { name: "Replit", icon: SiReplit, color: "text-orange-500" },
@@ -135,77 +136,77 @@ export function ValuePropsScreen() {
           </div>
         </motion.div>
 
-        {/* Right - Everyone Wins */}
+        {/* Right - ICP Flywheel */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="max-w-sm ml-auto mr-4"
+          className="flex-1 flex flex-col items-center"
         >
-          <h2 className="font-display text-xl font-bold text-foreground mb-4">
-            Everyone Wins
+          <h2 className="font-display text-xl font-bold text-foreground mb-3">
+            ICP Flywheel
           </h2>
           
-          {/* For Platforms & Content Owners */}
-          <div className="mb-5">
-            <div className="flex items-center gap-2 mb-2">
-              <Building2 className="h-4 w-4 text-primary" />
-              <h3 className="font-medium text-foreground text-sm">For Platforms & Content Owners</h3>
-            </div>
-            <div className="space-y-2 pl-6">
-              <div className="flex items-start gap-2">
-                <Share2 className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                <div>
-                  <span className="text-xs font-medium text-foreground">New Growth Channel</span>
-                  <span className="text-xs text-muted-foreground"> - Uses crowd to spread brand</span>
-                </div>
+          <div className="relative flex flex-col items-center gap-1">
+            {/* Step 1 */}
+            <Card className="px-3 py-2 bg-card border text-center w-64">
+              <div className="flex items-center justify-center gap-2">
+                <Coins className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-xs font-medium text-foreground">Platform funds reward pool</span>
               </div>
-              <div className="flex items-start gap-2">
-                <TrendingUp className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                <div>
-                  <span className="text-xs font-medium text-foreground">Pay for Results</span>
-                  <span className="text-xs text-muted-foreground"> - Budget flows to actual conversions</span>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <Zap className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                <div>
-                  <span className="text-xs font-medium text-foreground">Simplifies Admin</span>
-                  <span className="text-xs text-muted-foreground"> - Atomic, multi-party payouts</span>
-                </div>
-              </div>
-            </div>
-          </div>
+            </Card>
+            <ChevronDown className="h-4 w-4 text-primary" />
 
-          {/* For Participants */}
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Users className="h-4 w-4 text-primary" />
-              <h3 className="font-medium text-foreground text-sm">For Participants</h3>
-            </div>
-            <div className="space-y-2 pl-6">
-              <div className="flex items-start gap-2">
-                <Wallet className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                <div>
-                  <span className="text-xs font-medium text-foreground">Instant Earnings</span>
-                  <span className="text-xs text-muted-foreground"> - No minimums, instant withdrawal</span>
+            {/* Step 2 */}
+            <Card className="px-3 py-2 bg-card border text-center w-64">
+              <div className="flex items-center justify-center gap-2">
+                <Megaphone className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-xs font-medium text-foreground">Promotes to creators</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground">"Add VibeCard to your app!"</p>
+            </Card>
+            <ChevronDown className="h-4 w-4 text-primary" />
+
+            {/* Step 3 */}
+            <Card className="px-3 py-2 bg-card border text-center w-64">
+              <div className="flex items-center justify-center gap-2">
+                <Code2 className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-xs font-medium text-foreground">Creators integrate snippet</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground">Easy, platform-endorsed</p>
+            </Card>
+            <ChevronDown className="h-4 w-4 text-primary" />
+
+            {/* Step 4 - Branching */}
+            <Card className="px-3 py-2 bg-card border w-64">
+              <div className="flex items-center justify-center gap-2 mb-1">
+                <Share2 className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-xs font-medium text-foreground">Content shared with rewards</span>
+              </div>
+              <div className="space-y-0.5 text-left pl-4">
+                <div className="flex items-center gap-1">
+                  <ChevronRight className="h-3 w-3 text-primary flex-shrink-0" />
+                  <span className="text-[10px] text-muted-foreground">Sharers earn USDC</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <ChevronRight className="h-3 w-3 text-primary flex-shrink-0" />
+                  <span className="text-[10px] text-muted-foreground">Some convert to platform users</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <ChevronRight className="h-3 w-3 text-primary flex-shrink-0" />
+                  <span className="text-[10px] text-muted-foreground">Some remix, create more content</span>
                 </div>
               </div>
-              <div className="flex items-start gap-2">
-                <Clock className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                <div>
-                  <span className="text-xs font-medium text-foreground">Deferred Onboarding</span>
-                  <span className="text-xs text-muted-foreground"> - KYC only once have rewards</span>
-                </div>
+            </Card>
+            <ChevronDown className="h-4 w-4 text-primary" />
+
+            {/* Step 5 - Loop */}
+            <Card className="px-3 py-2 bg-primary/10 border-primary text-center w-64">
+              <div className="flex items-center justify-center gap-2">
+                <RefreshCw className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-xs font-medium text-primary">Platform grows, cycle accelerates</span>
               </div>
-              <div className="flex items-start gap-2">
-                <CreditCard className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                <div>
-                  <span className="text-xs font-medium text-foreground">One Card</span>
-                  <span className="text-xs text-muted-foreground"> - aggregates earnings across platforms</span>
-                </div>
-              </div>
-            </div>
+            </Card>
           </div>
         </motion.div>
       </div>
