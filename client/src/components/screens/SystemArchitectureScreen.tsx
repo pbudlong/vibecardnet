@@ -34,7 +34,7 @@ export function SystemArchitectureScreen() {
             transition={{ duration: 0.4, delay: 0.3 }}
             className="flex items-center pt-12 self-start"
           >
-            <div className="flex flex-col items-center gap-2" style={{ marginTop: '-30px' }}>
+            <div className="flex flex-col items-center gap-2" style={{ marginTop: '-35px' }}>
               <Card className="p-3 w-28 text-center">
                 <SiStripe className="h-6 w-6 mx-auto mb-1 text-[#635BFF]" />
                 <p className="text-[10px] font-medium text-foreground">Stripe</p>
@@ -189,7 +189,7 @@ export function SystemArchitectureScreen() {
             className="flex items-center pb-12 self-end"
           >
             <ArrowRight className="h-4 w-4 text-muted-foreground mr-1 mb-16" />
-            <div className="flex flex-col items-center gap-2" style={{ marginTop: '30px' }}>
+            <div className="flex flex-col items-center gap-2" style={{ marginTop: '35px' }}>
               <Card className="p-3 w-28 text-center border-sky-400/50">
                 <div className="h-6 w-6 mx-auto mb-1 rounded-full bg-sky-400 flex items-center justify-center">
                   <span className="text-white font-bold text-sm">◎</span>
