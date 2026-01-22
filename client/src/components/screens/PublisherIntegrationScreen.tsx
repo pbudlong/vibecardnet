@@ -13,18 +13,18 @@ const vibe = new VibeCard({
   budget: 1000,  // USDC budget
 });
 
-// Track a share action
-vibe.trackShare({
-  contentId: 'project-123',
-  sharerId: user.walletAddress,
-  upstreamRef: referralCode,
-});
-
 // Track a remix action
 vibe.trackRemix({
   originalId: 'project-123',
   remixId: 'remix-456',
   remixerId: user.walletAddress,
+  upstreamRef: referralCode,
+});
+
+// Track a share action
+vibe.trackShare({
+  contentId: 'project-123',
+  sharerId: user.walletAddress,
   upstreamRef: referralCode,
 });
 
@@ -45,7 +45,7 @@ export function PublisherIntegrationScreen() {
         className="text-center mb-6"
       >
         <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-3">
-          Content Tracker Integration
+          Content Tracking
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Platforms and creators can add viral rewards to projects in minutes.
@@ -92,23 +92,12 @@ export function PublisherIntegrationScreen() {
           </Card>
 
           {/* 3iAtlas Example */}
-          <Card className="p-4 overflow-hidden bg-slate-950 border-slate-800">
-            <div className="flex items-center gap-3 mb-3 text-xs text-slate-400">
-              <span className="flex items-center gap-1">Copy</span>
-              <span className="flex items-center gap-1">Share on X</span>
-              <span className="flex items-center gap-1">Share on LinkedIn</span>
-              <span className="flex items-center gap-1 text-primary">Remix</span>
-            </div>
-            <h3 className="font-display font-bold text-white text-base mb-3 tracking-wider">
-              3I/ATLAS PROVENANCE TRACKER
-            </h3>
-            <div className="rounded-md overflow-hidden">
-              <img 
-                src={atlasImg} 
-                alt="3iAtlas Provenance Tracker" 
-                className="w-full h-36 object-cover object-top"
-              />
-            </div>
+          <Card className="p-0 overflow-hidden bg-slate-950 border-slate-800">
+            <img 
+              src={atlasImg} 
+              alt="3iAtlas Provenance Tracker" 
+              className="w-full h-44 object-cover object-top"
+            />
           </Card>
         </motion.div>
 
@@ -127,7 +116,7 @@ export function PublisherIntegrationScreen() {
               </div>
               <span className="text-xs text-slate-400 ml-2">vibecard-integration.ts</span>
             </div>
-            <pre className="text-xs md:text-sm text-slate-300 overflow-x-auto">
+            <pre className="text-[10px] md:text-xs text-slate-300 overflow-x-auto">
               <code>{codeSnippet}</code>
             </pre>
           </Card>
