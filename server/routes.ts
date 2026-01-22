@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage, getDemoTreasuryBalance, setDemoTreasuryBalance } from "./storage";
-import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet } from "./lib/circle-wallets";
+import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, resetDemoToTreasury, getAllWalletsWithBalances } from "./lib/circle-wallets";
 import { GATEWAY_CONFIG } from "./lib/x402-gateway";
 
 export async function registerRoutes(
@@ -127,6 +127,43 @@ export async function registerRoutes(
     } catch (error) {
       console.error('Faucet error:', error);
       res.status(500).json({ error: 'Failed to request faucet funds' });
+    }
+  });
+
+  // Get all wallets with balances (for showing user wallets in UI)
+  app.get('/api/wallets', async (req, res) => {
+    try {
+      const wallets = await getAllWalletsWithBalances();
+      res.json({ wallets });
+    } catch (error) {
+      console.error('Get wallets error:', error);
+      res.status(500).json({ error: 'Failed to fetch wallets' });
+    }
+  });
+
+  // Reset demo - transfer all user wallet USDC back to treasury
+  app.post('/api/demo/reset', async (req, res) => {
+    try {
+      console.log('[Demo] Resetting demo - transferring funds back to treasury');
+      const result = await resetDemoToTreasury();
+      
+      if (result.success) {
+        res.json({
+          success: true,
+          message: `Recovered ${result.totalRecovered} USDC to treasury`,
+          transfers: result.transfers,
+          totalRecovered: result.totalRecovered
+        });
+      } else {
+        res.json({
+          success: false,
+          message: 'No funds to recover or transfer failed',
+          transfers: result.transfers
+        });
+      }
+    } catch (error) {
+      console.error('Demo reset error:', error);
+      res.status(500).json({ error: 'Failed to reset demo' });
     }
   });
 

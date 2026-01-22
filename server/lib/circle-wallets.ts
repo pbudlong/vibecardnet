@@ -186,3 +186,164 @@ export async function checkIntegrationStatus(): Promise<{
     arcNetwork: true
   };
 }
+
+export interface WalletWithBalance {
+  id: string;
+  name: string;
+  refId: string;
+  address: string;
+  blockchain: string;
+  usdcBalance: string;
+}
+
+export async function getAllWalletsWithBalances(): Promise<WalletWithBalance[]> {
+  const apiKey = process.env.CIRCLE_API_KEY;
+  if (!apiKey) return [];
+
+  try {
+    const response = await fetch(`${CIRCLE_W3S_API_BASE}/wallets`, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) return [];
+
+    const data = await response.json();
+    const wallets = data.data?.wallets || [];
+    
+    return wallets.map((w: any) => {
+      const usdcBalance = w.balances?.find((b: any) => 
+        b.token?.symbol === 'USDC' || b.token?.name?.includes('USDC')
+      );
+      return {
+        id: w.id,
+        name: w.name || '',
+        refId: w.refId || '',
+        address: w.address,
+        blockchain: w.blockchain,
+        usdcBalance: usdcBalance?.amount || '0'
+      };
+    });
+  } catch (error) {
+    console.error('[Circle] Error fetching all wallets:', error);
+    return [];
+  }
+}
+
+export async function transferUSDC(
+  fromWalletId: string, 
+  toAddress: string, 
+  amount: string,
+  blockchain: string = 'BASE-SEPOLIA'
+): Promise<{ success: boolean; txId?: string; error?: string }> {
+  const apiKey = process.env.CIRCLE_API_KEY;
+  if (!apiKey) {
+    return { success: false, error: 'No API key' };
+  }
+
+  try {
+    // Get USDC token ID for the blockchain
+    const tokenResponse = await fetch(`${CIRCLE_W3S_API_BASE}/tokens?blockchain=${blockchain}`, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!tokenResponse.ok) {
+      return { success: false, error: 'Failed to get token info' };
+    }
+
+    const tokenData = await tokenResponse.json();
+    const usdcToken = tokenData.data?.tokens?.find((t: any) => t.symbol === 'USDC');
+    
+    if (!usdcToken) {
+      return { success: false, error: 'USDC token not found' };
+    }
+
+    console.log(`[Circle] Transferring ${amount} USDC from wallet ${fromWalletId} to ${toAddress}`);
+    
+    const transferResponse = await fetch(`${CIRCLE_W3S_API_BASE}/developer/transactions/transfer`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        idempotencyKey: `transfer-${fromWalletId}-${Date.now()}`,
+        walletId: fromWalletId,
+        tokenId: usdcToken.id,
+        destinationAddress: toAddress,
+        amounts: [amount],
+        feeLevel: 'LOW'
+      })
+    });
+
+    if (!transferResponse.ok) {
+      const errorText = await transferResponse.text();
+      console.error('[Circle] Transfer failed:', transferResponse.status, errorText);
+      return { success: false, error: errorText };
+    }
+
+    const result = await transferResponse.json();
+    console.log('[Circle] Transfer result:', JSON.stringify(result, null, 2));
+    return { success: true, txId: result.data?.id };
+  } catch (error) {
+    console.error('[Circle] Transfer error:', error);
+    return { success: false, error: String(error) };
+  }
+}
+
+export async function resetDemoToTreasury(): Promise<{ 
+  success: boolean; 
+  transfers: Array<{ from: string; amount: string; status: string }>;
+  totalRecovered: string;
+}> {
+  const wallets = await getAllWalletsWithBalances();
+  
+  // Find treasury wallet
+  const treasury = wallets.find(w => 
+    w.refId === 'treasury' || w.name?.toLowerCase().includes('treasury')
+  );
+  
+  if (!treasury) {
+    return { success: false, transfers: [], totalRecovered: '0' };
+  }
+
+  // Find user wallets with balances
+  const userWallets = wallets.filter(w => 
+    w.refId !== 'treasury' && 
+    !w.name?.toLowerCase().includes('treasury') &&
+    parseFloat(w.usdcBalance) > 0
+  );
+
+  const transfers: Array<{ from: string; amount: string; status: string }> = [];
+  let totalRecovered = 0;
+
+  for (const userWallet of userWallets) {
+    const result = await transferUSDC(
+      userWallet.id,
+      treasury.address,
+      userWallet.usdcBalance,
+      userWallet.blockchain
+    );
+    
+    transfers.push({
+      from: userWallet.name || userWallet.refId,
+      amount: userWallet.usdcBalance,
+      status: result.success ? 'success' : 'failed'
+    });
+
+    if (result.success) {
+      totalRecovered += parseFloat(userWallet.usdcBalance);
+    }
+  }
+
+  return {
+    success: transfers.length > 0,
+    transfers,
+    totalRecovered: totalRecovered.toFixed(2)
+  };
+}

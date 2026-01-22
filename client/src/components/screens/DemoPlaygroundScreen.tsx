@@ -118,11 +118,6 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     setTimeout(addNextLog, 600);
   };
 
-  const resetDemo = () => {
-    setLogs(getInitialLogs(integrationStatus));
-    setShowPayouts(false);
-    setTransactionCount(0);
-  };
 
   useEffect(() => {
     if (isActive && integrationStatus) {
@@ -150,6 +145,26 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     },
     onError: () => {
       setLogs(prev => [...prev, { time: "00:00:10", type: "warn", message: "Faucet failed - visit faucet.circle.com" }]);
+    }
+  });
+
+  const resetDemoMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('POST', '/api/demo/reset');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        setLogs(prev => [...prev, { time: "00:00:10", type: "success", message: `Recovered $${data.totalRecovered} USDC to treasury` }]);
+      } else {
+        setLogs(prev => [...prev, { time: "00:00:10", type: "info", message: "No funds to recover from user wallets" }]);
+      }
+      queryClient.invalidateQueries({ queryKey: ['/api/wallet/balance'] });
+      setShowPayouts(false);
+      setTransactionCount(0);
+    },
+    onError: () => {
+      setLogs(prev => [...prev, { time: "00:00:10", type: "warn", message: "Reset failed" }]);
     }
   });
 
@@ -260,11 +275,21 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   size="sm" 
                   variant="outline" 
                   className="w-full text-[10px]"
-                  onClick={resetDemo}
+                  onClick={() => resetDemoMutation.mutate()}
+                  disabled={resetDemoMutation.isPending}
                   data-testid="button-reset-demo"
                 >
-                  <RefreshCw className="h-3 w-3 mr-1" />
-                  Reset Demo
+                  {resetDemoMutation.isPending ? (
+                    <>
+                      <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                      Recovering funds...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="h-3 w-3 mr-1" />
+                      Reset Demo (Recover USDC)
+                    </>
+                  )}
                 </Button>
                 <Button 
                   size="sm" 
