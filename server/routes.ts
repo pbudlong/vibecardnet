@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, getAllWalletsWithBalances, createArcTestnetWallets, generateNewEntitySecret, getTransactionStatus, getArcWallets } from "./lib/circle-wallets";
+import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, getAllWalletsWithBalances, createArcTestnetWallets, generateNewEntitySecret, getTransactionStatus, getArcWallets, getArcUsdcBalanceBaseUnits, transferUSDCExact } from "./lib/circle-wallets";
 import { GATEWAY_CONFIG, executeX402Payment, createViralRewardSplits } from "./lib/x402-gateway";
 
 export async function registerRoutes(
@@ -157,17 +157,33 @@ export async function registerRoutes(
     }
   });
 
-  // Reset demo via x402 - transfer all user wallet USDC back to treasury
+  // Reset demo via x402 - transfer all user wallet USDC back to treasury using EXACT balances
   app.post('/api/demo/reset', async (req, res) => {
     try {
-      console.log('[Demo] Resetting via x402 - transferring REAL funds back to treasury');
+      console.log('[Demo] Resetting via x402 - transferring REAL funds back to treasury (EXACT BALANCE)');
       const { treasury, users } = await getArcWallets();
       
       if (!treasury) {
         return res.status(400).json({ error: 'No Arc treasury wallet found' });
       }
 
-      const usersWithBalance = users.filter(u => parseFloat(u.balance) > 0);
+      // Get EXACT balance in base units for each user wallet
+      // Subtract gas buffer (0.01 USDC = 10000 base units) since USDC is gas on Arc
+      const GAS_BUFFER = BigInt(10000); // 0.01 USDC for gas
+      
+      const usersWithExactBalance = await Promise.all(users.map(async (user) => {
+        const exactBalanceRaw = await getArcUsdcBalanceBaseUnits(user.address);
+        const rawBalance = BigInt(exactBalanceRaw);
+        // Subtract gas buffer, but ensure we don't go negative
+        const transferBalance = rawBalance > GAS_BUFFER ? (rawBalance - GAS_BUFFER).toString() : '0';
+        return {
+          ...user,
+          exactBalance: transferBalance,
+          displayBalance: (Number(transferBalance) / 1_000_000).toFixed(2)
+        };
+      }));
+
+      const usersWithBalance = usersWithExactBalance.filter(u => Number(u.exactBalance) > 0);
       
       if (usersWithBalance.length === 0) {
         return res.json({
@@ -178,47 +194,64 @@ export async function registerRoutes(
         });
       }
 
-      // Use x402 to transfer each user's balance back to treasury
-      const transfers: Array<{ from: string; amount: string; status: string; txId?: string }> = [];
-      let totalRecovered = 0;
+      // Transfer in SMALL CHUNKS ($1 max per transfer) to avoid Arc transfer limit issues
+      const MAX_CHUNK_BASE_UNITS = BigInt(1_000_000); // $1.00 max per transfer
+      const transfers: Array<{ from: string; amount: string; status: string; txId?: string; error?: string }> = [];
+      let totalRecoveredBaseUnits = BigInt(0);
 
       for (const user of usersWithBalance) {
-        console.log(`[x402 Reset] Recovering $${user.balance} from ${user.name}`);
+        let remainingBalance = BigInt(user.exactBalance);
+        console.log(`[x402 Reset] Recovering $${user.displayBalance} from ${user.name} in chunks`);
         
-        const result = await executeX402Payment({
-          totalAmount: user.balance,
-          splits: [{
-            recipient: treasury.address,
-            recipientWalletId: treasury.id,
-            amount: user.balance,
-            role: 'treasury-recovery'
-          }],
-          sourceWalletId: user.id,
-          reason: `Reset: ${user.name} → Treasury`
-        });
+        while (remainingBalance > BigInt(0)) {
+          // Transfer min of remaining balance or max chunk size
+          const chunkAmount = remainingBalance > MAX_CHUNK_BASE_UNITS ? MAX_CHUNK_BASE_UNITS : remainingBalance;
+          const chunkDisplay = (Number(chunkAmount) / 1_000_000).toFixed(2);
+          
+          console.log(`[x402 Reset] Chunk transfer: $${chunkDisplay} from ${user.name}`);
+          
+          const result = await transferUSDCExact(
+            user.id,
+            treasury.address,
+            chunkAmount.toString(),
+            'ARC-TESTNET'
+          );
 
-        if (result.success) {
-          transfers.push({
-            from: user.name,
-            amount: user.balance,
-            status: 'success',
-            txId: result.transfers[0]?.txId
-          });
-          totalRecovered += parseFloat(user.balance);
-        } else {
-          transfers.push({
-            from: user.name,
-            amount: user.balance,
-            status: 'failed'
-          });
+          if (result.success) {
+            totalRecoveredBaseUnits += chunkAmount;
+            remainingBalance -= chunkAmount;
+            
+            // Only record final transfer for this user
+            if (remainingBalance <= BigInt(0)) {
+              transfers.push({
+                from: user.name,
+                amount: user.displayBalance,
+                status: 'success',
+                txId: result.txId
+              });
+            }
+            
+            // Wait for blockchain confirmation between chunks
+            await new Promise(resolve => setTimeout(resolve, 3000));
+          } else {
+            transfers.push({
+              from: user.name,
+              amount: user.displayBalance,
+              status: 'partial',
+              error: result.error
+            });
+            break; // Stop trying for this user
+          }
         }
       }
 
+      const totalRecovered = (Number(totalRecoveredBaseUnits) / 1_000_000).toFixed(2);
+
       res.json({
         success: transfers.some(t => t.status === 'success'),
-        message: `x402 recovered $${totalRecovered.toFixed(2)} USDC to treasury`,
+        message: `x402 recovered $${totalRecovered} USDC to treasury (exact balance)`,
         transfers,
-        totalRecovered: totalRecovered.toFixed(2),
+        totalRecovered,
         x402Version: 2
       });
     } catch (error) {

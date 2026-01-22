@@ -62,6 +62,38 @@ export async function getArcUsdcBalance(address: string): Promise<string> {
   }
 }
 
+// Get exact balance in base units (no rounding) for precise transfers
+export async function getArcUsdcBalanceBaseUnits(address: string): Promise<string> {
+  try {
+    const data = '0x70a08231' + address.slice(2).padStart(64, '0');
+    
+    const response = await fetch(ARC_TESTNET_RPC, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'eth_call',
+        params: [
+          { to: ARC_USDC_CONTRACT, data },
+          'latest'
+        ]
+      })
+    });
+
+    const result = await response.json();
+    if (result.result) {
+      // Return exact base units as string (no conversion loss)
+      const balanceWei = BigInt(result.result);
+      return balanceWei.toString();
+    }
+    return '0';
+  } catch (error) {
+    console.error('[Arc RPC] Error fetching exact balance:', error);
+    return '0';
+  }
+}
+
 // Initialize Circle SDK client (lazy loaded)
 let circleClient: ReturnType<typeof initiateDeveloperControlledWalletsClient> | null = null;
 
@@ -511,6 +543,44 @@ export async function transferUSDC(
       contractAddress: usdcContract,
       abiFunctionSignature: 'transfer(address,uint256)',
       abiParameters: [toAddress, amountInBaseUnits],
+      fee: { type: 'level', config: { feeLevel: 'MEDIUM' } }
+    });
+
+    console.log('[Circle SDK] Transfer result:', JSON.stringify(result.data, null, 2));
+    return { success: true, txId: result.data?.id };
+  } catch (error: any) {
+    console.error('[Circle SDK] Transfer error:', error?.message || error);
+    return { success: false, error: error?.message || String(error) };
+  }
+}
+
+// Transfer using exact base units (no rounding) - use for full balance transfers
+export async function transferUSDCExact(
+  fromWalletId: string, 
+  toAddress: string, 
+  amountBaseUnits: string,
+  blockchain: string = 'ARC-TESTNET'
+): Promise<{ success: boolean; txId?: string; error?: string }> {
+  const client = getCircleClient();
+  
+  if (!client) {
+    return { success: false, error: 'Circle SDK not configured' };
+  }
+
+  const usdcContract = USDC_CONTRACTS[blockchain];
+  if (!usdcContract) {
+    return { success: false, error: `USDC contract not configured for ${blockchain}` };
+  }
+
+  const displayAmount = (Number(amountBaseUnits) / 1_000_000).toFixed(2);
+  console.log(`[Circle SDK] Transferring EXACT ${amountBaseUnits} base units ($${displayAmount}) from ${fromWalletId} to ${toAddress}`);
+
+  try {
+    const result = await client.createContractExecutionTransaction({
+      walletId: fromWalletId,
+      contractAddress: usdcContract,
+      abiFunctionSignature: 'transfer(address,uint256)',
+      abiParameters: [toAddress, amountBaseUnits],
       fee: { type: 'level', config: { feeLevel: 'MEDIUM' } }
     });
 
