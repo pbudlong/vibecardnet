@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Eye, GitBranch, ExternalLink } from "lucide-react";
+import { Eye, GitBranch } from "lucide-react";
+import { useState, useEffect } from "react";
 import andromedaImg from "@assets/Screen_Shot_2026-01-21_at_3.01.09_PM_1769047486512.png";
 import atlasImg from "@assets/Screen_Shot_2026-01-21_at_5.53.22_PM_1769047494023.png";
+import mattProfileImg from "@assets/Screen_Shot_2026-01-21_at_6.31.11_PM_1769049114232.png";
 
 const codeSnippet = `// Initialize VibeCard for your project
 import { VibeCard } from '@vibecard/sdk';
@@ -34,6 +36,19 @@ vibe.trackConversion({
 });`;
 
 export function PublisherIntegrationScreen() {
+  const [highlightPhase, setHighlightPhase] = useState<'remix' | 'share' | 'pause'>('remix');
+  
+  useEffect(() => {
+    const cycle = () => {
+      setHighlightPhase('remix');
+      setTimeout(() => setHighlightPhase('share'), 2000);
+      setTimeout(() => setHighlightPhase('pause'), 4000);
+    };
+    cycle();
+    const interval = setInterval(cycle, 7000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="h-full w-full flex flex-col items-center justify-start px-8 py-6 overflow-y-auto">
       <motion.div
@@ -60,15 +75,21 @@ export function PublisherIntegrationScreen() {
         >
           {/* Andromeda Example */}
           <Card className="p-4 overflow-hidden">
-            <div className="mb-3">
-              <h3 className="font-display font-bold text-foreground text-base">Solar System Visualization</h3>
-              <p className="text-xs text-muted-foreground">Interactive 3D solar system visualization</p>
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h3 className="font-display font-bold text-foreground text-base">Solar System Visualization</h3>
+                <p className="text-xs text-muted-foreground">Interactive 3D solar system visualization</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">Created by</span>
+                <img src={mattProfileImg} alt="Matt" className="h-6 rounded-full" />
+              </div>
             </div>
             <div className="flex items-center gap-2 mb-3">
-              <Button size="sm" variant="outline" className="text-xs h-7 px-3 text-orange-500 border-orange-500">
+              <Button size="sm" variant="outline" className="text-xs h-8 px-4 text-orange-500 border-orange-500">
                 View App
               </Button>
-              <Button size="sm" variant="outline" className="text-xs h-7 px-3 ring-2 ring-primary ring-offset-2 ring-offset-background animate-pulse">
+              <Button size="sm" variant="outline" className={`text-xs h-8 px-4 transition-all duration-300 ${highlightPhase === 'remix' ? 'ring-2 ring-red-500 ring-offset-2 ring-offset-background' : ''}`}>
                 Remix Template
               </Button>
               <div className="flex items-center gap-3 ml-auto text-xs text-muted-foreground">
@@ -97,7 +118,7 @@ export function PublisherIntegrationScreen() {
               className="w-full h-60 object-cover object-top"
             />
             {/* Highlight overlay for Share on X button */}
-            <div className="absolute top-[6px] left-[85px] w-[75px] h-[22px] rounded-sm ring-2 ring-primary animate-pulse pointer-events-none" />
+            <div className={`absolute top-[5px] left-[72px] w-[82px] h-[24px] rounded-sm transition-all duration-300 pointer-events-none ${highlightPhase === 'share' ? 'ring-2 ring-red-500' : 'ring-0'}`} />
           </Card>
         </motion.div>
 
