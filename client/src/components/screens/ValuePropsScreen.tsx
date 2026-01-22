@@ -144,7 +144,7 @@ export function ValuePropsScreen() {
           className="flex-1 flex flex-col items-center"
         >
           <h2 className="font-display text-xl font-bold text-foreground mb-3">
-            ICP Flywheel
+            Beachhead ICP Flywheel
           </h2>
           
           <div className="relative flex flex-col items-center gap-1">
@@ -204,7 +204,7 @@ export function ValuePropsScreen() {
             <Card className="px-3 py-2 bg-primary/10 border-primary text-center w-64">
               <div className="flex items-center justify-center gap-2">
                 <RefreshCw className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs font-medium text-primary">Platform grows, cycle accelerates</span>
+                <span className="text-xs font-medium text-primary">Platform grows, funds more rewards, cycle accelerates, more platforms and creators join</span>
               </div>
             </Card>
           </div>
