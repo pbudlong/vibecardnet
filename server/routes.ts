@@ -172,6 +172,35 @@ export async function registerRoutes(
     }
   });
 
+  // Update settings (conversion value, decay rate)
+  app.post("/api/demo/settings", async (req: Request, res: Response) => {
+    try {
+      const { conversionValue, decayRate } = req.body;
+      
+      if (conversionValue !== undefined) {
+        viralTrackingService.setConversionValue(conversionValue);
+      }
+      if (decayRate !== undefined) {
+        viralTrackingService.setDecayFactor(decayRate);
+      }
+      
+      const settings = viralTrackingService.getSettings();
+      res.json({ success: true, settings });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  // Get current settings
+  app.get("/api/demo/settings", async (req: Request, res: Response) => {
+    try {
+      const settings = viralTrackingService.getSettings();
+      res.json({ success: true, settings });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
   // Get all viral chains
   app.get("/api/demo/chains", async (req: Request, res: Response) => {
     try {

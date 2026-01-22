@@ -34,6 +34,25 @@ class ViralTrackingService {
   private decayFactor = 0.50; // Each hop gets 50% of previous
   private converterBonus = 0.10;
 
+  setConversionValue(value: number): void {
+    this.conversionValue = Math.max(5, Math.min(100, value));
+    console.log(`💰 Conversion value updated to $${this.conversionValue}`);
+  }
+
+  setDecayFactor(value: number): void {
+    this.decayFactor = Math.max(0.3, Math.min(0.7, value));
+    console.log(`📉 Decay factor updated to ${this.decayFactor}`);
+  }
+
+  getSettings(): { conversionValue: number; decayFactor: number; creatorShare: number; converterBonus: number } {
+    return {
+      conversionValue: this.conversionValue,
+      decayFactor: this.decayFactor,
+      creatorShare: this.creatorShare,
+      converterBonus: this.converterBonus,
+    };
+  }
+
   createContent(creatorName: string, walletAddress?: string): ViralAction {
     const contentId = `content-${Date.now()}`;
     const action: ViralAction = {
