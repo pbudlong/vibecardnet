@@ -173,7 +173,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   const walletAddress = walletBalance?.address;
 
   return (
-    <div className="h-full flex flex-col items-center justify-start py-6 px-8 overflow-hidden">
+    <div className="h-full flex flex-col items-center justify-start py-6 px-8 overflow-y-auto">
       <motion.h2
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -356,7 +356,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
           </div>
 
           <div className="flex flex-col gap-2 w-1/2">
-            <Card className="flex-1 p-3 bg-zinc-950 border-zinc-800" data-testid="card-terminal">
+            <Card className="p-3 bg-zinc-950 border-zinc-800" data-testid="card-terminal">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1">
@@ -370,7 +370,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   LIVE
                 </Badge>
               </div>
-              <div className="h-40 overflow-y-auto font-mono text-[10px] space-y-1" data-testid="logs-container">
+              <div className="min-h-[180px] max-h-[220px] overflow-y-auto font-mono text-[10px] space-y-1" data-testid="logs-container">
                 {logs.map((log, i) => (
                   <motion.div
                     key={i}
