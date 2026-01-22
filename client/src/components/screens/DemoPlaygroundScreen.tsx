@@ -269,7 +269,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                 <Button 
                   size="sm" 
                   variant="outline" 
-                  className="w-full text-[10px] border-sky-400/50 text-sky-400 hover:bg-sky-400/10"
+                  className="w-full text-[10px] border-sky-400/50 text-sky-400"
                   onClick={() => fundTreasuryMutation.mutate()}
                   disabled={fundTreasuryMutation.isPending || isTreasuryFunded}
                   data-testid="button-fund-treasury"

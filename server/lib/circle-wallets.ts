@@ -45,7 +45,15 @@ export async function getDeveloperWalletBalance(): Promise<DeveloperWallet | nul
     console.log('[Circle] Wallets response:', JSON.stringify(data, null, 2));
     
     if (data.data?.wallets && data.data.wallets.length > 0) {
-      const wallet = data.data.wallets[0];
+      const wallets = data.data.wallets;
+      
+      const treasuryWallet = wallets.find((w: any) => 
+        w.refId === 'treasury' || w.name?.toLowerCase().includes('treasury')
+      );
+      
+      const wallet = treasuryWallet || wallets[0];
+      console.log('[Circle] Selected wallet:', wallet.name || wallet.refId, wallet.address);
+      
       const usdcBalance = wallet.balances?.find((b: any) => 
         b.token?.symbol === 'USDC' || b.token?.name?.includes('USDC')
       );
