@@ -12,9 +12,9 @@ interface DemoPlaygroundScreenProps {
 const initialLogs = [
   { time: "00:00:01", type: "info", message: "Initializing VibeCard Demo Environment..." },
   { time: "00:00:02", type: "info", message: "Checking integrations..." },
-  { time: "00:00:02", type: "warn", message: "Circle Developer Wallet: Not configured" },
-  { time: "00:00:02", type: "warn", message: "Circle Non-Custodial Wallets: Not configured" },
+  { time: "00:00:02", type: "warn", message: "Circle Wallets: Not configured" },
   { time: "00:00:02", type: "warn", message: "x402 Batching SDK: Not configured" },
+  { time: "00:00:02", type: "warn", message: "Viral Tracking: Pending (requires wallets + x402)" },
   { time: "00:00:03", type: "info", message: "Waiting for integration setup..." },
 ];
 
@@ -111,15 +111,10 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                 <span className="text-xs font-medium text-foreground">Integration Status</span>
               </div>
               <div className="space-y-2">
-                <div className="flex items-center gap-2" data-testid="status-circle-dev-wallet">
-                  <Clock className="h-3 w-3 text-yellow-500" />
-                  <Wallet className="h-3 w-3 text-sky-400/50" />
-                  <span className="text-[10px] text-muted-foreground">Circle Developer Wallet</span>
-                </div>
                 <div className="flex items-center gap-2" data-testid="status-circle-wallets">
                   <Clock className="h-3 w-3 text-yellow-500" />
-                  <Circle className="h-3 w-3 text-sky-400/50" />
-                  <span className="text-[10px] text-muted-foreground">Circle Non-Custodial Wallets</span>
+                  <Wallet className="h-3 w-3 text-sky-400/50" />
+                  <span className="text-[10px] text-muted-foreground">Circle Wallets</span>
                 </div>
                 <div className="flex items-center gap-2" data-testid="status-x402">
                   <Clock className="h-3 w-3 text-yellow-500" />
@@ -130,6 +125,11 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   <Clock className="h-3 w-3 text-yellow-500" />
                   <Zap className="h-3 w-3 text-emerald-500/50" />
                   <span className="text-[10px] text-muted-foreground">Arc Network</span>
+                </div>
+                <div className="flex items-center gap-2" data-testid="status-viral-tracking">
+                  <Clock className="h-3 w-3 text-yellow-500" />
+                  <ArrowDown className="h-3 w-3 text-emerald-500/50" />
+                  <span className="text-[10px] text-muted-foreground">Viral Tracking</span>
                 </div>
               </div>
             </Card>
