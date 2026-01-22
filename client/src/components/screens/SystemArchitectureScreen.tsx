@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { ArrowRight, ArrowDown, CreditCard } from "lucide-react";
 import { SiStripe } from "react-icons/si";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 export function SystemArchitectureScreen() {
   return (
@@ -62,14 +61,8 @@ export function SystemArchitectureScreen() {
             className="flex-1 max-w-xl"
           >
             <div className="relative">
-              <Badge 
-                variant="outline" 
-                className="absolute -top-2 left-1/2 -translate-x-1/2 text-[9px] bg-background border-primary/50 text-primary whitespace-nowrap z-10 px-2 py-0.5"
-              >
-                ACOA Hackathon Build Scope
-              </Badge>
               <Card className="p-4 border-2 border-primary bg-primary/5 font-mono text-[9px] leading-tight">
-                <div className="text-center text-primary font-bold mb-2 text-[10px]">VIBECARD ONCHAIN CORE</div>
+                <div className="text-center text-primary font-bold mb-2 text-[10px]">VibeCard Onchain Core — Build Scope for ACOA Hackathon</div>
                 
                 {/* AI Creator's App */}
                 <div className="flex justify-center mb-1">
