@@ -96,7 +96,7 @@ export function PublisherIntegrationScreen() {
             <img 
               src={atlasImg} 
               alt="3iAtlas Provenance Tracker" 
-              className="w-full h-44 object-cover object-top"
+              className="w-full h-52 object-cover object-top"
             />
           </Card>
         </motion.div>
@@ -116,7 +116,7 @@ export function PublisherIntegrationScreen() {
               </div>
               <span className="text-xs text-slate-400 ml-2">vibecard-integration.ts</span>
             </div>
-            <pre className="text-[10px] md:text-xs text-slate-300 overflow-x-auto">
+            <pre className="text-[9px] md:text-[11px] text-slate-300 overflow-x-auto">
               <code>{codeSnippet}</code>
             </pre>
           </Card>
