@@ -20,14 +20,12 @@ vibe.trackRemix({
   remixerId: user.walletAddress,
   upstreamRef: referralCode,
 });
-
 // Track a share action
 vibe.trackShare({
   contentId: 'project-123',
   sharerId: user.walletAddress,
   upstreamRef: referralCode,
 });
-
 // Track a conversion (triggers x402 payout)
 vibe.trackConversion({
   contentId: 'project-123',
@@ -96,7 +94,7 @@ export function PublisherIntegrationScreen() {
             <img 
               src={atlasImg} 
               alt="3iAtlas Provenance Tracker" 
-              className="w-full h-52 object-cover object-top"
+              className="w-full h-60 object-cover object-top"
             />
           </Card>
         </motion.div>
