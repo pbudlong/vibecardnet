@@ -266,6 +266,9 @@ export async function transferUSDC(
   console.log(`[Circle] Transferring ${amount} USDC from wallet ${fromWalletId} to ${toAddress}`);
   console.log(`[Circle] Using USDC contract: ${usdcContract} (${amountInBaseUnits} base units)`);
 
+  // Generate a UUID v4 for idempotency
+  const idempotencyKey = crypto.randomUUID();
+
   try {
     // Use contract execution to call ERC-20 transfer function
     const transferResponse = await fetch(`${CIRCLE_W3S_API_BASE}/developer/transactions/contractExecution`, {
@@ -275,7 +278,7 @@ export async function transferUSDC(
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        idempotencyKey: `transfer-${fromWalletId}-${Date.now()}`,
+        idempotencyKey,
         entitySecretCiphertext: entitySecret,
         walletId: fromWalletId,
         contractAddress: usdcContract,
