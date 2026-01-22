@@ -31,7 +31,7 @@ export function ValuePropsScreen() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-4"
+        className="text-center mb-8"
       >
         <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-3">
           The AI-era Solution
