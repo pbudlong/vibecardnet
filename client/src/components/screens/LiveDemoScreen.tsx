@@ -563,7 +563,7 @@ export function LiveDemoScreen() {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Step 1: Button */}
-              <div className={`flex flex-col items-center justify-center p-4 rounded-lg border transition-all ${demoState.isLoading || demoState.currentStep >= 1 ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-white/5 border-white/10'}`}>
+              <div className="flex flex-col items-center justify-center p-4 rounded-lg border transition-all bg-white/5 border-white/10">
                 <div className="text-xs text-white/60 mb-2 flex items-center gap-1">
                   <span className="w-4 h-4 rounded-full bg-white/10 text-[10px] flex items-center justify-center text-white">1</span>
                   User Action
@@ -635,7 +635,7 @@ export function LiveDemoScreen() {
                     <div><span className="text-emerald-400">success</span>: <span className="text-cyan-400">true</span></div>
                     <div><span className="text-emerald-400">actionId</span>: <span className="text-amber-300">"{demoState.participants[2]?.action?.id?.slice(0, 8) || 'share-001'}"</span></div>
                     <div><span className="text-emerald-400">chain</span>: <span className="text-white">[Matt P, Pete, Manny]</span></div>
-                    <div><span className="text-emerald-400">wallet</span>: <span className="text-cyan-400 text-[10px]">{demoState.participants[2]?.wallet?.address || '0x...'}</span></div>
+                    <div><span className="text-emerald-400">sharerWallet</span>: <span className="text-cyan-400 text-[10px]">{demoState.participants[2]?.wallet?.address || '0x...'}</span></div>
                   </div>
                 ) : (
                   <div className="text-white/30 italic">Waiting...</div>
