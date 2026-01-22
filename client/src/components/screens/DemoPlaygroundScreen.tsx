@@ -122,7 +122,9 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       } else {
         setLogs(prev => [...prev, { time: "00:00:06", type: "warn", message: data.message || 'Transfer failed' }]);
       }
+      // Force immediate refresh of wallet balance
       queryClient.invalidateQueries({ queryKey: ['/api/wallet/balance'] });
+      queryClient.refetchQueries({ queryKey: ['/api/wallet/balance'] });
       setIsRunning(false);
     },
     onError: (error) => {
@@ -190,7 +192,9 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       } else {
         setLogs(prev => [...prev, { time: "00:00:10", type: "info", message: "No funds to recover from user wallets" }]);
       }
+      // Force immediate refresh of wallet balance
       queryClient.invalidateQueries({ queryKey: ['/api/wallet/balance'] });
+      queryClient.refetchQueries({ queryKey: ['/api/wallet/balance'] });
       setShowPayouts(false);
       setTransactionCount(0);
     },
