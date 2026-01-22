@@ -307,7 +307,7 @@ export async function transferUSDC(
   }
 }
 
-export async function runTestTransaction(): Promise<{
+export async function runTestTransaction(cachedTreasuryBalance?: string): Promise<{
   success: boolean;
   transfers: Array<{ to: string; amount: string; status: string; txId?: string }>;
   totalSent: string;
@@ -325,10 +325,16 @@ export async function runTestTransaction(): Promise<{
     return { success: false, transfers: [], totalSent: '0', newTreasuryBalance: '0' };
   }
 
-  const treasuryBalance = parseFloat(treasury.usdcBalance);
+  // Use cached balance if Circle API returns 0 (balance not included in wallet list)
+  let treasuryBalance = parseFloat(treasury.usdcBalance);
+  if (treasuryBalance === 0 && cachedTreasuryBalance) {
+    treasuryBalance = parseFloat(cachedTreasuryBalance);
+    console.log('[Demo] Using cached treasury balance for transaction:', treasuryBalance);
+  }
+  
   if (treasuryBalance < 1) {
     console.log('[Demo] Treasury balance too low:', treasuryBalance);
-    return { success: false, transfers: [], totalSent: '0', newTreasuryBalance: treasury.usdcBalance };
+    return { success: false, transfers: [], totalSent: '0', newTreasuryBalance: String(treasuryBalance) };
   }
 
   // Find user wallets (non-treasury)

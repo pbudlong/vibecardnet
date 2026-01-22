@@ -145,7 +145,8 @@ export async function registerRoutes(
   app.post('/api/demo/test-transaction', async (req, res) => {
     try {
       console.log('[Demo] Running test transaction - sending rewards to users');
-      const result = await runTestTransaction();
+      const cachedBalance = getDemoTreasuryBalance();
+      const result = await runTestTransaction(cachedBalance);
       
       if (result.success) {
         // Update cached balance
