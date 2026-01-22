@@ -214,6 +214,89 @@ export function LiveDemoScreen() {
 
   const projectedReach = calculateProjectedReach(settings.kFactor);
 
+  // Viral spread simulation state
+  interface ViralNode {
+    id: string;
+    x: number;
+    y: number;
+    parentX: number;
+    parentY: number;
+    active: boolean;
+    reward: string;
+  }
+  const [viralSpreadActive, setViralSpreadActive] = useState(false);
+  const [viralNodes, setViralNodes] = useState<ViralNode[]>([]);
+
+  const startViralSpread = () => {
+    setViralSpreadActive(true);
+    setViralNodes([]);
+    
+    // Generate tree of nodes based on K-factor
+    const centerX = 160;
+    const centerY = 160;
+    const nodeQueue: { x: number; y: number; depth: number; angle: number }[] = [];
+    const generatedNodes: ViralNode[] = [];
+    
+    // First generation from center
+    const numChildren = Math.round(settings.kFactor * 2);
+    for (let i = 0; i < numChildren; i++) {
+      const angle = (i / numChildren) * Math.PI * 2;
+      const radius = 80;
+      const x = centerX + Math.cos(angle) * radius;
+      const y = centerY + Math.sin(angle) * radius;
+      nodeQueue.push({ x, y, depth: 1, angle });
+      generatedNodes.push({
+        id: `node-${generatedNodes.length}`,
+        x, y,
+        parentX: centerX,
+        parentY: centerY,
+        active: false,
+        reward: (settings.conversionValue * 0.4 * Math.pow(settings.decayRate, 0)).toFixed(2),
+      });
+    }
+    
+    // Second and third generations
+    let processed = 0;
+    while (processed < nodeQueue.length && generatedNodes.length < 20) {
+      const parent = nodeQueue[processed];
+      if (parent.depth < 3) {
+        const childCount = Math.max(1, Math.round(settings.kFactor));
+        for (let i = 0; i < childCount && generatedNodes.length < 20; i++) {
+          const spreadAngle = parent.angle + (i - (childCount - 1) / 2) * 0.5;
+          const radius = 50;
+          const x = parent.x + Math.cos(spreadAngle) * radius;
+          const y = parent.y + Math.sin(spreadAngle) * radius;
+          if (x > 10 && x < 310 && y > 10 && y < 310) {
+            nodeQueue.push({ x, y, depth: parent.depth + 1, angle: spreadAngle });
+            generatedNodes.push({
+              id: `node-${generatedNodes.length}`,
+              x, y,
+              parentX: parent.x,
+              parentY: parent.y,
+              active: false,
+              reward: (settings.conversionValue * 0.4 * Math.pow(settings.decayRate, parent.depth)).toFixed(2),
+            });
+          }
+        }
+      }
+      processed++;
+    }
+    
+    setViralNodes(generatedNodes);
+    
+    // Animate nodes appearing one by one
+    generatedNodes.forEach((_, index) => {
+      setTimeout(() => {
+        setViralNodes(prev => prev.map((n, i) => i === index ? { ...n, active: true } : n));
+      }, (index + 1) * 300);
+    });
+    
+    // Stop animation after all nodes are active
+    setTimeout(() => {
+      setViralSpreadActive(false);
+    }, (generatedNodes.length + 1) * 300);
+  };
+
   useEffect(() => {
     const syncSettings = async () => {
       try {
@@ -414,39 +497,53 @@ export function LiveDemoScreen() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <h1 className="font-display text-3xl font-bold text-foreground mb-2">VibeCard Live Demo</h1>
-          <p className="text-muted-foreground">Viral Rewards Network powered by Circle USDC on Base Sepolia</p>
-          <Badge variant="outline" className="mt-2 border-cyan-500/50 text-cyan-400">
-            Testnet Mode
-          </Badge>
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-3">VibeCard Live Demo (Testnet)</h1>
+          <p className="text-white/70">Viral Rewards Network powered by Circle USDC on Base Sepolia</p>
         </motion.div>
 
-        {/* Tracking Code Demo - 3 Column Flow */}
+        {/* SECTION 1: Tracking Mechanics */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="p-4 bg-[#0c0c14] border-border/30">
-            <div className="flex items-center gap-2 mb-4">
-              <div className={`w-2 h-2 rounded-full ${demoState.isLoading ? 'bg-amber-500 animate-pulse' : demoState.currentStep >= 2 ? 'bg-emerald-500' : 'bg-slate-500'}`} />
-              <span className="text-xs text-muted-foreground uppercase tracking-wider">SDK Integration Demo</span>
+          <Card className="p-5 bg-[#0c0c14] border-white/10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${demoState.isLoading ? 'bg-amber-500 animate-pulse' : demoState.currentStep >= 2 ? 'bg-emerald-500' : 'bg-white/30'}`} />
+                <span className="text-sm font-semibold text-white uppercase tracking-wider">Step 1: Tracking Mechanics</span>
+              </div>
               {demoState.currentStep >= 2 && (
-                <Badge className="ml-auto bg-emerald-500/20 text-emerald-400 border-emerald-500/50 text-xs">
-                  trackShare() Complete
+                <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/50 text-xs">
+                  Rewards Triggered
                 </Badge>
               )}
+            </div>
+
+            {/* Pre-completed steps */}
+            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <span className="text-white/80 text-sm">Create</span>
+                <span className="text-white/50 text-xs">(Matt P)</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <span className="text-white/80 text-sm">Remix</span>
+                <span className="text-white/50 text-xs">(Pete)</span>
+              </div>
+              <span className="text-white/30 text-xs ml-2">← Pre-completed for demo</span>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Step 1: Button */}
-              <div className={`flex flex-col items-center justify-center p-4 rounded-lg border transition-all ${demoState.isLoading ? 'bg-amber-500/10 border-amber-500/50' : demoState.currentStep >= 2 ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-slate-800/30 border-border/30'}`}>
-                <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-                  <span className="w-4 h-4 rounded-full bg-slate-700 text-[10px] flex items-center justify-center">1</span>
+              <div className={`flex flex-col items-center justify-center p-4 rounded-lg border transition-all ${demoState.isLoading ? 'bg-amber-500/10 border-amber-500/50' : demoState.currentStep >= 2 ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-white/5 border-white/10'}`}>
+                <div className="text-xs text-white/60 mb-2 flex items-center gap-1">
+                  <span className="w-4 h-4 rounded-full bg-white/10 text-[10px] flex items-center justify-center text-white">1</span>
                   User Action
                 </div>
                 <Button 
-                  className="gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
+                  className="gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-white"
                   onClick={() => runFullShareDemo()}
                   disabled={demoState.isLoading}
                   data-testid="button-share-demo"
@@ -460,42 +557,42 @@ export function LiveDemoScreen() {
                   )}
                   {demoState.currentStep >= 2 ? 'Shared!' : 'Share & Earn'}
                 </Button>
-                <p className="text-[10px] text-muted-foreground mt-2 text-center">Pete's Remix</p>
+                <p className="text-[10px] text-white/50 mt-2 text-center">Manny shares Pete's remix</p>
               </div>
               
               {/* Step 2: Code Executing */}
-              <div className={`font-mono text-[11px] rounded-lg p-3 border transition-all ${demoState.isLoading && demoState.currentStep === 1 ? 'bg-amber-500/10 border-amber-500/50' : demoState.currentStep >= 2 ? 'bg-emerald-500/5 border-emerald-500/30' : 'bg-slate-900/80 border-border/30'}`}>
-                <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-                  <span className="w-4 h-4 rounded-full bg-slate-700 text-[10px] flex items-center justify-center">2</span>
+              <div className={`font-mono text-[11px] rounded-lg p-3 border transition-all ${demoState.isLoading ? 'bg-amber-500/10 border-amber-500/50' : demoState.currentStep >= 2 ? 'bg-emerald-500/5 border-emerald-500/30' : 'bg-black/50 border-white/10'}`}>
+                <div className="text-xs text-white/60 mb-2 flex items-center gap-1">
+                  <span className="w-4 h-4 rounded-full bg-white/10 text-[10px] flex items-center justify-center text-white">2</span>
                   SDK Call
-                  {demoState.isLoading && demoState.currentStep === 1 && (
+                  {demoState.isLoading && (
                     <Loader2 className="h-3 w-3 animate-spin ml-auto text-amber-400" />
                   )}
                 </div>
-                <div className={demoState.isLoading && demoState.currentStep === 1 ? 'animate-pulse' : ''}>
+                <div className={demoState.isLoading ? 'animate-pulse' : ''}>
                   <span className="text-purple-400">await</span>
                   <span className="text-cyan-400"> vibecard</span>
-                  <span className="text-foreground">.</span>
+                  <span className="text-white">.</span>
                   <span className="text-yellow-400">trackShare</span>
-                  <span className="text-foreground">({"{"}</span>
+                  <span className="text-white">({"{"}</span>
                 </div>
                 <div className="pl-2">
                   <span className="text-emerald-400">contentId</span>
-                  <span className="text-foreground">: </span>
+                  <span className="text-white">: </span>
                   <span className="text-amber-300">"remix-001"</span>
                 </div>
                 <div className="pl-2">
                   <span className="text-emerald-400">sharerId</span>
-                  <span className="text-foreground">: </span>
+                  <span className="text-white">: </span>
                   <span className="text-amber-300">"manny"</span>
                 </div>
-                <div><span className="text-foreground">{"}"})</span></div>
+                <div><span className="text-white">{"}"})</span></div>
               </div>
 
               {/* Step 3: Result */}
-              <div className={`font-mono text-[11px] rounded-lg p-3 border transition-all ${demoState.currentStep >= 2 ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-slate-900/80 border-border/30'}`}>
-                <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-                  <span className="w-4 h-4 rounded-full bg-slate-700 text-[10px] flex items-center justify-center">3</span>
+              <div className={`font-mono text-[11px] rounded-lg p-3 border transition-all ${demoState.currentStep >= 2 ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-black/50 border-white/10'}`}>
+                <div className="text-xs text-white/60 mb-2 flex items-center gap-1">
+                  <span className="w-4 h-4 rounded-full bg-white/10 text-[10px] flex items-center justify-center text-white">3</span>
                   Response
                   {demoState.currentStep >= 2 && (
                     <CheckCircle className="h-3 w-3 ml-auto text-emerald-400" />
@@ -505,172 +602,161 @@ export function LiveDemoScreen() {
                   <div className="space-y-1">
                     <div><span className="text-emerald-400">success</span>: <span className="text-cyan-400">true</span></div>
                     <div><span className="text-emerald-400">actionId</span>: <span className="text-amber-300">"{demoState.participants[2]?.action?.id?.slice(0, 8) || 'share-001'}"</span></div>
-                    <div><span className="text-emerald-400">chain</span>: <span className="text-foreground">[Matt P, Pete, Manny]</span></div>
+                    <div><span className="text-emerald-400">chain</span>: <span className="text-white">[Matt P, Pete, Manny]</span></div>
                     <div><span className="text-emerald-400">wallet</span>: <span className="text-cyan-400">{demoState.participants[2]?.wallet?.address?.slice(0, 10) || '0x...'}...</span></div>
                   </div>
                 ) : (
-                  <div className="text-slate-500 italic">Waiting for action...</div>
+                  <div className="text-white/30 italic">Waiting for action...</div>
                 )}
               </div>
             </div>
-          </Card>
-        </motion.div>
 
-        {/* Visualization Section with Initialize Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-        >
-          <Card className="p-4 bg-[#0c0c14] border-border/30">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                <Banknote className="h-4 w-4 text-primary" />
-                USDC Flow Visualization
-              </h3>
-              <div className="flex items-center gap-3">
-                {stats.totalDistributed > 0 && (
-                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/50">
-                    Total: ${stats.totalDistributed.toFixed(2)} USDC
-                  </Badge>
-                )}
-                {!demoState.initialized ? (
-                  <Button onClick={initDemo} disabled={demoState.isLoading} className="gap-2" data-testid="button-init-demo">
-                    {demoState.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-                    Initialize Demo
-                  </Button>
-                ) : (
-                  <Button variant="outline" onClick={resetDemo} disabled={demoState.isLoading} className="gap-2" data-testid="button-reset-demo">
-                    <RotateCcw className="h-4 w-4" />
-                    Reset
-                  </Button>
-                )}
-              </div>
-            </div>
-            
-            <FlowVisualization
-              treasury={demoState.treasury}
-              participants={demoState.participants}
-              splits={demoState.latestSplits}
-              isAnimating={isAnimating}
-            />
-
-            {demoState.initialized && (
-              <div className="mt-4 pt-4 border-t border-border/30">
-                <div className="text-xs text-center text-muted-foreground mb-3">
-                  Treasury: <span className="text-cyan-400 font-mono">{demoState.treasury?.address.slice(0, 8)}...</span>
-                </div>
-                <div className="flex justify-center gap-3 flex-wrap">
-                  {DEMO_PARTICIPANTS.map((p, index) => (
-                    <Button
-                      key={p.name}
-                      onClick={() => runStep(index)}
-                      disabled={demoState.isLoading || demoState.currentStep >= index || (index > 0 && demoState.currentStep < index - 1)}
-                      variant={demoState.currentStep >= index ? "secondary" : "default"}
-                      className="gap-2"
-                      style={{ borderColor: demoState.currentStep >= index ? p.color : undefined }}
-                      data-testid={`button-step-${index}`}
-                    >
-                      {demoState.isLoading && demoState.currentStep === index - 1 ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : demoState.currentStep >= index ? (
-                        <CheckCircle className="h-4 w-4" style={{ color: p.color }} />
-                      ) : (
-                        <Zap className="h-4 w-4" />
-                      )}
-                      {p.name} ({p.role})
-                    </Button>
+            {/* Reward Distribution appears after share */}
+            {demoState.latestSplits.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <h4 className="text-sm font-semibold text-white mb-3">Reward Distribution</h4>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  {demoState.latestSplits.map(split => (
+                    <div key={split.recipient} className="text-center">
+                      <p className="text-xs text-white/50">{split.role}</p>
+                      <p className="font-semibold text-sm text-white">{split.recipient}</p>
+                      <p className="font-mono font-bold text-emerald-400">+${split.amount}</p>
+                    </div>
                   ))}
+                  <div className="text-center border-l border-white/10 pl-4">
+                    <p className="text-xs text-white/50">Total</p>
+                    <p className="font-mono font-bold text-lg text-cyan-400">${stats.totalDistributed.toFixed(2)}</p>
+                  </div>
                 </div>
               </div>
             )}
           </Card>
         </motion.div>
 
-        {/* K-Factor Controls Section */}
+        {/* SECTION 2: Viral Spread Simulation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card className="p-4 bg-[#0c0c14] border-border/30">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* K-Factor */}
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Activity className="h-4 w-4 text-primary" />
-                  <span className="text-xs text-muted-foreground uppercase">K-Factor (Viral Coefficient)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setSettings(s => ({ ...s, kFactor: Math.max(0.5, s.kFactor - 0.1) }))} data-testid="button-kfactor-minus">
-                    <Minus className="h-3 w-3" />
-                  </Button>
-                  <span className={`font-mono text-xl font-bold flex-1 text-center ${settings.kFactor >= 1 ? "text-emerald-400" : "text-muted-foreground"}`}>
+          <Card className="p-5 bg-[#0c0c14] border-white/10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${viralSpreadActive ? 'bg-cyan-500 animate-pulse' : 'bg-white/30'}`} />
+                <span className="text-sm font-semibold text-white uppercase tracking-wider">Step 2: Viral Spread Simulation</span>
+              </div>
+              <Button 
+                className="gap-2 bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white"
+                onClick={() => startViralSpread()}
+                disabled={viralSpreadActive}
+                data-testid="button-start-viral-spread"
+              >
+                {viralSpreadActive ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Play className="h-4 w-4" />
+                )}
+                Start Viral Spread
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Mind Map Visualization */}
+              <div className="relative h-80 bg-black/50 rounded-lg border border-white/10 overflow-hidden">
+                <svg className="w-full h-full">
+                  {/* Central node */}
+                  <g>
+                    <circle cx="160" cy="160" r="30" fill="#22c55e" opacity="0.8" />
+                    <text x="160" y="165" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">ORIGIN</text>
+                  </g>
+                  
+                  {/* Spread nodes */}
+                  {viralNodes.map((node, i) => (
+                    <g key={node.id}>
+                      {/* Connection line with animated synapse */}
+                      <line 
+                        x1={node.parentX} 
+                        y1={node.parentY} 
+                        x2={node.x} 
+                        y2={node.y} 
+                        stroke={node.active ? "#06b6d4" : "#ffffff20"} 
+                        strokeWidth="1"
+                      />
+                      {node.active && (
+                        <motion.circle
+                          cx={node.parentX}
+                          cy={node.parentY}
+                          r="3"
+                          fill="#06b6d4"
+                          initial={{ cx: node.parentX, cy: node.parentY }}
+                          animate={{ cx: node.x, cy: node.y }}
+                          transition={{ duration: 0.5, ease: "easeOut" }}
+                        />
+                      )}
+                      {/* Node */}
+                      <motion.circle 
+                        cx={node.x} 
+                        cy={node.y} 
+                        r={node.active ? 15 : 10} 
+                        fill={node.active ? "#06b6d4" : "#ffffff20"}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: node.active ? 1 : 0.5 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                      {node.active && (
+                        <text x={node.x} y={node.y + 4} textAnchor="middle" fill="white" fontSize="8" fontWeight="bold">
+                          ${node.reward}
+                        </text>
+                      )}
+                    </g>
+                  ))}
+                </svg>
+                
+                {!viralSpreadActive && viralNodes.length === 0 && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <p className="text-white/40 text-sm">Click "Start Viral Spread" to begin</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Stats Panel */}
+              <div className="space-y-4">
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Activity className="h-4 w-4 text-cyan-400" />
+                    <span className="text-xs text-white/60 uppercase">K-Factor</span>
+                  </div>
+                  <span className={`font-mono text-3xl font-bold ${settings.kFactor >= 1 ? "text-emerald-400" : "text-white/60"}`}>
                     {settings.kFactor.toFixed(1)}
                   </span>
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setSettings(s => ({ ...s, kFactor: Math.min(2.0, s.kFactor + 0.1) }))} data-testid="button-kfactor-plus">
-                    <Plus className="h-3 w-3" />
-                  </Button>
+                  <p className="text-xs text-white/40 mt-1">Viral coefficient</p>
                 </div>
-                <p className="text-xs text-muted-foreground text-center mt-1">Projected Reach: {projectedReach}</p>
-              </div>
+                
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <GitBranch className="h-4 w-4 text-purple-400" />
+                    <span className="text-xs text-white/60 uppercase">Network Reach</span>
+                  </div>
+                  <span className="font-mono text-3xl font-bold text-white">
+                    {viralNodes.filter(n => n.active).length + 1}
+                  </span>
+                  <p className="text-xs text-white/40 mt-1">Wallets created</p>
+                </div>
 
-              {/* Conversion Value */}
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <DollarSign className="h-4 w-4 text-primary" />
-                  <span className="text-xs text-muted-foreground uppercase">Conversion Value</span>
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <DollarSign className="h-4 w-4 text-emerald-400" />
+                    <span className="text-xs text-white/60 uppercase">Total Distributed</span>
+                  </div>
+                  <span className="font-mono text-3xl font-bold text-emerald-400">
+                    ${viralNodes.filter(n => n.active).reduce((sum, n) => sum + parseFloat(n.reward), 0).toFixed(2)}
+                  </span>
+                  <p className="text-xs text-white/40 mt-1">USDC rewards paid</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setSettings(s => ({ ...s, conversionValue: Math.max(5, s.conversionValue - 5) }))} data-testid="button-conversion-minus">
-                    <Minus className="h-3 w-3" />
-                  </Button>
-                  <span className="font-mono text-xl font-bold flex-1 text-center text-foreground">${settings.conversionValue}</span>
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setSettings(s => ({ ...s, conversionValue: Math.min(100, s.conversionValue + 5) }))} data-testid="button-conversion-plus">
-                    <Plus className="h-3 w-3" />
-                  </Button>
-                </div>
-                <Slider value={[settings.conversionValue]} min={5} max={100} step={5} onValueChange={([v]) => setSettings(s => ({ ...s, conversionValue: v }))} className="mt-2" />
-              </div>
-
-              {/* Decay Rate */}
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <GitBranch className="h-4 w-4 text-primary" />
-                  <span className="text-xs text-muted-foreground uppercase">Decay Rate</span>
-                </div>
-                <span className="font-mono text-xl font-bold block text-center text-foreground">{(settings.decayRate * 100).toFixed(0)}%</span>
-                <Slider value={[settings.decayRate]} min={0.3} max={0.7} step={0.05} onValueChange={([v]) => setSettings(s => ({ ...s, decayRate: v }))} className="mt-2" />
               </div>
             </div>
           </Card>
         </motion.div>
-
-        {/* Payout Summary */}
-        {demoState.latestSplits.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <Card className="p-4 bg-emerald-500/5 border-emerald-500/30">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Reward Distribution</h3>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                {demoState.latestSplits.map(split => (
-                  <div key={split.recipient} className="text-center">
-                    <p className="text-xs text-muted-foreground">{split.role}</p>
-                    <p className="font-semibold text-sm text-foreground">{split.recipient}</p>
-                    <p className="font-mono font-bold text-emerald-400">+${split.amount}</p>
-                    {split.error && <p className="text-xs text-red-400 mt-1">Needs USDC</p>}
-                  </div>
-                ))}
-                <div className="text-center border-l border-border/50 pl-4">
-                  <p className="text-xs text-muted-foreground">Total</p>
-                  <p className="font-mono font-bold text-lg text-cyan-400">${stats.totalDistributed.toFixed(2)}</p>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
-        )}
 
         {/* Logs Section */}
         <motion.div
@@ -678,10 +764,10 @@ export function LiveDemoScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <Card className="p-4 bg-[#0c0c14] border-border/30">
+          <Card className="p-4 bg-[#0c0c14] border-white/10">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-xs text-muted-foreground uppercase tracking-wider">Live Logs</span>
+              <span className="text-xs text-white/60 uppercase tracking-wider">Live Logs</span>
               <div className="flex gap-1 ml-auto">
                 {(['txs', 'wallets', 'api'] as const).map(tab => (
                   <Button
@@ -699,12 +785,12 @@ export function LiveDemoScreen() {
             <div className="h-40 overflow-y-auto font-mono text-xs space-y-2">
               {activeLogTab === 'txs' && (
                 demoState.latestSplits.length === 0 ? (
-                  <p className="text-muted-foreground">No transactions yet...</p>
+                  <p className="text-white/40">No transactions yet...</p>
                 ) : (
                   demoState.latestSplits.map((split, i) => (
-                    <div key={i} className="p-2 rounded bg-slate-800/50 flex justify-between">
+                    <div key={i} className="p-2 rounded bg-white/5 flex justify-between">
                       <span className="text-cyan-400">{split.role}</span>
-                      <span className="text-foreground">{split.recipient}</span>
+                      <span className="text-white">{split.recipient}</span>
                       <span className="text-emerald-400">${split.amount}</span>
                       <span className={split.error ? "text-red-400" : "text-emerald-400"}>{split.error ? "Failed" : "OK"}</span>
                     </div>
@@ -713,30 +799,30 @@ export function LiveDemoScreen() {
               )}
               {activeLogTab === 'wallets' && (
                 demoState.participants.filter(p => p.wallet).length === 0 ? (
-                  <p className="text-muted-foreground">No wallets created yet...</p>
+                  <p className="text-white/40">No wallets created yet...</p>
                 ) : (
                   demoState.participants.filter(p => p.wallet).map((p, i) => (
-                    <div key={i} className="p-2 rounded bg-slate-800/50">
+                    <div key={i} className="p-2 rounded bg-white/5">
                       <div className="flex justify-between">
-                        <span className="text-foreground">{p.name}</span>
+                        <span className="text-white">{p.name}</span>
                         <span className="text-cyan-400">${p.wallet?.balance || '0.00'}</span>
                       </div>
-                      <div className="text-muted-foreground truncate">{p.wallet?.address}</div>
+                      <div className="text-white/50 truncate">{p.wallet?.address}</div>
                     </div>
                   ))
                 )
               )}
               {activeLogTab === 'api' && (
                 demoState.apiResponses.length === 0 ? (
-                  <p className="text-muted-foreground">No API calls yet...</p>
+                  <p className="text-white/40">No API calls yet...</p>
                 ) : (
                   demoState.apiResponses.map((resp, i) => (
                     <div key={i} className="p-2 rounded bg-blue-500/10">
                       <div className="flex justify-between mb-1">
                         <span className="text-blue-400">{resp.endpoint}</span>
-                        <span className="text-muted-foreground">{new Date(resp.timestamp).toLocaleTimeString()}</span>
+                        <span className="text-white/50">{new Date(resp.timestamp).toLocaleTimeString()}</span>
                       </div>
-                      <pre className="text-muted-foreground overflow-x-auto">{JSON.stringify(resp.data, null, 1).slice(0, 150)}...</pre>
+                      <pre className="text-white/50 overflow-x-auto">{JSON.stringify(resp.data, null, 1).slice(0, 150)}...</pre>
                     </div>
                   ))
                 )
