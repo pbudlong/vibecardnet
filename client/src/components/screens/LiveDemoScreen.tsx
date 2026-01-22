@@ -355,21 +355,30 @@ export function LiveDemoScreen() {
           </Badge>
         </motion.div>
 
-        {/* Tracking Code Demo */}
+        {/* Tracking Code Demo - 3 Column Flow */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
           <Card className="p-4 bg-[#0c0c14] border-border/30">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="text-xs text-muted-foreground uppercase tracking-wider">Pete's Remix - Share Button Integration</span>
+            <div className="flex items-center gap-2 mb-4">
+              <div className={`w-2 h-2 rounded-full ${demoState.isLoading ? 'bg-amber-500 animate-pulse' : demoState.currentStep >= 2 ? 'bg-emerald-500' : 'bg-slate-500'}`} />
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">SDK Integration Demo</span>
+              {demoState.currentStep >= 2 && (
+                <Badge className="ml-auto bg-emerald-500/20 text-emerald-400 border-emerald-500/50 text-xs">
+                  trackShare() Complete
+                </Badge>
+              )}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Share Button Preview */}
-              <div className="flex flex-col items-center justify-center p-6 rounded-lg bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-border/30">
-                <p className="text-xs text-muted-foreground mb-3">User clicks share button:</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Step 1: Button */}
+              <div className={`flex flex-col items-center justify-center p-4 rounded-lg border transition-all ${demoState.currentStep >= 1 && demoState.currentStep < 2 ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-slate-800/30 border-border/30'}`}>
+                <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                  <span className="w-4 h-4 rounded-full bg-slate-700 text-[10px] flex items-center justify-center">1</span>
+                  User Action
+                </div>
                 <Button 
                   className="gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
                   onClick={() => {
@@ -380,43 +389,64 @@ export function LiveDemoScreen() {
                   disabled={!demoState.initialized || demoState.currentStep < 1 || demoState.currentStep >= 2 || demoState.isLoading}
                   data-testid="button-share-demo"
                 >
-                  <Zap className="h-4 w-4" />
+                  {demoState.isLoading && demoState.currentStep === 1 ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Zap className="h-4 w-4" />
+                  )}
                   Share & Earn
                 </Button>
-                <p className="text-xs text-muted-foreground mt-2">Triggers reward tracking</p>
+                <p className="text-[10px] text-muted-foreground mt-2 text-center">Pete's Remix</p>
               </div>
               
-              {/* Code Snippet */}
-              <div className="font-mono text-xs bg-slate-900/80 rounded-lg p-4 overflow-x-auto border border-emerald-500/20">
-                <div className="text-slate-500 mb-2">// VibeCard SDK - Share tracking</div>
-                <div>
+              {/* Step 2: Code Executing */}
+              <div className={`font-mono text-[11px] rounded-lg p-3 border transition-all ${demoState.isLoading && demoState.currentStep === 1 ? 'bg-amber-500/10 border-amber-500/50' : demoState.currentStep >= 2 ? 'bg-emerald-500/5 border-emerald-500/30' : 'bg-slate-900/80 border-border/30'}`}>
+                <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                  <span className="w-4 h-4 rounded-full bg-slate-700 text-[10px] flex items-center justify-center">2</span>
+                  SDK Call
+                  {demoState.isLoading && demoState.currentStep === 1 && (
+                    <Loader2 className="h-3 w-3 animate-spin ml-auto text-amber-400" />
+                  )}
+                </div>
+                <div className={demoState.isLoading && demoState.currentStep === 1 ? 'animate-pulse' : ''}>
                   <span className="text-purple-400">await</span>
                   <span className="text-cyan-400"> vibecard</span>
                   <span className="text-foreground">.</span>
                   <span className="text-yellow-400">trackShare</span>
                   <span className="text-foreground">({"{"}</span>
                 </div>
-                <div className="pl-4">
+                <div className="pl-2">
                   <span className="text-emerald-400">contentId</span>
                   <span className="text-foreground">: </span>
-                  <span className="text-amber-300">"pete-remix-001"</span>
-                  <span className="text-foreground">,</span>
+                  <span className="text-amber-300">"remix-001"</span>
                 </div>
-                <div className="pl-4">
+                <div className="pl-2">
                   <span className="text-emerald-400">sharerId</span>
                   <span className="text-foreground">: </span>
-                  <span className="text-amber-300">"manny-wallet"</span>
-                  <span className="text-foreground">,</span>
+                  <span className="text-amber-300">"manny"</span>
                 </div>
-                <div className="pl-4">
-                  <span className="text-emerald-400">platform</span>
-                  <span className="text-foreground">: </span>
-                  <span className="text-amber-300">"twitter"</span>
+                <div><span className="text-foreground">{"}"})</span></div>
+              </div>
+
+              {/* Step 3: Result */}
+              <div className={`font-mono text-[11px] rounded-lg p-3 border transition-all ${demoState.currentStep >= 2 ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-slate-900/80 border-border/30'}`}>
+                <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                  <span className="w-4 h-4 rounded-full bg-slate-700 text-[10px] flex items-center justify-center">3</span>
+                  Response
+                  {demoState.currentStep >= 2 && (
+                    <CheckCircle className="h-3 w-3 ml-auto text-emerald-400" />
+                  )}
                 </div>
-                <div>
-                  <span className="text-foreground">{"}"})</span>
-                </div>
-                <div className="mt-2 text-slate-500">// Returns: actionId, upstreamChain[]</div>
+                {demoState.currentStep >= 2 ? (
+                  <div className="space-y-1">
+                    <div><span className="text-emerald-400">success</span>: <span className="text-cyan-400">true</span></div>
+                    <div><span className="text-emerald-400">actionId</span>: <span className="text-amber-300">"{demoState.participants[2]?.action?.id?.slice(0, 8) || 'share-001'}"</span></div>
+                    <div><span className="text-emerald-400">chain</span>: <span className="text-foreground">[Matt P, Pete, Manny]</span></div>
+                    <div><span className="text-emerald-400">wallet</span>: <span className="text-cyan-400">{demoState.participants[2]?.wallet?.address?.slice(0, 10) || '0x...'}...</span></div>
+                  </div>
+                ) : (
+                  <div className="text-slate-500 italic">Waiting for action...</div>
+                )}
               </div>
             </div>
           </Card>
