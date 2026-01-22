@@ -214,42 +214,6 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         Demo Playground
       </motion.h2>
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-        className="flex flex-col items-center gap-2 mb-4"
-      >
-        <div className="flex items-center gap-2">
-          <Badge 
-            variant="outline" 
-            className={`px-3 py-1 ${isTreasuryFunded 
-              ? 'bg-sky-400/10 border-sky-400/50 text-sky-400' 
-              : 'bg-zinc-400/10 border-zinc-400/50 text-zinc-400'}`}
-            data-testid="badge-reward-pool"
-          >
-            <DollarSign className={`h-4 w-4 mr-2 ${isTreasuryFunded ? 'text-sky-400' : 'text-zinc-400'}`} />
-            Reward Pool: ${treasuryBalance.toFixed(2)} USDC
-            {isTreasuryFunded 
-              ? <Check className="h-3 w-3 ml-2 text-emerald-400" />
-              : <Clock className="h-3 w-3 ml-2 text-yellow-500" />
-            }
-          </Badge>
-          <span className="text-[10px] text-muted-foreground">
-            {isTreasuryFunded ? 'Treasury Funded' : 'Treasury Not Funded'}
-          </span>
-        </div>
-        {isSimulated && (
-          <Badge 
-            variant="outline" 
-            className="px-2 py-0.5 bg-amber-500/10 border-amber-500/50 text-amber-400 text-[10px]"
-            data-testid="badge-simulation-mode"
-          >
-            <AlertCircle className="h-3 w-3 mr-1" />
-            Simulation Mode - Fund treasury with ETH for live transactions
-          </Badge>
-        )}
-      </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -376,7 +340,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
               </div>
               <div className="space-y-2 text-center">
                 <div className="p-2 rounded bg-sky-400/10 border border-sky-400/30" data-testid="flow-reward-pool">
-                  <span className="text-[9px] text-sky-400 font-medium">Developer Wallet</span>
+                  <span className="text-[9px] text-sky-400 font-medium">Reward Pool Treasury - Developer Wallet</span>
                   <p className="text-sm font-bold text-foreground">${treasuryBalance.toFixed(2)} USDC</p>
                   {walletAddress && (
                     <p className="text-[8px] text-muted-foreground font-mono mt-1">
@@ -413,7 +377,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   LIVE
                 </Badge>
               </div>
-              <div className="min-h-[180px] max-h-[220px] overflow-y-auto font-mono text-[10px] space-y-1" data-testid="logs-container">
+              <div className="min-h-[270px] max-h-[330px] overflow-y-auto font-mono text-[10px] space-y-1" data-testid="logs-container">
                 {logs.map((log, i) => (
                   <motion.div
                     key={i}
