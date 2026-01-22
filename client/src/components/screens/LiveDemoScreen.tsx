@@ -448,7 +448,7 @@ export function LiveDemoScreen() {
                 <Button 
                   className="gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
                   onClick={() => runFullShareDemo()}
-                  disabled={demoState.isLoading || demoState.currentStep >= 2}
+                  disabled={demoState.isLoading}
                   data-testid="button-share-demo"
                 >
                   {demoState.isLoading ? (
