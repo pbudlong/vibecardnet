@@ -13,6 +13,7 @@ import { PublisherIntegrationScreen } from "@/components/screens/PublisherIntegr
 import { LiveDemoScreen } from "@/components/screens/LiveDemoScreen";
 import { ViralProjectionScreen } from "@/components/screens/ViralProjectionScreen";
 import { NetworkVisionScreen } from "@/components/screens/NetworkVisionScreen";
+import DemoPlaygroundScreen from "@/components/screens/DemoPlaygroundScreen";
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState(() => {
@@ -39,6 +40,7 @@ function App() {
           <SystemArchitectureScreen />
           <PublisherIntegrationScreen />
           <ViralProjectionScreen />
+          <DemoPlaygroundScreen isActive={currentScreen === 7} />
           <LiveDemoScreen />
           <NetworkVisionScreen />
         </Presentation>
