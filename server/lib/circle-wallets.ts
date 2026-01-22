@@ -509,41 +509,71 @@ export async function resetDemoToTreasury(): Promise<{
 }> {
   const wallets = await getAllWalletsWithBalances();
   
-  // Find treasury wallet
-  const treasury = wallets.find(w => 
-    w.refId === 'treasury' || w.name?.toLowerCase().includes('treasury')
+  // Prefer Arc treasury for gasless transfers
+  const arcTreasury = wallets.find(w => 
+    w.blockchain === 'ARC-TESTNET' && 
+    (w.refId === 'arc-treasury' || w.name?.toLowerCase().includes('arc treasury'))
   );
+  
+  const baseTreasury = wallets.find(w => 
+    w.blockchain === 'BASE-SEPOLIA' && 
+    (w.refId === 'treasury' || w.name?.toLowerCase().includes('treasury'))
+  );
+  
+  const treasury = arcTreasury || baseTreasury;
   
   if (!treasury) {
     return { success: false, transfers: [], totalRecovered: '0' };
   }
 
-  // Find user wallets with balances
+  console.log(`[Demo Reset] Using treasury on ${treasury.blockchain}: ${treasury.address}`);
+
+  // For Arc wallets, use expected payout amounts since Circle API doesn't return Arc balances
+  const expectedPayouts = [
+    { refIdPattern: 'Matt', amount: '3.00' },
+    { refIdPattern: 'Pete', amount: '1.25' },
+    { refIdPattern: 'Manny', amount: '0.75' }
+  ];
+
+  // Find user wallets on same blockchain as treasury
   const userWallets = wallets.filter(w => 
-    w.refId !== 'treasury' && 
-    !w.name?.toLowerCase().includes('treasury') &&
-    parseFloat(w.usdcBalance) > 0
-  );
+    w.blockchain === treasury.blockchain &&
+    !w.refId?.includes('treasury') && 
+    !w.name?.toLowerCase().includes('treasury')
+  ).slice(0, 3);
 
   const transfers: Array<{ from: string; amount: string; status: string }> = [];
   let totalRecovered = 0;
 
   for (const userWallet of userWallets) {
+    // Use expected amount for Arc (API doesn't return balances), or actual balance for others
+    let amount = userWallet.usdcBalance;
+    if (treasury.blockchain === 'ARC-TESTNET') {
+      const expected = expectedPayouts.find(p => 
+        userWallet.name?.includes(p.refIdPattern) || userWallet.refId?.includes(p.refIdPattern)
+      );
+      amount = expected?.amount || '0';
+    }
+
+    if (parseFloat(amount) <= 0) continue;
+
+    console.log(`[Demo Reset] Recovering $${amount} from ${userWallet.name}`);
+    
     const result = await transferUSDC(
       userWallet.id,
       treasury.address,
-      userWallet.usdcBalance,
+      amount,
       userWallet.blockchain
     );
     
     transfers.push({
       from: userWallet.name || userWallet.refId,
-      amount: userWallet.usdcBalance,
+      amount,
       status: result.success ? 'success' : 'failed'
     });
 
     if (result.success) {
-      totalRecovered += parseFloat(userWallet.usdcBalance);
+      totalRecovered += parseFloat(amount);
     }
   }
 
