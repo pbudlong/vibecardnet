@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Play, RotateCcw, Wallet, ArrowRight, Zap, TrendingUp, Users, DollarSign } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Play, RotateCcw, Wallet, ArrowRight, Zap, TrendingUp, Users, DollarSign, Loader2, CheckCircle, AlertCircle, Copy } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 
 const kFactorData = [
   { label: "Without VibeCard", value: 0.5, color: "bg-muted-foreground/30", description: "Viral decay, limited reach" },
@@ -25,102 +26,206 @@ const windfallPotential = [
   { role: "Early Adopters (top 10)", earnings: "$80-160 each", description: "Upstream decay rewards", icon: DollarSign },
 ];
 
-interface Participant {
+interface WalletInfo {
+  id: string;
+  address: string;
   name: string;
+  blockchain: string;
+  state: string;
+  balance?: string;
+}
+
+interface ViralAction {
+  id: string;
+  timestamp: number;
+  actionType: string;
+  actorName: string;
+  actorWalletAddress?: string;
+  upstreamActionId?: string;
+  contentId: string;
+  reward?: string;
+}
+
+interface TransactionLog {
+  id: string;
+  timestamp: number;
+  from: string;
+  to: string;
+  amount: string;
+  status: string;
+  txHash?: string;
+}
+
+interface PayoutSplit {
+  recipient: string;
+  recipientAddress: string;
+  amount: string;
   role: string;
-  wallet: string;
-  balance: number;
-  earnings: number;
+  error?: string;
+  transaction?: TransactionLog;
 }
 
-interface DemoStep {
-  action: string;
-  description: string;
-  payout: {
-    creator: number;
-    upstream: { name: string; amount: number }[];
-    actor: number;
-    fee: number;
-  };
+interface DemoState {
+  initialized: boolean;
+  treasury: WalletInfo | null;
+  participants: { name: string; action: ViralAction | null; wallet: WalletInfo | null }[];
+  currentStep: number;
+  isLoading: boolean;
+  latestSplits: PayoutSplit[];
+  transactionLogs: TransactionLog[];
 }
 
-const initialParticipants: Participant[] = [
-  { name: "Creator", role: "Original Creator", wallet: "0x1a2b...3c4d", balance: 0, earnings: 0 },
-  { name: "Alice", role: "First Sharer", wallet: "0x5e6f...7g8h", balance: 0, earnings: 0 },
-  { name: "Bob", role: "Second Sharer", wallet: "0x9i0j...1k2l", balance: 0, earnings: 0 },
-  { name: "Carol", role: "Converter", wallet: "0x3m4n...5o6p", balance: 0, earnings: 0 },
-];
-
-const demoSteps: DemoStep[] = [
-  {
-    action: "Alice shares",
-    description: "Alice discovers and shares the Vibe Project",
-    payout: { creator: 0, upstream: [], actor: 0, fee: 0 },
-  },
-  {
-    action: "Bob shares via Alice",
-    description: "Bob finds it through Alice's link and shares",
-    payout: { creator: 0, upstream: [], actor: 0, fee: 0 },
-  },
-  {
-    action: "Carol converts via Bob",
-    description: "Carol converts through Bob's link — $10 action triggers x402 payout",
-    payout: {
-      creator: 4.00,      // 40%
-      upstream: [
-        { name: "Alice", amount: 2.00 },  // 40% × 0.5^1 = 20%
-        { name: "Bob", amount: 1.00 },    // 40% × 0.5^0 × 0.5 = 10% (remaining upstream)
-      ],
-      actor: 2.40,        // 20% + bonus
-      fee: 0.60,          // VibeCard fee
-    },
-  },
+const DEMO_PARTICIPANTS = [
+  { name: "Matt P", role: "Creator" },
+  { name: "Pete", role: "Remixer" },
+  { name: "Manny", role: "Sharer" },
+  { name: "Francisco", role: "Converter" },
 ];
 
 export function LiveDemoScreen() {
-  const [currentStep, setCurrentStep] = useState(-1);
-  const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const { toast } = useToast();
+  const [demoState, setDemoState] = useState<DemoState>({
+    initialized: false,
+    treasury: null,
+    participants: DEMO_PARTICIPANTS.map(p => ({ name: p.name, action: null, wallet: null })),
+    currentStep: -1,
+    isLoading: false,
+    latestSplits: [],
+    transactionLogs: [],
+  });
 
-  const resetDemo = () => {
-    setCurrentStep(-1);
-    setParticipants(initialParticipants);
+  const logsEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToLogs = () => {
+    logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const runNextStep = async () => {
-    if (currentStep >= demoSteps.length - 1 || isAnimating) return;
-    
-    setIsAnimating(true);
-    const nextStep = currentStep + 1;
-    setCurrentStep(nextStep);
-
-    // If this step has payouts, animate them
-    const step = demoSteps[nextStep];
-    if (step.payout.creator > 0) {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setParticipants(prev => {
-        const updated = [...prev];
-        // Creator payout
-        updated[0] = { ...updated[0], balance: updated[0].balance + step.payout.creator, earnings: updated[0].earnings + step.payout.creator };
-        // Upstream payouts
-        step.payout.upstream.forEach(up => {
-          const idx = updated.findIndex(p => p.name === up.name);
-          if (idx >= 0) {
-            updated[idx] = { ...updated[idx], balance: updated[idx].balance + up.amount, earnings: updated[idx].earnings + up.amount };
-          }
-        });
-        // Actor payout (Carol)
-        updated[3] = { ...updated[3], balance: updated[3].balance + step.payout.actor, earnings: updated[3].earnings + step.payout.actor };
-        return updated;
-      });
+  const initDemo = async () => {
+    setDemoState(prev => ({ ...prev, isLoading: true }));
+    try {
+      const response = await fetch("/api/demo/init", { method: "POST" });
+      const data = await response.json();
+      if (data.success) {
+        setDemoState(prev => ({
+          ...prev,
+          initialized: true,
+          treasury: data.treasury,
+          isLoading: false,
+          currentStep: -1,
+          participants: DEMO_PARTICIPANTS.map(p => ({ name: p.name, action: null, wallet: null })),
+          latestSplits: [],
+          transactionLogs: [],
+        }));
+        toast({ title: "Demo initialized", description: `Treasury: ${data.treasury.address.slice(0, 10)}...` });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to initialize demo", variant: "destructive" });
+      setDemoState(prev => ({ ...prev, isLoading: false }));
     }
-
-    setIsAnimating(false);
   };
 
-  const totalPaid = participants.reduce((sum, p) => sum + p.earnings, 0);
-  const currentStepData = currentStep >= 0 ? demoSteps[currentStep] : null;
+  const resetDemo = async () => {
+    setDemoState(prev => ({ ...prev, isLoading: true }));
+    try {
+      await fetch("/api/demo/reset", { method: "POST" });
+      setDemoState({
+        initialized: false,
+        treasury: null,
+        participants: DEMO_PARTICIPANTS.map(p => ({ name: p.name, action: null, wallet: null })),
+        currentStep: -1,
+        isLoading: false,
+        latestSplits: [],
+        transactionLogs: [],
+      });
+    } catch (error) {
+      setDemoState(prev => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  const runStep = async (stepIndex: number) => {
+    if (demoState.isLoading) return;
+    setDemoState(prev => ({ ...prev, isLoading: true }));
+
+    try {
+      let endpoint = "";
+      let body: any = {};
+      const participant = DEMO_PARTICIPANTS[stepIndex];
+
+      if (stepIndex === 0) {
+        endpoint = "/api/demo/create";
+        body = { creatorName: participant.name };
+      } else {
+        const upstreamAction = demoState.participants[stepIndex - 1].action;
+        if (!upstreamAction) {
+          toast({ title: "Error", description: "Previous step not completed", variant: "destructive" });
+          setDemoState(prev => ({ ...prev, isLoading: false }));
+          return;
+        }
+
+        if (stepIndex === 1) {
+          endpoint = "/api/demo/remix";
+        } else if (stepIndex === 2) {
+          endpoint = "/api/demo/share";
+        } else {
+          endpoint = "/api/demo/convert";
+        }
+        body = { actorName: participant.name, upstreamActionId: upstreamAction.id };
+      }
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        setDemoState(prev => {
+          const newParticipants = [...prev.participants];
+          newParticipants[stepIndex] = {
+            name: participant.name,
+            action: data.action,
+            wallet: data.wallet,
+          };
+
+          return {
+            ...prev,
+            participants: newParticipants,
+            currentStep: stepIndex,
+            isLoading: false,
+            latestSplits: data.splits || prev.latestSplits,
+            transactionLogs: data.payouts 
+              ? [...prev.transactionLogs, ...data.payouts.filter((p: any) => p.transaction).map((p: any) => p.transaction)]
+              : prev.transactionLogs,
+          };
+        });
+
+        const actionType = stepIndex === 0 ? "created content" 
+          : stepIndex === 1 ? "remixed" 
+          : stepIndex === 2 ? "shared" 
+          : "converted";
+        
+        toast({ 
+          title: `${participant.name} ${actionType}!`, 
+          description: stepIndex === 3 ? "Rewards distributed via x402!" : `Wallet: ${data.wallet.address.slice(0, 10)}...` 
+        });
+
+        if (stepIndex === 3) {
+          scrollToLogs();
+        }
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Action failed", variant: "destructive" });
+      setDemoState(prev => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  const copyAddress = (address: string) => {
+    navigator.clipboard.writeText(address);
+    toast({ title: "Copied!", description: address.slice(0, 20) + "..." });
+  };
+
+  const totalPaid = demoState.latestSplits.reduce((sum, s) => sum + parseFloat(s.amount || "0"), 0);
 
   return (
     <div className="h-full w-full flex flex-col items-center justify-start px-8 py-6 overflow-y-auto">
@@ -131,33 +236,58 @@ export function LiveDemoScreen() {
         className="text-center mb-4"
       >
         <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-2">
-          Live Demo
+          Live Onchain Demo
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Watch the viral chain in action: Creator → Alice → Bob → Carol
+          Real wallets on Base Sepolia: Matt P → Pete → Manny → Francisco
         </p>
       </motion.div>
 
-      <div className="w-full max-w-5xl">
+      <div className="w-full max-w-6xl">
         {/* Control Bar */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="flex justify-center gap-3 mb-6"
+          className="flex justify-center gap-3 mb-6 flex-wrap"
         >
-          <Button
-            onClick={runNextStep}
-            disabled={currentStep >= demoSteps.length - 1 || isAnimating}
-            className="gap-2"
-            data-testid="button-next-step"
-          >
-            <Play className="h-4 w-4" />
-            {currentStep < 0 ? "Start Demo" : "Next Action"}
-          </Button>
+          {!demoState.initialized ? (
+            <Button
+              onClick={initDemo}
+              disabled={demoState.isLoading}
+              className="gap-2"
+              data-testid="button-init-demo"
+            >
+              {demoState.isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+              Initialize Demo
+            </Button>
+          ) : (
+            <>
+              {DEMO_PARTICIPANTS.map((p, index) => (
+                <Button
+                  key={p.name}
+                  onClick={() => runStep(index)}
+                  disabled={demoState.isLoading || demoState.currentStep >= index || (index > 0 && demoState.currentStep < index - 1)}
+                  variant={demoState.currentStep >= index ? "secondary" : "default"}
+                  className="gap-2"
+                  data-testid={`button-step-${index}`}
+                >
+                  {demoState.isLoading && demoState.currentStep === index - 1 ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : demoState.currentStep >= index ? (
+                    <CheckCircle className="h-4 w-4" />
+                  ) : (
+                    <Zap className="h-4 w-4" />
+                  )}
+                  {p.name}: {p.role}
+                </Button>
+              ))}
+            </>
+          )}
           <Button
             variant="outline"
             onClick={resetDemo}
+            disabled={demoState.isLoading}
             className="gap-2"
             data-testid="button-reset-demo"
           >
@@ -166,21 +296,31 @@ export function LiveDemoScreen() {
           </Button>
         </motion.div>
 
-        {/* Current Action Display */}
-        {currentStepData && (
+        {/* Treasury Info */}
+        {demoState.treasury && (
           <motion.div
-            key={currentStep}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-6"
+            className="mb-4"
           >
-            <Card className="p-4 border-primary border-2 bg-primary/5">
-              <div className="flex items-center gap-3">
-                <Zap className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="font-semibold text-foreground">{currentStepData.action}</p>
-                  <p className="text-sm text-muted-foreground">{currentStepData.description}</p>
+            <Card className="p-3 border-sky-400/50 bg-sky-400/5">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="border-sky-400 text-sky-400">USDC Treasury</Badge>
+                  <span className="font-mono text-sm text-muted-foreground">{demoState.treasury.address}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6" 
+                    onClick={() => copyAddress(demoState.treasury!.address)}
+                    data-testid="button-copy-treasury"
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
                 </div>
+                <Badge variant="secondary" className="font-mono">
+                  Balance: ${demoState.treasury.balance || "0.00"} USDC
+                </Badge>
               </div>
             </Card>
           </motion.div>
@@ -194,68 +334,95 @@ export function LiveDemoScreen() {
           className="mb-6"
         >
           <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
-            {participants.map((participant, index) => (
-              <div key={participant.name} className="flex items-center">
-                <motion.div
-                  animate={{
-                    scale: participant.earnings > 0 ? [1, 1.05, 1] : 1,
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className={`p-3 w-32 md:w-36 text-center ${
-                    participant.earnings > 0 ? "border-primary border-2" : ""
-                  }`}>
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <Wallet className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground font-mono">
-                        {participant.wallet}
-                      </span>
-                    </div>
-                    <p className="font-semibold text-sm">{participant.name}</p>
-                    <p className="text-xs text-muted-foreground mb-2">{participant.role}</p>
-                    <Badge variant={participant.earnings > 0 ? "default" : "secondary"} className="font-mono">
-                      ${participant.balance.toFixed(2)}
-                    </Badge>
-                  </Card>
-                </motion.div>
-                {index < participants.length - 1 && (
-                  <ArrowRight className="h-5 w-5 text-muted-foreground mx-1 flex-shrink-0" />
-                )}
-              </div>
-            ))}
+            {demoState.participants.map((participant, index) => {
+              const role = DEMO_PARTICIPANTS[index].role;
+              const isActive = participant.action !== null;
+              const split = demoState.latestSplits.find(s => s.recipient === participant.name);
+              
+              return (
+                <div key={participant.name} className="flex items-center">
+                  <motion.div
+                    animate={{
+                      scale: isActive ? [1, 1.05, 1] : 1,
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Card className={`p-3 w-36 md:w-40 text-center ${
+                      isActive ? "border-primary border-2" : ""
+                    }`}>
+                      <div className="flex items-center justify-center gap-1 mb-1">
+                        <Wallet className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground font-mono">
+                          {participant.wallet?.address 
+                            ? `${participant.wallet.address.slice(0, 6)}...${participant.wallet.address.slice(-4)}` 
+                            : "—"}
+                        </span>
+                      </div>
+                      <p className="font-semibold text-sm">{participant.name}</p>
+                      <p className="text-xs text-muted-foreground mb-2">{role}</p>
+                      <AnimatePresence mode="wait">
+                        {split ? (
+                          <motion.div
+                            key="reward"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0 }}
+                          >
+                            <Badge variant="default" className="font-mono bg-primary">
+                              +${split.amount} USDC
+                            </Badge>
+                            {split.error && (
+                              <div className="mt-1 flex items-center justify-center gap-1 text-destructive">
+                                <AlertCircle className="h-3 w-3" />
+                                <span className="text-xs">Pending fund</span>
+                              </div>
+                            )}
+                          </motion.div>
+                        ) : (
+                          <Badge variant="secondary" className="font-mono">
+                            {isActive ? "Active" : "Waiting"}
+                          </Badge>
+                        )}
+                      </AnimatePresence>
+                    </Card>
+                  </motion.div>
+                  {index < demoState.participants.length - 1 && (
+                    <ArrowRight className={`h-5 w-5 mx-1 flex-shrink-0 ${
+                      demoState.participants[index + 1]?.action ? "text-primary" : "text-muted-foreground"
+                    }`} />
+                  )}
+                </div>
+              );
+            })}
           </div>
         </motion.div>
 
-        {/* Payout Breakdown */}
-        {currentStepData && currentStepData.payout.creator > 0 && (
+        {/* x402 Payout Breakdown */}
+        {demoState.latestSplits.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}
+            className="mb-6"
           >
-            <Card className="p-4">
-              <h3 className="font-display font-semibold text-foreground mb-3 text-center">
-                x402 Atomic Split Breakdown
+            <Card className="p-4 border-emerald-500/30 bg-emerald-500/5">
+              <h3 className="font-display font-semibold text-foreground mb-3 text-center flex items-center justify-center gap-2">
+                <Zap className="h-4 w-4 text-primary" />
+                x402 Atomic Split Breakdown ($20 Conversion)
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Creator (40%)</p>
-                  <p className="font-mono font-semibold text-primary">+${currentStepData.payout.creator.toFixed(2)}</p>
-                </div>
-                {currentStepData.payout.upstream.map(up => (
-                  <div key={up.name}>
-                    <p className="text-xs text-muted-foreground mb-1">{up.name} (upstream)</p>
-                    <p className="font-mono font-semibold text-primary">+${up.amount.toFixed(2)}</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+                {demoState.latestSplits.map(split => (
+                  <div key={split.recipient} className="p-2 rounded bg-background/50">
+                    <p className="text-xs text-muted-foreground mb-1">{split.role}</p>
+                    <p className="font-semibold text-sm">{split.recipient}</p>
+                    <p className="font-mono font-bold text-primary text-lg">+${split.amount}</p>
+                    {split.error ? (
+                      <Badge variant="destructive" className="text-xs mt-1">Needs USDC</Badge>
+                    ) : split.transaction ? (
+                      <Badge variant="secondary" className="text-xs mt-1">{split.transaction.status}</Badge>
+                    ) : null}
                   </div>
                 ))}
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Carol (actor)</p>
-                  <p className="font-mono font-semibold text-primary">+${currentStepData.payout.actor.toFixed(2)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">VibeCard Fee</p>
-                  <p className="font-mono font-semibold text-accent-foreground">${currentStepData.payout.fee.toFixed(2)}</p>
-                </div>
               </div>
               <div className="mt-4 pt-3 border-t text-center">
                 <p className="text-sm text-muted-foreground">
@@ -266,15 +433,44 @@ export function LiveDemoScreen() {
           </motion.div>
         )}
 
+        {/* Raw Logs Panel */}
+        {(demoState.transactionLogs.length > 0 || demoState.latestSplits.some(s => s.error)) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.4 }}
+            className="mb-6"
+          >
+            <Card className="p-4 bg-black/80 text-green-400 font-mono text-xs">
+              <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
+                <span className="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                LIVE Transaction Log
+              </h3>
+              <div className="space-y-1 max-h-48 overflow-y-auto">
+                {demoState.latestSplits.map((split, i) => (
+                  <div key={i} className={split.error ? "text-yellow-400" : "text-green-400"}>
+                    {split.error ? (
+                      <span>[PENDING] {split.recipient}: ${split.amount} USDC - Treasury needs funding</span>
+                    ) : split.transaction ? (
+                      <span>[{split.transaction.status}] {split.recipient}: ${split.amount} USDC - {split.transaction.txHash?.slice(0, 16)}...</span>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+              <div ref={logsEndRef} />
+            </Card>
+          </motion.div>
+        )}
+
         {/* Waiting state */}
-        {currentStep < 0 && (
+        {!demoState.initialized && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="text-center text-muted-foreground"
+            className="text-center text-muted-foreground mb-6"
           >
-            <p>Click "Start Demo" to begin the viral chain simulation</p>
+            <p>Click "Initialize Demo" to create wallets on Base Sepolia testnet</p>
           </motion.div>
         )}
 
@@ -373,7 +569,7 @@ export function LiveDemoScreen() {
         >
           <Card className="p-4">
             <h2 className="font-display text-lg font-bold text-foreground mb-3 text-center">
-              Windfall Potential (1,000 conversions @ $10 each)
+              Windfall Potential (1,000 conversions @ $20 each)
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {windfallPotential.map((item, index) => (

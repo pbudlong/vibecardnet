@@ -135,13 +135,27 @@ class ViralTrackingService {
     remainingPool -= converterAmount;
 
     // Distribute remaining 50% with decay to intermediaries
+    // Closest to converter gets most, decay as we go back toward creator
     const intermediaries = path.slice(1, -1); // Exclude creator and converter
     if (intermediaries.length > 0) {
-      let currentShare = remainingPool * 0.5; // Start with 50% of remaining
+      // Calculate total decay weights for normalization
+      // Weight[i] = 0.5^(distance from converter), where i=0 is closest to converter
+      let totalWeight = 0;
+      const weights: number[] = [];
+      for (let i = 0; i < intermediaries.length; i++) {
+        // Distance from converter: i=0 means closest to converter (last intermediary)
+        const weight = Math.pow(this.decayFactor, i);
+        weights.push(weight);
+        totalWeight += weight;
+      }
       
+      // Distribute remaining pool proportionally based on weights
+      // Iterate from converter-side backwards (last in path array = closest to converter)
       for (let i = intermediaries.length - 1; i >= 0; i--) {
         const action = intermediaries[i];
-        const amount = Math.max(currentShare, 0.01); // Minimum $0.01
+        const distanceFromConverter = intermediaries.length - 1 - i;
+        const weight = weights[distanceFromConverter];
+        const amount = Math.max((remainingPool * weight) / totalWeight, 0.01);
         
         splits.push({
           recipient: action.actorName,
@@ -149,8 +163,6 @@ class ViralTrackingService {
           amount: amount.toFixed(2),
           role: action.actionType === 'remix' ? 'Remixer' : 'Sharer',
         });
-        
-        currentShare = currentShare * this.decayFactor;
       }
     }
 
