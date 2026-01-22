@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
-import { Code, Zap, BarChart3 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Eye, GitBranch, ExternalLink } from "lucide-react";
+import andromedaImg from "@assets/Screen_Shot_2026-01-21_at_3.01.09_PM_1769047486512.png";
+import atlasImg from "@assets/Screen_Shot_2026-01-21_at_5.53.22_PM_1769047494023.png";
 
 const codeSnippet = `// Initialize VibeCard for your project
 import { VibeCard } from '@vibecard/sdk';
@@ -12,39 +15,29 @@ const vibe = new VibeCard({
 
 // Track a share action
 vibe.trackShare({
-  contentId: 'tutorial-123',
+  contentId: 'project-123',
   sharerId: user.walletAddress,
-  upstreamRef: referralCode,  // who referred them
+  upstreamRef: referralCode,
+});
+
+// Track a remix action
+vibe.trackRemix({
+  originalId: 'project-123',
+  remixId: 'remix-456',
+  remixerId: user.walletAddress,
+  upstreamRef: referralCode,
 });
 
 // Track a conversion (triggers x402 payout)
 vibe.trackConversion({
-  contentId: 'tutorial-123',
+  contentId: 'project-123',
   userId: user.walletAddress,
-  value: 10.00,  // USDC value of conversion
+  value: 10.00,  // USDC value
 });`;
-
-const features = [
-  {
-    icon: Code,
-    title: "3 Lines to Integrate",
-    description: "Drop in the SDK and start tracking shares and conversions",
-  },
-  {
-    icon: Zap,
-    title: "x402 Atomic Splits",
-    description: "Payouts happen instantly to all participants in one transaction",
-  },
-  {
-    icon: BarChart3,
-    title: "Real-time Analytics",
-    description: "Track viral spread, conversion rates, and budget utilization",
-  },
-];
 
 export function PublisherIntegrationScreen() {
   return (
-    <div className="h-full w-full flex flex-col items-center justify-start px-8 py-8 overflow-y-auto">
+    <div className="h-full w-full flex flex-col items-center justify-start px-8 py-6 overflow-y-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -52,17 +45,76 @@ export function PublisherIntegrationScreen() {
         className="text-center mb-6"
       >
         <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-3">
-          Publisher Integration
+          Content Tracker Integration
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Add viral rewards to any project in minutes. Any creator can become a publisher.
+          Platforms and creators can add viral rewards to projects in minutes.
         </p>
       </motion.div>
 
       <div className="w-full max-w-5xl grid md:grid-cols-2 gap-6">
-        {/* Code Block */}
+        {/* Content Examples - Left Side */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="flex flex-col gap-4"
+        >
+          {/* Andromeda Example */}
+          <Card className="p-4 overflow-hidden">
+            <div className="mb-3">
+              <h3 className="font-display font-bold text-foreground text-base">Solar System Visualization</h3>
+              <p className="text-xs text-muted-foreground">Interactive 3D solar system visualization</p>
+            </div>
+            <div className="flex items-center gap-2 mb-3">
+              <Button size="sm" variant="outline" className="text-xs h-7 px-3 text-orange-500 border-orange-500">
+                View App
+              </Button>
+              <Button size="sm" variant="outline" className="text-xs h-7 px-3">
+                Remix Template
+              </Button>
+              <div className="flex items-center gap-3 ml-auto text-xs text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Eye className="h-3 w-3" /> 3,214
+                </span>
+                <span className="flex items-center gap-1">
+                  <GitBranch className="h-3 w-3" /> 6
+                </span>
+              </div>
+            </div>
+            <div className="rounded-md overflow-hidden">
+              <img 
+                src={andromedaImg} 
+                alt="Andromeda Galaxy Visualization" 
+                className="w-full h-32 object-cover object-bottom"
+              />
+            </div>
+          </Card>
+
+          {/* 3iAtlas Example */}
+          <Card className="p-4 overflow-hidden bg-slate-950 border-slate-800">
+            <div className="flex items-center gap-3 mb-3 text-xs text-slate-400">
+              <span className="flex items-center gap-1">Copy</span>
+              <span className="flex items-center gap-1">Share on X</span>
+              <span className="flex items-center gap-1">Share on LinkedIn</span>
+              <span className="flex items-center gap-1 text-primary">Remix</span>
+            </div>
+            <h3 className="font-display font-bold text-white text-base mb-3 tracking-wider">
+              3I/ATLAS PROVENANCE TRACKER
+            </h3>
+            <div className="rounded-md overflow-hidden">
+              <img 
+                src={atlasImg} 
+                alt="3iAtlas Provenance Tracker" 
+                className="w-full h-36 object-cover object-top"
+              />
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Code Block - Right Side */}
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
@@ -78,74 +130,6 @@ export function PublisherIntegrationScreen() {
             <pre className="text-xs md:text-sm text-slate-300 overflow-x-auto">
               <code>{codeSnippet}</code>
             </pre>
-          </Card>
-        </motion.div>
-
-        {/* Features + Dashboard Preview */}
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex flex-col gap-4"
-        >
-          {/* Features */}
-          <Card className="p-5">
-            <h2 className="font-display text-lg font-bold text-foreground mb-4">
-              Why Publishers Love VibeCard
-            </h2>
-            <div className="space-y-3">
-              {features.map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
-                  className="flex items-start gap-3"
-                >
-                  <div className="p-1.5 rounded-md bg-primary/10 mt-0.5">
-                    <feature.icon className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground text-sm">
-                      {feature.title}
-                    </h3>
-                    <p className="text-xs text-muted-foreground">
-                      {feature.description}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </Card>
-
-          {/* Dashboard Preview */}
-          <Card className="p-5 flex-1">
-            <h2 className="font-display text-lg font-bold text-foreground mb-3">
-              Live Dashboard Preview
-            </h2>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Budget Remaining</span>
-                <span className="font-mono text-sm font-semibold text-primary">$847.20 USDC</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-primary h-2 rounded-full" style={{ width: '85%' }} />
-              </div>
-              <div className="grid grid-cols-3 gap-3 mt-4">
-                <div className="text-center">
-                  <p className="font-mono text-xl font-bold text-foreground">2,847</p>
-                  <p className="text-xs text-muted-foreground">Total Shares</p>
-                </div>
-                <div className="text-center">
-                  <p className="font-mono text-xl font-bold text-foreground">342</p>
-                  <p className="text-xs text-muted-foreground">Conversions</p>
-                </div>
-                <div className="text-center">
-                  <p className="font-mono text-xl font-bold text-foreground">12%</p>
-                  <p className="text-xs text-muted-foreground">Conv. Rate</p>
-                </div>
-              </div>
-            </div>
           </Card>
         </motion.div>
       </div>
