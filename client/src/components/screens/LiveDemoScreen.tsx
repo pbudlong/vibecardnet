@@ -355,11 +355,78 @@ export function LiveDemoScreen() {
           </Badge>
         </motion.div>
 
-        {/* Visualization Section with Initialize Button */}
+        {/* Tracking Code Demo */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
+        >
+          <Card className="p-4 bg-[#0c0c14] border-border/30">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Pete's Remix - Share Button Integration</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Share Button Preview */}
+              <div className="flex flex-col items-center justify-center p-6 rounded-lg bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-border/30">
+                <p className="text-xs text-muted-foreground mb-3">User clicks share button:</p>
+                <Button 
+                  className="gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600"
+                  onClick={() => {
+                    if (demoState.initialized && demoState.currentStep >= 1 && demoState.currentStep < 2) {
+                      runStep(2);
+                    }
+                  }}
+                  disabled={!demoState.initialized || demoState.currentStep < 1 || demoState.currentStep >= 2 || demoState.isLoading}
+                  data-testid="button-share-demo"
+                >
+                  <Zap className="h-4 w-4" />
+                  Share & Earn
+                </Button>
+                <p className="text-xs text-muted-foreground mt-2">Triggers reward tracking</p>
+              </div>
+              
+              {/* Code Snippet */}
+              <div className="font-mono text-xs bg-slate-900/80 rounded-lg p-4 overflow-x-auto border border-emerald-500/20">
+                <div className="text-slate-500 mb-2">// VibeCard SDK - Share tracking</div>
+                <div>
+                  <span className="text-purple-400">await</span>
+                  <span className="text-cyan-400"> vibecard</span>
+                  <span className="text-foreground">.</span>
+                  <span className="text-yellow-400">trackShare</span>
+                  <span className="text-foreground">({"{"}</span>
+                </div>
+                <div className="pl-4">
+                  <span className="text-emerald-400">contentId</span>
+                  <span className="text-foreground">: </span>
+                  <span className="text-amber-300">"pete-remix-001"</span>
+                  <span className="text-foreground">,</span>
+                </div>
+                <div className="pl-4">
+                  <span className="text-emerald-400">sharerId</span>
+                  <span className="text-foreground">: </span>
+                  <span className="text-amber-300">"manny-wallet"</span>
+                  <span className="text-foreground">,</span>
+                </div>
+                <div className="pl-4">
+                  <span className="text-emerald-400">platform</span>
+                  <span className="text-foreground">: </span>
+                  <span className="text-amber-300">"twitter"</span>
+                </div>
+                <div>
+                  <span className="text-foreground">{"}"})</span>
+                </div>
+                <div className="mt-2 text-slate-500">// Returns: actionId, upstreamChain[]</div>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Visualization Section with Initialize Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
         >
           <Card className="p-4 bg-[#0c0c14] border-border/30">
             <div className="flex items-center justify-between mb-4">
