@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, resetDemoToTreasury, getAllWalletsWithBalances, runTestTransaction, createArcTestnetWallets, generateNewEntitySecret } from "./lib/circle-wallets";
+import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, resetDemoToTreasury, getAllWalletsWithBalances, runTestTransaction, createArcTestnetWallets, generateNewEntitySecret, getTransactionStatus } from "./lib/circle-wallets";
 import { GATEWAY_CONFIG } from "./lib/x402-gateway";
 
 export async function registerRoutes(
@@ -178,6 +178,18 @@ export async function registerRoutes(
     } catch (error) {
       console.error('Demo reset error:', error);
       res.status(500).json({ error: 'Failed to reset demo' });
+    }
+  });
+
+  // Check transaction status
+  app.get('/api/transaction/:txId', async (req, res) => {
+    try {
+      const { txId } = req.params;
+      const status = await getTransactionStatus(txId);
+      res.json(status);
+    } catch (error) {
+      console.error('Transaction status error:', error);
+      res.status(500).json({ error: 'Failed to get transaction status' });
     }
   });
 

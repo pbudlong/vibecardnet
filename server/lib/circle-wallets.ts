@@ -4,6 +4,30 @@ const CIRCLE_W3S_API_BASE = 'https://api.circle.com/v1/w3s';
 const ARC_TESTNET_RPC = 'https://arc-testnet.drpc.org';
 const ARC_USDC_CONTRACT = '0x3600000000000000000000000000000000000000';
 
+// Check transaction status
+export async function getTransactionStatus(txId: string): Promise<{ state: string; txHash?: string; error?: string }> {
+  const apiKey = process.env.CIRCLE_API_KEY;
+  if (!apiKey) return { state: 'error', error: 'No API key' };
+
+  try {
+    const response = await fetch(`${CIRCLE_W3S_API_BASE}/transactions/contractExecution/${txId}`, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await response.json();
+    console.log(`[Circle] Transaction ${txId} status:`, JSON.stringify(data.data, null, 2));
+    return {
+      state: data.data?.transaction?.state || 'unknown',
+      txHash: data.data?.transaction?.txHash,
+      error: data.data?.transaction?.errorReason
+    };
+  } catch (error: any) {
+    return { state: 'error', error: error?.message };
+  }
+}
+
 // Query real USDC balance from Arc blockchain directly
 export async function getArcUsdcBalance(address: string): Promise<string> {
   try {
@@ -436,25 +460,25 @@ export async function transferUSDC(
     return { success: false, error: 'Circle SDK not configured - check API key and entity secret' };
   }
 
+  console.log(`[Circle SDK] Transferring ${amount} USDC from wallet ${fromWalletId} to ${toAddress} on ${blockchain}`);
+
   const usdcContract = USDC_CONTRACTS[blockchain];
   if (!usdcContract) {
     return { success: false, error: `USDC contract not configured for ${blockchain}` };
   }
 
-  // Convert amount to USDC base units (6 decimals)
+  // Convert amount to USDC base units (6 decimals for USDC)
   const amountInBaseUnits = Math.floor(parseFloat(amount) * 1_000_000).toString();
-
-  console.log(`[Circle SDK] Transferring ${amount} USDC from wallet ${fromWalletId} to ${toAddress}`);
   console.log(`[Circle SDK] Using USDC contract: ${usdcContract} (${amountInBaseUnits} base units)`);
 
   try {
-    // Use the SDK for contract execution
+    // Use contract execution for ERC-20 transfer
     const result = await client.createContractExecutionTransaction({
       walletId: fromWalletId,
       contractAddress: usdcContract,
       abiFunctionSignature: 'transfer(address,uint256)',
       abiParameters: [toAddress, amountInBaseUnits],
-      fee: { type: 'level', config: { feeLevel: 'LOW' } }
+      fee: { type: 'level', config: { feeLevel: 'MEDIUM' } }
     });
 
     console.log('[Circle SDK] Transfer result:', JSON.stringify(result.data, null, 2));
@@ -599,11 +623,11 @@ export async function resetDemoToTreasury(): Promise<{
 
   console.log(`[Demo Reset] Found ${userWallets.length} user wallets with balances`);
 
-  const transfers: Array<{ from: string; amount: string; status: string }> = [];
+  const transfers: Array<{ from: string; amount: string; status: string; txId?: string }> = [];
   let totalRecovered = 0;
 
+  // Process transfers sequentially with delay to avoid nonce conflicts
   for (const userWallet of userWallets) {
-    // Use REAL blockchain balance
     const amount = userWallet.usdcBalance;
     if (parseFloat(amount) <= 0) continue;
 
@@ -619,11 +643,14 @@ export async function resetDemoToTreasury(): Promise<{
     transfers.push({
       from: userWallet.name || userWallet.refId,
       amount,
-      status: result.success ? 'success' : 'failed'
+      status: result.success ? 'success' : 'failed',
+      txId: result.txId
     });
 
     if (result.success) {
       totalRecovered += parseFloat(amount);
+      // Wait 3 seconds between transfers to allow nonce to update
+      await new Promise(resolve => setTimeout(resolve, 3000));
     }
   }
 
