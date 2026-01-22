@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowDown, CreditCard } from "lucide-react";
-import { SiStripe } from "react-icons/si";
+import { ArrowRight, ArrowDown, CreditCard, Wallet } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 export function SystemArchitectureScreen() {
@@ -35,10 +34,10 @@ export function SystemArchitectureScreen() {
             className="flex items-center pt-12 self-start"
           >
             <div className="flex flex-col items-center gap-2" style={{ marginTop: '-35px' }}>
-              <Card className="p-3 w-28 text-center">
-                <SiStripe className="h-6 w-6 mx-auto mb-1 text-[#635BFF]" />
-                <p className="text-[10px] font-medium text-foreground">Stripe</p>
-                <p className="text-[8px] text-muted-foreground">Fiat In</p>
+              <Card className="p-3 w-28 text-center border-sky-400/50">
+                <Wallet className="h-6 w-6 mx-auto mb-1 text-sky-400" />
+                <p className="text-[10px] font-medium text-foreground">Developer Wallet</p>
+                <p className="text-[8px] text-muted-foreground">USDC Funding</p>
               </Card>
               
               <ArrowDown className="h-3 w-3 text-muted-foreground" />
