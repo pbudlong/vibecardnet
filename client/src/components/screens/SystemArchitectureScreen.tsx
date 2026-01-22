@@ -32,7 +32,7 @@ export function SystemArchitectureScreen() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}
-            className="flex items-start pt-12"
+            className="flex items-center pt-12 self-start"
           >
             <div className="flex flex-col items-center gap-2">
               <Card className="p-3 w-28 text-center">
@@ -43,17 +43,15 @@ export function SystemArchitectureScreen() {
               
               <ArrowDown className="h-3 w-3 text-muted-foreground" />
               
-              <div className="flex items-center">
-                <Card className="p-3 w-28 text-center border-sky-400/50">
-                  <div className="h-6 w-6 mx-auto mb-1 rounded-full bg-sky-400 flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">◎</span>
-                  </div>
-                  <p className="text-[10px] font-medium text-foreground">Circle Mint</p>
-                  <p className="text-[8px] text-muted-foreground">USD → USDC</p>
-                </Card>
-                <ArrowRight className="h-4 w-4 text-muted-foreground ml-1" />
-              </div>
+              <Card className="p-3 w-28 text-center border-sky-400/50">
+                <div className="h-6 w-6 mx-auto mb-1 rounded-full bg-sky-400 flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">◎</span>
+                </div>
+                <p className="text-[10px] font-medium text-foreground">Circle Mint</p>
+                <p className="text-[8px] text-muted-foreground">USD → USDC</p>
+              </Card>
             </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground ml-1 mt-16" />
           </motion.div>
 
           {/* Center - VibeCard Onchain Core (ASCII-style) */}
@@ -188,19 +186,17 @@ export function SystemArchitectureScreen() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
-            className="flex items-end pb-12"
+            className="flex items-center pb-12 self-end"
           >
+            <ArrowRight className="h-4 w-4 text-muted-foreground mr-1 mb-16" />
             <div className="flex flex-col items-center gap-2">
-              <div className="flex items-center">
-                <ArrowRight className="h-4 w-4 text-muted-foreground mr-1" />
-                <Card className="p-3 w-28 text-center border-sky-400/50">
-                  <div className="h-6 w-6 mx-auto mb-1 rounded-full bg-sky-400 flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">◎</span>
-                  </div>
-                  <p className="text-[10px] font-medium text-foreground">Circle Mint</p>
-                  <p className="text-[8px] text-muted-foreground">USDC → USD</p>
-                </Card>
-              </div>
+              <Card className="p-3 w-28 text-center border-sky-400/50">
+                <div className="h-6 w-6 mx-auto mb-1 rounded-full bg-sky-400 flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">◎</span>
+                </div>
+                <p className="text-[10px] font-medium text-foreground">Circle Mint</p>
+                <p className="text-[8px] text-muted-foreground">USDC → USD</p>
+              </Card>
 
               <ArrowDown className="h-3 w-3 text-muted-foreground" />
 
