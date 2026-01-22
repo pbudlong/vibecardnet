@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage, getDemoTreasuryBalance, setDemoTreasuryBalance } from "./storage";
 import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet } from "./lib/circle-wallets";
 import { GATEWAY_CONFIG } from "./lib/x402-gateway";
 
@@ -46,24 +46,56 @@ export async function registerRoutes(
     try {
       const wallet = await getDeveloperWalletBalance();
       if (wallet) {
+        let balance = wallet.balance.available;
+        
+        // If real balance is non-zero, cache it for demo persistence
+        if (parseFloat(balance) > 0) {
+          setDemoTreasuryBalance(balance);
+        } else {
+          // Use cached balance if real balance is 0
+          const cachedBalance = getDemoTreasuryBalance();
+          if (parseFloat(cachedBalance) > 0) {
+            balance = cachedBalance;
+            console.log('[Demo] Using cached treasury balance:', balance);
+          }
+        }
+        
         res.json({
           address: wallet.address,
-          balance: wallet.balance.available,
+          balance: balance,
           currency: wallet.balance.currency,
           blockchain: wallet.blockchain
         });
       } else {
+        // Even without wallet, try cached balance
+        const cachedBalance = getDemoTreasuryBalance();
         res.json({
           address: null,
-          balance: '0',
+          balance: cachedBalance,
           currency: 'USDC',
-          blockchain: 'ARC',
-          error: 'Wallet not configured or not accessible'
+          blockchain: 'BASE-SEPOLIA',
+          cached: true
         });
       }
     } catch (error) {
       console.error('Wallet balance error:', error);
       res.status(500).json({ error: 'Failed to fetch wallet balance' });
+    }
+  });
+
+  // Manually set demo balance (for when Circle balance isn't updating)
+  app.post('/api/wallet/set-balance', async (req, res) => {
+    try {
+      const { balance } = req.body;
+      if (balance === undefined) {
+        return res.status(400).json({ error: 'Balance required' });
+      }
+      setDemoTreasuryBalance(String(balance));
+      console.log('[Demo] Manually set treasury balance to:', balance);
+      res.json({ success: true, balance: String(balance) });
+    } catch (error) {
+      console.error('Set balance error:', error);
+      res.status(500).json({ error: 'Failed to set balance' });
     }
   });
 
