@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Circle, Play, RefreshCw, Wallet, ArrowDown, Zap, DollarSign, Clock, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 
 interface DemoPlaygroundScreenProps {
   isActive: boolean;
@@ -136,8 +137,25 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     return <AlertCircle className="h-3 w-3 text-red-400" />;
   };
 
+  const queryClient = useQueryClient();
+
+  const fundTreasuryMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('POST', '/api/wallet/fund');
+      return response.json();
+    },
+    onSuccess: () => {
+      setLogs(prev => [...prev, { time: "00:00:10", type: "success", message: "Faucet request submitted - USDC incoming!" }]);
+      queryClient.invalidateQueries({ queryKey: ['/api/wallet/balance'] });
+    },
+    onError: () => {
+      setLogs(prev => [...prev, { time: "00:00:10", type: "warn", message: "Faucet failed - visit faucet.circle.com" }]);
+    }
+  });
+
   const treasuryBalance = walletBalance?.balance ? parseFloat(walletBalance.balance) : 0;
   const isTreasuryFunded = treasuryBalance > 0;
+  const walletAddress = walletBalance?.address;
 
   return (
     <div className="h-full flex flex-col items-center justify-start py-6 px-8 overflow-hidden">
@@ -248,6 +266,31 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   <RefreshCw className="h-3 w-3 mr-1" />
                   Reset Demo
                 </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="w-full text-[10px] border-sky-400/50 text-sky-400 hover:bg-sky-400/10"
+                  onClick={() => fundTreasuryMutation.mutate()}
+                  disabled={fundTreasuryMutation.isPending || isTreasuryFunded}
+                  data-testid="button-fund-treasury"
+                >
+                  {fundTreasuryMutation.isPending ? (
+                    <>
+                      <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                      Requesting USDC...
+                    </>
+                  ) : isTreasuryFunded ? (
+                    <>
+                      <Check className="h-3 w-3 mr-1" />
+                      Treasury Funded
+                    </>
+                  ) : (
+                    <>
+                      <DollarSign className="h-3 w-3 mr-1" />
+                      Fund Treasury (Testnet)
+                    </>
+                  )}
+                </Button>
               </div>
               {transactionCount > 0 && (
                 <div className="mt-2 text-center">
@@ -266,7 +309,12 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
               <div className="space-y-2 text-center">
                 <div className="p-2 rounded bg-sky-400/10 border border-sky-400/30" data-testid="flow-reward-pool">
                   <span className="text-[9px] text-sky-400 font-medium">Developer Wallet</span>
-                  <p className="text-sm font-bold text-foreground">$500.00</p>
+                  <p className="text-sm font-bold text-foreground">${treasuryBalance.toFixed(2)} USDC</p>
+                  {walletAddress && (
+                    <p className="text-[8px] text-muted-foreground font-mono mt-1">
+                      {walletAddress.slice(0, 10)}...{walletAddress.slice(-8)}
+                    </p>
+                  )}
                 </div>
                 <ArrowDown className="h-4 w-4 mx-auto text-muted-foreground" />
                 <div className="p-2 rounded bg-emerald-500/10 border border-emerald-500/30" data-testid="flow-x402-split">
