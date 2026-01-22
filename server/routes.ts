@@ -125,11 +125,11 @@ export async function registerRoutes(
         return res.status(400).json({ error: 'No Arc user wallets found' });
       }
 
-      const totalAmount = 5.00;
+      const totalAmount = 1.00;
       const splits = [
-        { recipient: users[0].address, recipientWalletId: users[0].id, amount: '3.00', role: 'creator' },
-        { recipient: users[1]?.address || users[0].address, recipientWalletId: users[1]?.id || users[0].id, amount: '1.25', role: 'upstream' },
-        { recipient: users[2]?.address || users[0].address, recipientWalletId: users[2]?.id || users[0].id, amount: '0.75', role: 'actor' },
+        { recipient: users[0].address, recipientWalletId: users[0].id, amount: '0.60', role: 'creator' },
+        { recipient: users[1]?.address || users[0].address, recipientWalletId: users[1]?.id || users[0].id, amount: '0.25', role: 'upstream' },
+        { recipient: users[2]?.address || users[0].address, recipientWalletId: users[2]?.id || users[0].id, amount: '0.15', role: 'actor' },
       ].filter(s => s.recipient);
 
       const result = await executeX402Payment({
