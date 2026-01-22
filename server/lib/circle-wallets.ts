@@ -110,7 +110,7 @@ export async function createUserWallet(userId: string): Promise<UserWallet | nul
   }
 }
 
-export async function fundFromFaucet(address: string): Promise<boolean> {
+export async function fundFromFaucet(address: string, blockchain: string = 'BASE-SEPOLIA'): Promise<boolean> {
   const apiKey = process.env.CIRCLE_API_KEY;
   
   if (!apiKey) {
@@ -119,6 +119,7 @@ export async function fundFromFaucet(address: string): Promise<boolean> {
   }
 
   try {
+    console.log(`[Circle] Requesting faucet funds for ${address} on ${blockchain}`);
     const response = await fetch('https://api.circle.com/v1/faucet/drips', {
       method: 'POST',
       headers: {
@@ -128,8 +129,9 @@ export async function fundFromFaucet(address: string): Promise<boolean> {
       },
       body: JSON.stringify({
         address,
-        blockchain: 'ARC',
-        usdc: true
+        blockchain,
+        usdc: true,
+        native: true
       })
     });
 
@@ -139,6 +141,17 @@ export async function fundFromFaucet(address: string): Promise<boolean> {
       return false;
     }
 
+    const text = await response.text();
+    if (text) {
+      try {
+        const data = JSON.parse(text);
+        console.log('[Circle] Faucet response:', JSON.stringify(data, null, 2));
+      } catch (e) {
+        console.log('[Circle] Faucet response (non-JSON):', text);
+      }
+    } else {
+      console.log('[Circle] Faucet request successful (empty response)');
+    }
     return true;
   } catch (error) {
     console.error('[Circle] Faucet error:', error);

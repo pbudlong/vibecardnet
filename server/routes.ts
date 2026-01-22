@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { checkIntegrationStatus, getDeveloperWalletBalance } from "./lib/circle-wallets";
+import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet } from "./lib/circle-wallets";
 import { GATEWAY_CONFIG } from "./lib/x402-gateway";
 
 export async function registerRoutes(
@@ -64,6 +64,37 @@ export async function registerRoutes(
     } catch (error) {
       console.error('Wallet balance error:', error);
       res.status(500).json({ error: 'Failed to fetch wallet balance' });
+    }
+  });
+
+  app.post('/api/wallet/fund', async (req, res) => {
+    try {
+      const wallet = await getDeveloperWalletBalance();
+      if (!wallet) {
+        return res.status(400).json({ error: 'No wallet configured' });
+      }
+      
+      console.log('[Faucet] Requesting funds for wallet:', wallet.address, 'on', wallet.blockchain);
+      const success = await fundFromFaucet(wallet.address, wallet.blockchain);
+      
+      if (success) {
+        res.json({ 
+          success: true, 
+          message: 'Faucet request submitted - funds should arrive shortly',
+          address: wallet.address,
+          blockchain: wallet.blockchain
+        });
+      } else {
+        res.status(400).json({ 
+          success: false, 
+          error: 'Faucet request failed',
+          faucetUrl: 'https://faucet.circle.com',
+          note: 'You can manually fund the wallet at faucet.circle.com'
+        });
+      }
+    } catch (error) {
+      console.error('Faucet error:', error);
+      res.status(500).json({ error: 'Failed to request faucet funds' });
     }
   });
 
