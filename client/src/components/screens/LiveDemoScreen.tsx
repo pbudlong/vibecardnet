@@ -422,64 +422,91 @@ export function LiveDemoScreen() {
   };
 
   const runFullShareDemo = async () => {
-    setDemoState(prev => ({ ...prev, isLoading: true }));
+    setDemoState(prev => ({ ...prev, isLoading: true, currentStep: 0 }));
     setIsAnimating(true);
     
     try {
-      // Step 0: Initialize if needed
-      if (!demoState.initialized) {
-        const resetRes = await fetch("/api/demo/reset", { method: "POST" });
-        await resetRes.json();
-        
-        const initRes = await fetch("/api/demo/init", { method: "POST" });
-        const initData = await initRes.json();
-        logApiResponse("POST /api/demo/init", initData);
-        
-        if (initData.success) {
-          setDemoState(prev => ({
-            ...prev,
-            initialized: true,
-            treasury: initData.treasury,
-          }));
-        }
+      // Reset and initialize
+      await fetch("/api/demo/reset", { method: "POST" });
+      
+      const initRes = await fetch("/api/demo/init", { method: "POST" });
+      const initData = await initRes.json();
+      
+      if (!initData.success) {
+        throw new Error("Init failed");
       }
+      
+      setDemoState(prev => ({
+        ...prev,
+        initialized: true,
+        treasury: initData.treasury,
+      }));
 
-      // Run steps 0, 1, 2 (Create, Remix, Share)
-      const endpoints = ["/api/demo/create", "/api/demo/remix", "/api/demo/share"];
-      const participants = DEMO_PARTICIPANTS;
+      // Step 1: Create content (Matt P)
+      const createRes = await fetch("/api/demo/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ creatorName: DEMO_PARTICIPANTS[0].name }),
+      });
+      const createData = await createRes.json();
       
-      for (let i = 0; i <= 2; i++) {
-        const response = await fetch(endpoints[i], {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ actorName: participants[i].name }),
-        });
-        const data = await response.json();
-        logApiResponse(`POST ${endpoints[i]}`, data);
-        
-        if (data.success) {
-          setDemoState(prev => {
-            const newParticipants = [...prev.participants];
-            newParticipants[i] = {
-              ...newParticipants[i],
-              action: data.action,
-              wallet: data.wallet,
-            };
-            return {
-              ...prev,
-              participants: newParticipants,
-              currentStep: i,
-              latestSplits: data.splits || prev.latestSplits,
-            };
-          });
-        }
-        
-        // Small delay between steps for visual effect
-        await new Promise(r => setTimeout(r, 400));
+      if (!createData.success) {
+        throw new Error("Create failed");
       }
       
-      toast({ title: "Share tracked!", description: "SDK call completed - chain recorded" });
+      const createActionId = createData.action.id;
+      
+      // Step 2: Remix (Pete)
+      const remixRes = await fetch("/api/demo/remix", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          actorName: DEMO_PARTICIPANTS[1].name,
+          upstreamActionId: createActionId,
+        }),
+      });
+      const remixData = await remixRes.json();
+      
+      if (!remixData.success) {
+        throw new Error("Remix failed");
+      }
+      
+      const remixActionId = remixData.action.id;
+      
+      // Step 3: Share (Manny) - This triggers rewards
+      setDemoState(prev => ({ ...prev, currentStep: 1 }));
+      
+      const shareRes = await fetch("/api/demo/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          actorName: DEMO_PARTICIPANTS[2].name,
+          upstreamActionId: remixActionId,
+        }),
+      });
+      const shareData = await shareRes.json();
+      logApiResponse("POST /api/demo/share", shareData);
+      
+      if (shareData.success) {
+        setDemoState(prev => {
+          const newParticipants = [...prev.participants];
+          newParticipants[2] = {
+            ...newParticipants[2],
+            action: shareData.action,
+            wallet: shareData.wallet,
+          };
+          return {
+            ...prev,
+            participants: newParticipants,
+            currentStep: 2,
+            latestSplits: shareData.splits || [],
+          };
+        });
+        
+        toast({ title: "Share tracked!", description: "SDK call completed - rewards distributed" });
+      }
     } catch (error) {
+      console.error("Demo error:", error);
       toast({ title: "Error", description: "Demo failed", variant: "destructive" });
     }
     
@@ -569,24 +596,30 @@ export function LiveDemoScreen() {
                     <Loader2 className="h-3 w-3 animate-spin ml-auto text-amber-400" />
                   )}
                 </div>
-                <div className={demoState.isLoading ? 'animate-pulse' : ''}>
-                  <span className="text-purple-400">await</span>
-                  <span className="text-cyan-400"> vibecard</span>
-                  <span className="text-white">.</span>
-                  <span className="text-yellow-400">trackShare</span>
-                  <span className="text-white">({"{"}</span>
-                </div>
-                <div className="pl-2">
-                  <span className="text-emerald-400">contentId</span>
-                  <span className="text-white">: </span>
-                  <span className="text-amber-300">"remix-001"</span>
-                </div>
-                <div className="pl-2">
-                  <span className="text-emerald-400">sharerId</span>
-                  <span className="text-white">: </span>
-                  <span className="text-amber-300">"manny"</span>
-                </div>
-                <div><span className="text-white">{"}"})</span></div>
+                {(demoState.isLoading || demoState.currentStep >= 1) ? (
+                  <div className={demoState.isLoading ? 'animate-pulse' : ''}>
+                    <div>
+                      <span className="text-purple-400">await</span>
+                      <span className="text-cyan-400"> vibecard</span>
+                      <span className="text-white">.</span>
+                      <span className="text-yellow-400">trackShare</span>
+                      <span className="text-white">({"{"}</span>
+                    </div>
+                    <div className="pl-2">
+                      <span className="text-emerald-400">contentId</span>
+                      <span className="text-white">: </span>
+                      <span className="text-amber-300">"remix-001"</span>
+                    </div>
+                    <div className="pl-2">
+                      <span className="text-emerald-400">sharerId</span>
+                      <span className="text-white">: </span>
+                      <span className="text-amber-300">"manny"</span>
+                    </div>
+                    <div><span className="text-white">{"}"})</span></div>
+                  </div>
+                ) : (
+                  <div className="text-white/30 italic">Click button to execute...</div>
+                )}
               </div>
 
               {/* Step 3: Result */}
