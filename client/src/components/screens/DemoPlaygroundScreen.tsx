@@ -97,25 +97,53 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     refetchInterval: 15000,
   });
 
+  const testTransactionMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('POST', '/api/demo/test-transaction');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        setLogs(prev => [
+          ...prev,
+          { time: "00:00:06", type: "success", message: `Sent $${data.totalSent} USDC to ${data.transfers.length} recipients` },
+          ...data.transfers.map((t: any, i: number) => ({
+            time: `00:00:0${7 + i}`,
+            type: t.status === 'success' ? 'success' : 'error',
+            message: `${t.to}: $${t.amount} ${t.status === 'success' ? '(confirmed)' : '(failed)'}`
+          })),
+          { time: "00:00:10", type: "info", message: `Treasury balance: $${data.newTreasuryBalance}` }
+        ]);
+        setShowPayouts(true);
+        setTransactionCount(prev => prev + 1);
+      } else {
+        setLogs(prev => [...prev, { time: "00:00:06", type: "warn", message: data.message || 'Transfer failed' }]);
+      }
+      queryClient.invalidateQueries({ queryKey: ['/api/wallet/balance'] });
+      setIsRunning(false);
+    },
+    onError: (error) => {
+      setLogs(prev => [...prev, { time: "00:00:06", type: "error", message: `Transaction error: ${error}` }]);
+      setIsRunning(false);
+    }
+  });
+
   const runTestTransaction = () => {
     if (isRunning) return;
     setIsRunning(true);
     setShowPayouts(false);
     
-    let currentIndex = 0;
-    const addNextLog = () => {
-      if (currentIndex < testTransactionLogs.length) {
-        const logToAdd = testTransactionLogs[currentIndex];
-        setLogs(prev => [...prev, logToAdd]);
-        currentIndex++;
-        setTimeout(addNextLog, 600);
-      } else {
-        setIsRunning(false);
-        setShowPayouts(true);
-        setTransactionCount(prev => prev + 1);
-      }
-    };
-    setTimeout(addNextLog, 600);
+    // Add initial logs
+    setLogs(prev => [
+      ...prev,
+      { time: "00:00:04", type: "event", message: "Initiating real USDC transfer..." },
+      { time: "00:00:05", type: "info", message: "x402 Batching: Creator 60% | Sharer 25% | Platform 15%" },
+    ]);
+    
+    // Execute real transfer after log animation
+    setTimeout(() => {
+      testTransactionMutation.mutate();
+    }, 1200);
   };
 
 

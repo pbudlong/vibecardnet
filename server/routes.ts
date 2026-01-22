@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage, getDemoTreasuryBalance, setDemoTreasuryBalance } from "./storage";
-import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, resetDemoToTreasury, getAllWalletsWithBalances } from "./lib/circle-wallets";
+import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, resetDemoToTreasury, getAllWalletsWithBalances, runTestTransaction } from "./lib/circle-wallets";
 import { GATEWAY_CONFIG } from "./lib/x402-gateway";
 
 export async function registerRoutes(
@@ -138,6 +138,37 @@ export async function registerRoutes(
     } catch (error) {
       console.error('Get wallets error:', error);
       res.status(500).json({ error: 'Failed to fetch wallets' });
+    }
+  });
+
+  // Run test transaction - transfer USDC from treasury to user wallets
+  app.post('/api/demo/test-transaction', async (req, res) => {
+    try {
+      console.log('[Demo] Running test transaction - sending rewards to users');
+      const result = await runTestTransaction();
+      
+      if (result.success) {
+        // Update cached balance
+        setDemoTreasuryBalance(result.newTreasuryBalance);
+        
+        res.json({
+          success: true,
+          message: `Sent $${result.totalSent} USDC to ${result.transfers.length} recipients`,
+          transfers: result.transfers,
+          totalSent: result.totalSent,
+          newTreasuryBalance: result.newTreasuryBalance
+        });
+      } else {
+        res.json({
+          success: false,
+          message: 'Transfer failed or no wallets available',
+          transfers: result.transfers,
+          newTreasuryBalance: result.newTreasuryBalance
+        });
+      }
+    } catch (error) {
+      console.error('Test transaction error:', error);
+      res.status(500).json({ error: 'Failed to run test transaction' });
     }
   });
 

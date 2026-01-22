@@ -307,6 +307,87 @@ export async function transferUSDC(
   }
 }
 
+export async function runTestTransaction(): Promise<{
+  success: boolean;
+  transfers: Array<{ to: string; amount: string; status: string; txId?: string }>;
+  totalSent: string;
+  newTreasuryBalance: string;
+}> {
+  const wallets = await getAllWalletsWithBalances();
+  
+  // Find treasury wallet
+  const treasury = wallets.find(w => 
+    w.refId === 'treasury' || w.name?.toLowerCase().includes('treasury')
+  );
+  
+  if (!treasury) {
+    console.log('[Demo] No treasury wallet found');
+    return { success: false, transfers: [], totalSent: '0', newTreasuryBalance: '0' };
+  }
+
+  const treasuryBalance = parseFloat(treasury.usdcBalance);
+  if (treasuryBalance < 1) {
+    console.log('[Demo] Treasury balance too low:', treasuryBalance);
+    return { success: false, transfers: [], totalSent: '0', newTreasuryBalance: treasury.usdcBalance };
+  }
+
+  // Find user wallets (non-treasury)
+  const userWallets = wallets.filter(w => 
+    w.refId !== 'treasury' && 
+    !w.name?.toLowerCase().includes('treasury')
+  ).slice(0, 3); // Take up to 3 user wallets
+
+  if (userWallets.length === 0) {
+    console.log('[Demo] No user wallets found');
+    return { success: false, transfers: [], totalSent: '0', newTreasuryBalance: treasury.usdcBalance };
+  }
+
+  // Calculate payout amounts (Creator 60%, Sharer 25%, Platform 15% of $5 total)
+  const payoutTotal = Math.min(5, treasuryBalance); // Cap at $5 per test or available balance
+  const payoutAmounts = [
+    { label: 'Creator', ratio: 0.60 },
+    { label: 'Sharer', ratio: 0.25 },
+    { label: 'Platform', ratio: 0.15 }
+  ];
+
+  const transfers: Array<{ to: string; amount: string; status: string; txId?: string }> = [];
+  let totalSent = 0;
+
+  for (let i = 0; i < Math.min(userWallets.length, payoutAmounts.length); i++) {
+    const userWallet = userWallets[i];
+    const amount = (payoutTotal * payoutAmounts[i].ratio).toFixed(2);
+    
+    console.log(`[Demo] Sending $${amount} to ${userWallet.name || userWallet.refId} (${userWallet.address})`);
+    
+    const result = await transferUSDC(
+      treasury.id,
+      userWallet.address,
+      amount,
+      treasury.blockchain
+    );
+    
+    transfers.push({
+      to: userWallet.name || userWallet.refId || payoutAmounts[i].label,
+      amount,
+      status: result.success ? 'success' : 'failed',
+      txId: result.txId
+    });
+
+    if (result.success) {
+      totalSent += parseFloat(amount);
+    }
+  }
+
+  const newBalance = (treasuryBalance - totalSent).toFixed(2);
+  
+  return {
+    success: transfers.some(t => t.status === 'success'),
+    transfers,
+    totalSent: totalSent.toFixed(2),
+    newTreasuryBalance: newBalance
+  };
+}
+
 export async function resetDemoToTreasury(): Promise<{ 
   success: boolean; 
   transfers: Array<{ from: string; amount: string; status: string }>;
