@@ -198,11 +198,18 @@ export async function registerRoutes(
       const result = await resetDemoToTreasury();
       
       if (result.success) {
+        // Update cached balance by adding recovered amount
+        const currentBalance = parseFloat(getDemoTreasuryBalance()) || 0;
+        const newBalance = (currentBalance + parseFloat(result.totalRecovered)).toFixed(2);
+        setDemoTreasuryBalance(newBalance);
+        console.log(`[Demo] Updated treasury balance: ${currentBalance} + ${result.totalRecovered} = ${newBalance}`);
+        
         res.json({
           success: true,
           message: `Recovered ${result.totalRecovered} USDC to treasury`,
           transfers: result.transfers,
-          totalRecovered: result.totalRecovered
+          totalRecovered: result.totalRecovered,
+          newTreasuryBalance: newBalance
         });
       } else {
         res.json({
