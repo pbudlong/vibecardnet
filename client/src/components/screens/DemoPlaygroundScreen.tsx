@@ -569,9 +569,9 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   <div className="flex-1 relative h-36">
                     <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" key={synapseKey}>
                       {[
-                        { yEnd: 16, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$1.00' },
+                        { yEnd: -10, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$1.00' },
                         { yEnd: 50, color: '#8b5cf6', amount: displayPayouts[1]?.amount || '$0.70' },
-                        { yEnd: 100, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.30' }
+                        { yEnd: 110, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.30' }
                       ].map((path, i) => {
                         const pathD = `M 0 50 Q 50 ${path.yEnd}, 100 ${path.yEnd}`;
                         return (
