@@ -251,6 +251,8 @@ export async function registerRoutes(
       }
 
       const totalRecovered = (Number(totalRecoveredBaseUnits) / 1_000_000).toFixed(2);
+      // Gas buffer is $0.10 per wallet that had funds
+      const totalGasReserved = (usersWithBalance.length * 0.10).toFixed(2);
 
       // Wait for final transactions to confirm on blockchain before returning
       // Arc blockchain takes ~15s to confirm, so wait 20s to be safe
@@ -269,6 +271,7 @@ export async function registerRoutes(
         message: `x402 recovered $${totalRecovered} USDC to treasury (exact balance)`,
         transfers,
         totalRecovered,
+        totalGasReserved,
         newTreasuryBalance,
         x402Version: 2
       });

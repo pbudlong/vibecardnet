@@ -240,8 +240,9 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     },
     onSuccess: (data) => {
       if (data.success) {
-        const newBalance = data.newTreasuryBalance ? ` (Treasury now: $${parseFloat(data.newTreasuryBalance).toFixed(2)})` : '';
-        setLogs(prev => [...prev, { time: "00:00:10", type: "success", message: `Recovered $${data.totalRecovered} USDC to treasury${newBalance}` }]);
+        const gasInfo = data.totalGasReserved ? ` (gas reserved: $${data.totalGasReserved})` : '';
+        const newBalance = data.newTreasuryBalance ? ` Treasury: $${parseFloat(data.newTreasuryBalance).toFixed(2)}` : '';
+        setLogs(prev => [...prev, { time: "00:00:10", type: "success", message: `Recovered $${data.totalRecovered} USDC${gasInfo}${newBalance}` }]);
       } else {
         setLogs(prev => [...prev, { time: "00:00:10", type: "info", message: "No funds to recover from user wallets" }]);
       }
