@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import vibeCardLogo from "@assets/VibeCard_fintech_logo_design_0f486542_1769211450355.png";
 
 interface CoverScreenProps {
   onStart: () => void;
@@ -46,6 +47,21 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
         </motion.h2>
 
         <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mb-8"
+        >
+          <img 
+            src={vibeCardLogo} 
+            alt="VibeCard Logo" 
+            className="h-32 w-auto"
+            style={{ filter: 'hue-rotate(80deg) saturate(1.2)' }}
+            data-testid="img-vibecard-logo"
+          />
+        </motion.div>
+
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -59,18 +75,6 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
             Start Demo
             <ArrowRight className="h-5 w-5" />
           </Button>
-        </motion.div>
-
-        <motion.div
-          className="mt-16 flex items-center gap-6 text-sm text-muted-foreground"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-primary" />
-            <span>Best Vibecoded Application Track</span>
-          </div>
         </motion.div>
       </div>
     </div>
