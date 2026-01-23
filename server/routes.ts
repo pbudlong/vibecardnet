@@ -42,6 +42,87 @@ export async function registerRoutes(
     }
   });
 
+  // Circle diagnostics endpoint for hackathon judges
+  app.get('/api/circle/diagnostics', async (req, res) => {
+    try {
+      const apiKey = process.env.CIRCLE_API_KEY || '';
+      const entitySecret = process.env.CIRCLE_ENTITY_SECRET || '';
+      
+      // Get all wallets with full details
+      const allWallets = await getAllWalletsWithBalances();
+      const arcWallets = allWallets.filter(w => w.blockchain === 'ARC-TESTNET');
+      
+      // Fetch entity info from Circle API
+      let entityInfo = null;
+      let walletSetInfo = null;
+      
+      if (apiKey) {
+        try {
+          // Get entity configuration
+          const entityResponse = await fetch('https://api.circle.com/v1/w3s/config/entity', {
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          if (entityResponse.ok) {
+            const entityData = await entityResponse.json();
+            entityInfo = entityData.data;
+          }
+          
+          // Get wallet sets
+          const walletSetsResponse = await fetch('https://api.circle.com/v1/w3s/walletSets', {
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          if (walletSetsResponse.ok) {
+            const walletSetsData = await walletSetsResponse.json();
+            walletSetInfo = walletSetsData.data?.walletSets?.[0] || null;
+          }
+        } catch (e) {
+          console.error('[Circle Diagnostics] Error fetching entity info:', e);
+        }
+      }
+      
+      res.json({
+        configured: !!apiKey && !!entitySecret,
+        apiKeyPrefix: apiKey ? apiKey.slice(0, 12) + '...' : null,
+        entitySecretConfigured: !!entitySecret,
+        entity: entityInfo ? {
+          id: entityInfo.id,
+          name: entityInfo.name,
+          appId: entityInfo.appId
+        } : null,
+        walletSet: walletSetInfo ? {
+          id: walletSetInfo.id,
+          name: walletSetInfo.name,
+          custodyType: walletSetInfo.custodyType,
+          createDate: walletSetInfo.createDate
+        } : null,
+        arcNetwork: {
+          chainId: 5042002,
+          name: 'Arc Testnet',
+          rpcUrl: 'https://arc-testnet.drpc.org',
+          explorerUrl: 'https://testnet.arcscan.app',
+          usdcContract: '0x3600000000000000000000000000000000000000'
+        },
+        wallets: arcWallets.map(w => ({
+          id: w.id,
+          name: w.name,
+          address: w.address,
+          balance: w.usdcBalance,
+          explorerUrl: `https://testnet.arcscan.app/address/${w.address}`,
+          isTreasury: w.refId === 'arc-treasury'
+        }))
+      });
+    } catch (error) {
+      console.error('Circle diagnostics error:', error);
+      res.status(500).json({ error: 'Failed to fetch diagnostics' });
+    }
+  });
+
   app.get('/api/wallet/balance', async (req, res) => {
     try {
       const wallet = await getDeveloperWalletBalance();

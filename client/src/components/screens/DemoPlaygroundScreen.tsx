@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Play, RefreshCw, Wallet, ArrowDown, Zap, Video, Users, Share2 } from "lucide-react";
+import { Check, Play, RefreshCw, Wallet, ArrowDown, Zap, Video, Users, Share2, ExternalLink, Info } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -143,6 +143,22 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     queryKey: ['/api/wallets'],
     enabled: isActive,
     refetchInterval: 10000,
+  });
+
+  // Fetch Circle diagnostics for hackathon judges
+  interface CircleDiagnostics {
+    configured: boolean;
+    apiKeyPrefix: string | null;
+    entitySecretConfigured: boolean;
+    entity: { id: string; name: string; appId: string } | null;
+    walletSet: { id: string; name: string; custodyType: string; createDate: string } | null;
+    arcNetwork: { chainId: number; name: string; rpcUrl: string; explorerUrl: string; usdcContract: string };
+    wallets: Array<{ id: string; name: string; address: string; balance: string; explorerUrl: string; isTreasury: boolean }>;
+  }
+  const { data: circleDiagnostics } = useQuery<CircleDiagnostics>({
+    queryKey: ['/api/circle/diagnostics'],
+    enabled: isActive,
+    refetchInterval: 30000,
   });
 
   // Get Arc user wallets with balances
@@ -475,6 +491,96 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                 </div>
               )}
             </Card>
+
+            {/* Circle Integration Details for Hackathon Judges */}
+            {circleDiagnostics && (
+              <Card className="p-3 border-blue-500/30 bg-blue-500/5" data-testid="card-circle-diagnostics">
+                <div className="flex items-center gap-2 mb-2">
+                  <Info className="h-4 w-4 text-blue-400" />
+                  <span className="text-xs font-medium text-foreground">Circle Integration Details</span>
+                  <Badge variant="outline" className="text-[8px] ml-auto border-blue-500/50 text-blue-400">
+                    For Judges
+                  </Badge>
+                </div>
+                <div className="space-y-2 text-[9px]">
+                  <div className="p-1.5 rounded bg-muted/30">
+                    <span className="text-muted-foreground">API Key: </span>
+                    {circleDiagnostics.apiKeyPrefix ? (
+                      <>
+                        <span className="text-foreground font-mono">{circleDiagnostics.apiKeyPrefix}</span>
+                        <span className="text-emerald-400 ml-2">configured</span>
+                      </>
+                    ) : (
+                      <span className="text-amber-400">not configured</span>
+                    )}
+                  </div>
+                  <div className="p-1.5 rounded bg-muted/30">
+                    <span className="text-muted-foreground">Entity Secret: </span>
+                    <span className={circleDiagnostics.entitySecretConfigured ? "text-emerald-400" : "text-amber-400"}>
+                      {circleDiagnostics.entitySecretConfigured ? "configured" : "not configured"}
+                    </span>
+                  </div>
+                  {circleDiagnostics.entity && (
+                    <div className="p-1.5 rounded bg-muted/30">
+                      <span className="text-muted-foreground">Entity ID: </span>
+                      <span className="text-foreground font-mono">{circleDiagnostics.entity.id}</span>
+                      {circleDiagnostics.entity.appId && (
+                        <span className="text-muted-foreground ml-2">(App: {circleDiagnostics.entity.appId})</span>
+                      )}
+                    </div>
+                  )}
+                  {circleDiagnostics.walletSet && (
+                    <div className="p-1.5 rounded bg-muted/30">
+                      <span className="text-muted-foreground">Wallet Set: </span>
+                      <span className="text-foreground font-mono">{circleDiagnostics.walletSet.name || circleDiagnostics.walletSet.id}</span>
+                      <span className="text-muted-foreground ml-2">({circleDiagnostics.walletSet.custodyType})</span>
+                    </div>
+                  )}
+                  <div className="p-1.5 rounded bg-muted/30">
+                    <span className="text-muted-foreground">Network: </span>
+                    <span className="text-foreground">{circleDiagnostics.arcNetwork.name} (Chain {circleDiagnostics.arcNetwork.chainId})</span>
+                  </div>
+                  <div className="p-1.5 rounded bg-muted/30">
+                    <span className="text-muted-foreground">USDC Contract: </span>
+                    <a 
+                      href={`${circleDiagnostics.arcNetwork.explorerUrl}/address/${circleDiagnostics.arcNetwork.usdcContract}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:underline font-mono"
+                    >
+                      {circleDiagnostics.arcNetwork.usdcContract}
+                      <ExternalLink className="h-2.5 w-2.5 inline ml-0.5" />
+                    </a>
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-muted/50">
+                    <p className="text-muted-foreground mb-1">Arc Testnet Wallets:</p>
+                    <div className="space-y-1">
+                      {circleDiagnostics.wallets.map(w => (
+                        <div key={w.id} className="flex items-center justify-between p-1 rounded bg-muted/20">
+                          <div className="flex items-center gap-1.5">
+                            {w.isTreasury ? (
+                              <Badge className="text-[7px] bg-sky-500/20 text-sky-400 px-1 py-0">Treasury</Badge>
+                            ) : (
+                              <Badge variant="secondary" className="text-[7px] px-1 py-0">{w.name.replace(' Arc', '')}</Badge>
+                            )}
+                            <a 
+                              href={w.explorerUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-400 hover:underline font-mono"
+                            >
+                              {w.address}
+                              <ExternalLink className="h-2.5 w-2.5 inline ml-0.5" />
+                            </a>
+                          </div>
+                          <span className="font-mono text-foreground">${parseFloat(w.balance).toFixed(2)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
 
             <Card className="p-3" data-testid="card-transaction-flow">
               <div className="flex items-center gap-2 mb-2">
