@@ -49,7 +49,7 @@ export function ViralProjectionScreen() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <Card className="p-4 h-full">
+          <Card className="p-4">
             <h2 className="font-display text-base font-bold text-foreground mb-3 text-center">
               K-Factor Comparison
             </h2>
@@ -101,16 +101,16 @@ export function ViralProjectionScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <Card className="p-5">
-            <h2 className="font-display text-base font-bold text-foreground mb-4 text-center">
+          <Card className="p-4">
+            <h2 className="font-display text-base font-bold text-foreground mb-3 text-center">
               Path to 1,000 Actions
             </h2>
-            <table className="w-full text-sm">
+            <table className="w-full text-xs">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-2 text-muted-foreground font-medium">Initial</th>
-                  <th className="text-right py-2 text-muted-foreground font-medium">Without</th>
-                  <th className="text-right py-2 text-primary font-medium">With VibeCard</th>
+                  <th className="text-left py-1.5 text-muted-foreground font-medium">Initial</th>
+                  <th className="text-right py-1.5 text-muted-foreground font-medium">Without</th>
+                  <th className="text-right py-1.5 text-primary font-medium">With VibeCard</th>
                 </tr>
               </thead>
               <tbody>
@@ -122,9 +122,9 @@ export function ViralProjectionScreen() {
                     transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
                     className="border-b border-muted/50"
                   >
-                    <td className="py-2 font-mono">{row.actions}</td>
-                    <td className="py-2 text-right font-mono text-muted-foreground">{row.withoutVibeCard}</td>
-                    <td className="py-2 text-right font-mono font-semibold text-primary">{row.withVibeCard.toLocaleString()}</td>
+                    <td className="py-1.5 font-mono">{row.actions}</td>
+                    <td className="py-1.5 text-right font-mono text-muted-foreground">{row.withoutVibeCard}</td>
+                    <td className="py-1.5 text-right font-mono font-semibold text-primary">{row.withVibeCard.toLocaleString()}</td>
                   </motion.tr>
                 ))}
               </tbody>
