@@ -172,8 +172,9 @@ export async function registerRoutes(
       }
 
       // Get EXACT balance in base units for each user wallet
-      // Subtract gas buffer (0.01 USDC = 10000 base units) since USDC is gas on Arc
-      const GAS_BUFFER = BigInt(10000); // 0.01 USDC for gas
+      // Subtract larger gas buffer since USDC is gas on Arc and transfer also costs gas
+      // 0.10 USDC = 100000 base units - enough for gas + transfer fee
+      const GAS_BUFFER = BigInt(100000); // 0.10 USDC for gas
       
       const usersWithExactBalance = await Promise.all(users.map(async (user) => {
         const exactBalanceRaw = await getArcUsdcBalanceBaseUnits(user.address);
