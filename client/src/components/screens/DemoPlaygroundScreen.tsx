@@ -780,54 +780,55 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                         Sharer: { name: 'Manny', displayLabel: 'First Sharer', color: 'text-sky-400', bgColor: 'bg-sky-500/20', borderColor: 'border-sky-500/50', glowColor: 'rgba(14, 165, 233, 0.6)', split: '15%' }
                       }[payout.label] || { name: '?', displayLabel: payout.label, color: 'text-sky-400', bgColor: 'bg-sky-500/20', borderColor: 'border-sky-500/50', glowColor: 'rgba(14, 165, 233, 0.6)', split: '' };
                       return (
-                        <motion.div
-                          key={payout.label}
-                          initial={{ opacity: 0.4 }}
-                          animate={{ 
-                            opacity: hasFunds ? 1 : 0.4,
-                            scale: hasFunds ? 1 : 0.98,
-                            boxShadow: isSynapseAnimating ? [
-                              '0 0 0px transparent',
-                              `0 0 15px ${roleConfig.glowColor}`,
-                              '0 0 0px transparent'
-                            ] : '0 0 0px transparent'
-                          }}
-                          transition={{ 
-                            duration: 0.3,
-                            boxShadow: { duration: 0.8, delay: i * 0.15 + 0.6 }
-                          }}
-                          className={`p-2 rounded ${roleConfig.bgColor} border ${roleConfig.borderColor} w-24 text-center`}
-                          data-testid={`payout-wallet-${payout.label.toLowerCase()}`}
-                        >
-                          <div className={`h-8 w-8 rounded-full flex items-center justify-center mx-auto mb-1 ${roleConfig.bgColor} border ${roleConfig.borderColor}`}>
-                            <span className={`text-[9px] font-bold ${roleConfig.color}`}>{roleConfig.name}</span>
-                          </div>
-                          <div className={`text-[9px] font-medium ${roleConfig.color}`}>{roleConfig.displayLabel}</div>
-                          <div className="text-[7px] text-muted-foreground">({roleConfig.split})</div>
-                          <div className={`text-xs font-bold mt-1 ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
-                            {payout.amount}
-                          </div>
-                          {/* Transaction record - shows after animation completes */}
+                        <div key={payout.label} className="flex flex-col items-center">
+                          <motion.div
+                            initial={{ opacity: 0.4 }}
+                            animate={{ 
+                              opacity: hasFunds ? 1 : 0.4,
+                              scale: hasFunds ? 1 : 0.98,
+                              boxShadow: isSynapseAnimating ? [
+                                '0 0 0px transparent',
+                                `0 0 15px ${roleConfig.glowColor}`,
+                                '0 0 0px transparent'
+                              ] : '0 0 0px transparent'
+                            }}
+                            transition={{ 
+                              duration: 0.3,
+                              boxShadow: { duration: 0.8, delay: i * 0.15 + 0.6 }
+                            }}
+                            className={`p-2 rounded ${roleConfig.bgColor} border ${roleConfig.borderColor} w-24 text-center`}
+                            data-testid={`payout-wallet-${payout.label.toLowerCase()}`}
+                          >
+                            <div className={`h-8 w-8 rounded-full flex items-center justify-center mx-auto mb-1 ${roleConfig.bgColor} border ${roleConfig.borderColor}`}>
+                              <span className={`text-[9px] font-bold ${roleConfig.color}`}>{roleConfig.name}</span>
+                            </div>
+                            <div className={`text-[9px] font-medium ${roleConfig.color}`}>{roleConfig.displayLabel}</div>
+                            <div className="text-[7px] text-muted-foreground">({roleConfig.split})</div>
+                            <div className={`text-xs font-bold mt-1 ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
+                              {payout.amount}
+                            </div>
+                          </motion.div>
+                          {/* Transaction record - shows below box after animation completes */}
                           {!isSynapseAnimating && payout.txId && (
                             <motion.div
                               initial={{ opacity: 0, y: -5 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ duration: 0.3, delay: 0.2 }}
-                              className="mt-1"
+                              className="mt-2"
                             >
                               <a 
                                 href={`${ARC_EXPLORER_URL}${payout.txId}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-[7px] text-sky-400 hover:text-sky-300 flex items-center justify-center gap-0.5"
+                                className="text-xs font-medium text-foreground hover:text-primary flex items-center gap-1"
                                 data-testid={`link-tx-${payout.label.toLowerCase()}`}
                               >
                                 <span>tx:{payout.txId.slice(0, 6)}...{payout.txId.slice(-4)}</span>
-                                <ExternalLink className="h-2 w-2" />
+                                <ExternalLink className="h-3 w-3" />
                               </a>
                             </motion.div>
                           )}
-                        </motion.div>
+                        </div>
                       );
                     })}
                   </div>
