@@ -48,11 +48,11 @@ export function ViralProjectionScreen() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <Card className="p-4 h-full">
-            <h2 className="font-display text-base font-bold text-foreground mb-3 text-center">
-              K-Factor
+          <Card className="p-4 h-full min-h-[280px]">
+            <h2 className="font-display text-base font-bold text-foreground mb-4 text-center">
+              K-Factor Comparison
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {kFactorData.map((item, index) => (
                 <motion.div
                   key={item.label}
@@ -63,10 +63,10 @@ export function ViralProjectionScreen() {
                   <div className="flex justify-between items-center gap-2 mb-1">
                     <span className="text-xs font-medium text-foreground">{item.label}</span>
                     <Badge variant={item.value >= 1 ? "default" : "secondary"} className="font-mono text-xs">
-                      {item.value}
+                      K = {item.value}
                     </Badge>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
+                  <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min(item.value / 1.5 * 100, 100)}%` }}
@@ -74,12 +74,15 @@ export function ViralProjectionScreen() {
                       className={`h-full rounded-full ${item.color}`}
                     />
                   </div>
+                  <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
                 </motion.div>
               ))}
             </div>
-            <p className="text-xs text-center text-muted-foreground mt-3">
-              <span className="font-semibold text-primary">K &gt; 1</span> = viral growth
-            </p>
+            <div className="mt-4 pt-3 border-t">
+              <p className="text-xs text-center text-muted-foreground">
+                <span className="font-semibold text-primary">K &gt; 1</span> = Each share generates more than one new share
+              </p>
+            </div>
           </Card>
         </motion.div>
 
@@ -89,7 +92,7 @@ export function ViralProjectionScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <Card className="p-4 h-full">
+          <Card className="p-4 h-full min-h-[280px]">
             <h2 className="font-display text-base font-bold text-foreground mb-3 text-center">
               Path to 1,000
             </h2>
