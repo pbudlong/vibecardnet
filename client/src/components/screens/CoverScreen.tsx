@@ -67,10 +67,7 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-primary" />
-            <span>Best Gateway-Based Micropayments Integration</span>
-          </div>
+          <span>Best Gateway-Based Micropayments Integration</span>
         </motion.div>
       </div>
     </div>
