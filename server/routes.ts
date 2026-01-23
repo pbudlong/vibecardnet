@@ -259,11 +259,17 @@ export async function registerRoutes(
         await new Promise(resolve => setTimeout(resolve, 20000));
       }
 
+      // Fetch updated treasury balance
+      const updatedWallets = await getArcWallets();
+      const newTreasuryBalance = updatedWallets.treasury?.balance || '0';
+      console.log(`[x402 Reset] New treasury balance: $${newTreasuryBalance}`);
+
       res.json({
         success: transfers.some(t => t.status === 'success'),
         message: `x402 recovered $${totalRecovered} USDC to treasury (exact balance)`,
         transfers,
         totalRecovered,
+        newTreasuryBalance,
         x402Version: 2
       });
     } catch (error) {

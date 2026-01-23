@@ -128,8 +128,8 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     { label: "Platform", amount: `$${parseFloat(arcUserWallets[2]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[2]?.address ? `${arcUserWallets[2].address.slice(0, 6)}...${arcUserWallets[2].address.slice(-4)}` : "0x..." },
   ] : walletPayouts;
 
-  // Check if any user wallets have funds
-  const hasUserFunds = arcUserWallets.some(w => parseFloat(w.usdcBalance || '0') > 0.02);
+  // Check if any user wallets have funds above gas buffer ($0.10)
+  const hasUserFunds = arcUserWallets.some(w => parseFloat(w.usdcBalance || '0') > 0.10);
 
   const testTransactionMutation = useMutation({
     mutationFn: async () => {
@@ -240,7 +240,8 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     },
     onSuccess: (data) => {
       if (data.success) {
-        setLogs(prev => [...prev, { time: "00:00:10", type: "success", message: `Recovered $${data.totalRecovered} USDC to treasury` }]);
+        const newBalance = data.newTreasuryBalance ? ` (Treasury now: $${parseFloat(data.newTreasuryBalance).toFixed(2)})` : '';
+        setLogs(prev => [...prev, { time: "00:00:10", type: "success", message: `Recovered $${data.totalRecovered} USDC to treasury${newBalance}` }]);
       } else {
         setLogs(prev => [...prev, { time: "00:00:10", type: "info", message: "No funds to recover from user wallets" }]);
       }
@@ -343,7 +344,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   variant="outline" 
                   className="w-full text-[10px]"
                   onClick={() => resetDemoMutation.mutate()}
-                  disabled={resetDemoMutation.isPending || isResetting}
+                  disabled={resetDemoMutation.isPending || isResetting || !hasUserFunds}
                   data-testid="button-reset-demo"
                 >
                   {(resetDemoMutation.isPending || isResetting) ? (
