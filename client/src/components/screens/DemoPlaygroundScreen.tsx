@@ -190,18 +190,6 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
           })),
           { time, type: "info", message: `Treasury balance: $${data.newTreasuryBalance}${gasMsg}` }
         ]);
-        // Update wallet payouts with real amounts from transaction
-        if (data.transfers && data.transfers.length >= 3) {
-          const labels = ["Creator", "Remixer", "Sharer"];
-          setWalletPayouts(data.transfers.slice(0, 3).map((t: any, i: number) => {
-            const addr = t.to || t.address || "";
-            return {
-              label: labels[i],
-              amount: `$${parseFloat(t.amount).toFixed(2)}`,
-              address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x..."
-            };
-          }));
-        }
         setShowPayouts(true);
         setTransactionCount(prev => prev + 1);
         if (synapseTimerRef.current) clearTimeout(synapseTimerRef.current);
@@ -211,6 +199,25 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
           setIsSynapseAnimating(true);
           synapseTimerRef.current = setTimeout(() => setIsSynapseAnimating(false), 4500);
         });
+        // Update wallet payouts with delays matching animation arrival times
+        if (data.transfers && data.transfers.length >= 3) {
+          const labels = ["Creator", "Remixer", "Sharer"];
+          const animationDelays = [1000, 2100, 3200]; // When each animation reaches its target
+          data.transfers.slice(0, 3).forEach((t: any, i: number) => {
+            setTimeout(() => {
+              const addr = t.to || t.address || "";
+              setWalletPayouts(prev => {
+                const updated = [...prev];
+                updated[i] = {
+                  label: labels[i],
+                  amount: `$${parseFloat(t.amount).toFixed(2)}`,
+                  address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x..."
+                };
+                return updated;
+              });
+            }, animationDelays[i]);
+          });
+        }
       } else {
         setLogs(prev => [...prev, { time: getPSTTime(), type: "warn", message: data.message || 'Transfer failed' }]);
       }
