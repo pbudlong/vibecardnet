@@ -33,10 +33,10 @@ export function ViralProjectionScreen() {
         className="text-center mb-6"
       >
         <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-2">
-          Viral Projection
+          Viral Growth Projections
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          When sharing pays, sharing grows. See the power of incentive alignment.
+          Paid sharing boosts the k-factor. The earlier you get in, the more you get.
         </p>
       </motion.div>
 
