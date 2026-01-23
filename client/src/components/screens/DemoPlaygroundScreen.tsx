@@ -60,9 +60,9 @@ function getInitialLogs(status: IntegrationStatus | undefined, treasuryBalance: 
   }
 
   if (status.x402Batching.status === 'connected') {
-    logs.push({ time, type: "success", message: "x402 Protocol: Connected" });
+    logs.push({ time, type: "success", message: "Circle x402 Gateway: Connected" });
   } else {
-    logs.push({ time, type: "warn", message: "x402 Protocol: Not configured" });
+    logs.push({ time, type: "warn", message: "Circle x402 Gateway: Not configured" });
   }
 
   if (status.arcNetwork.status === 'connected') {
@@ -558,8 +558,8 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                         className={`p-2 rounded ${roleConfig.bgColor} border ${roleConfig.borderColor} w-28 text-center`}
                         data-testid={`payout-wallet-${payout.label.toLowerCase()}`}
                       >
-                        <div className={`h-8 w-8 rounded-full flex items-center justify-center mx-auto mb-1 ${roleConfig.bgColor} border ${roleConfig.borderColor}`}>
-                          <span className={`text-[10px] font-bold ${roleConfig.color}`}>{roleConfig.name}</span>
+                        <div className={`h-10 w-10 rounded-full flex items-center justify-center mx-auto mb-1 ${roleConfig.bgColor} border ${roleConfig.borderColor}`}>
+                          <span className={`text-[11px] font-bold ${roleConfig.color}`}>{roleConfig.name}</span>
                         </div>
                         <div className={`text-[10px] font-medium ${roleConfig.color}`}>{roleConfig.displayLabel}</div>
                         <div className="text-[8px] text-muted-foreground">({roleConfig.split})</div>
