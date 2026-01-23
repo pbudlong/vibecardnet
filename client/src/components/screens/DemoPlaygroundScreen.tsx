@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Play, RefreshCw, Wallet, ArrowDown, Zap } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -221,11 +221,19 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   };
 
 
+  // Track if we've initialized logs to prevent resetting on balance updates
+  const logsInitialized = useRef(false);
+  
   useEffect(() => {
-    if (isActive && integrationStatus) {
+    if (isActive && integrationStatus && !logsInitialized.current) {
       const balance = walletBalance?.balance ? parseFloat(walletBalance.balance) : 0;
       setLogs(getInitialLogs(integrationStatus, balance));
       setShowPayouts(false);
+      logsInitialized.current = true;
+    }
+    // Reset when becoming inactive so logs reinitialize on next visit
+    if (!isActive) {
+      logsInitialized.current = false;
     }
   }, [isActive, integrationStatus, walletBalance]);
 
