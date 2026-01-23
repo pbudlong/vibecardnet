@@ -205,7 +205,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         
         requestAnimationFrame(() => {
           setIsSynapseAnimating(true);
-          synapseTimerRef.current = setTimeout(() => setIsSynapseAnimating(false), 4500);
+          synapseTimerRef.current = setTimeout(() => setIsSynapseAnimating(false), 5500);
         });
         // Update wallet payouts with delays matching animation arrival times
         if (data.transfers && data.transfers.length >= 3) {
@@ -248,7 +248,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
             queryClient.invalidateQueries({ queryKey: ['/api/wallets'] });
             queryClient.refetchQueries({ queryKey: ['/api/wallet/balance'] });
             queryClient.refetchQueries({ queryKey: ['/api/wallets'] });
-          }, 4000);
+          }, 5000);
         }
       } else {
         setLogs(prev => [...prev, { time: getPSTTime(), type: "warn", message: data.message || 'Transfer failed' }]);
