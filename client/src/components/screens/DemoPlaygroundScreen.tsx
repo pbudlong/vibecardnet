@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Play, RefreshCw, Wallet, ArrowDown, Zap } from "lucide-react";
+import { Check, Play, RefreshCw, Wallet, ArrowDown, Zap, Video, Users, Share2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -540,6 +540,12 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                 <div className="flex flex-col gap-2">
                   {displayPayouts.map((payout, i) => {
                     const hasFunds = parseFloat(payout.amount.replace('$', '')) > 0.02;
+                    const roleConfig = {
+                      Creator: { icon: Video, color: 'text-rose-400', bgColor: 'bg-rose-500/20', borderColor: 'border-rose-500/50', split: '50%' },
+                      Remixer: { icon: Users, color: 'text-violet-400', bgColor: 'bg-violet-500/20', borderColor: 'border-violet-500/50', split: '35%' },
+                      Sharer: { icon: Share2, color: 'text-sky-400', bgColor: 'bg-sky-500/20', borderColor: 'border-sky-500/50', split: '15%' }
+                    }[payout.label] || { icon: Wallet, color: 'text-sky-400', bgColor: 'bg-sky-500/20', borderColor: 'border-sky-500/50', split: '' };
+                    const IconComponent = roleConfig.icon;
                     return (
                       <motion.div
                         key={payout.label}
@@ -550,23 +556,26 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                           scale: hasFunds ? 1 : 0.98
                         }}
                         transition={{ duration: 0.3, delay: hasFunds ? i * 0.1 : 0 }}
-                        className="flex items-center justify-between gap-2 p-2 rounded bg-zinc-900/50"
+                        className={`p-2 rounded ${roleConfig.bgColor} border ${roleConfig.borderColor}`}
                         data-testid={`payout-wallet-${payout.label.toLowerCase()}`}
                       >
-                        <div className="flex items-center gap-2">
-                          <div className={`h-6 w-6 rounded-full flex items-center justify-center ${
-                            hasFunds ? 'bg-sky-400/20 border border-sky-400' : 'bg-zinc-800 border border-zinc-700'
-                          }`}>
-                            <Wallet className={`h-3 w-3 ${hasFunds ? 'text-sky-400' : 'text-zinc-600'}`} />
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className={`h-6 w-6 rounded-full flex items-center justify-center ${roleConfig.bgColor} border ${roleConfig.borderColor}`}>
+                              <IconComponent className={`h-3 w-3 ${roleConfig.color}`} />
+                            </div>
+                            <div className="flex flex-col">
+                              <div className="flex items-center gap-1">
+                                <span className={`text-[10px] font-medium ${roleConfig.color}`}>{payout.label}</span>
+                                <span className="text-[8px] text-muted-foreground">({roleConfig.split})</span>
+                              </div>
+                              <span className="text-[7px] text-muted-foreground font-mono">{payout.address}</span>
+                            </div>
                           </div>
-                          <div className="flex flex-col">
-                            <span className="text-[10px] font-medium text-foreground">{payout.label}</span>
-                            <span className="text-[7px] text-muted-foreground font-mono">{payout.address}</span>
-                          </div>
+                          <span className={`text-sm font-bold ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
+                            {payout.amount}
+                          </span>
                         </div>
-                        <span className={`text-sm font-bold ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
-                          {payout.amount}
-                        </span>
                       </motion.div>
                     );
                   })}
