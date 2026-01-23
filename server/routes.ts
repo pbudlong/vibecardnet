@@ -171,6 +171,11 @@ export async function registerRoutes(
         return res.status(400).json({ error: 'No Arc treasury wallet found' });
       }
 
+      // Get treasury balance BEFORE reset to calculate actual gas spent
+      const oldTreasuryBalanceRaw = await getArcUsdcBalanceBaseUnits(treasury.address);
+      const oldTreasuryBalance = (Number(oldTreasuryBalanceRaw) / 1_000_000).toFixed(2);
+      console.log(`[x402 Reset] Treasury balance before reset: $${oldTreasuryBalance}`);
+
       // Get EXACT balance in base units for each user wallet
       // Subtract larger gas buffer since USDC is gas on Arc and transfer also costs gas
       // 0.10 USDC = 100000 base units - enough for gas + transfer fee
@@ -261,10 +266,13 @@ export async function registerRoutes(
         await new Promise(resolve => setTimeout(resolve, 20000));
       }
 
-      // Fetch updated treasury balance
-      const updatedWallets = await getArcWallets();
-      const newTreasuryBalance = updatedWallets.treasury?.balance || '0';
+      // Fetch updated treasury balance and calculate actual gas spent
+      const newTreasuryBalanceRaw = await getArcUsdcBalanceBaseUnits(treasury.address);
+      const newTreasuryBalance = (Number(newTreasuryBalanceRaw) / 1_000_000).toFixed(2);
+      const actualTreasuryIncrease = parseFloat(newTreasuryBalance) - parseFloat(oldTreasuryBalance);
+      const gasSpent = (parseFloat(totalRecovered) - actualTreasuryIncrease).toFixed(2);
       console.log(`[x402 Reset] New treasury balance: $${newTreasuryBalance}`);
+      console.log(`[x402 Reset] Treasury increase: $${actualTreasuryIncrease.toFixed(2)}, Gas spent: $${gasSpent}`);
 
       res.json({
         success: transfers.some(t => t.status === 'success'),
@@ -272,6 +280,7 @@ export async function registerRoutes(
         transfers,
         totalRecovered,
         totalGasReserved,
+        gasSpent,
         newTreasuryBalance,
         x402Version: 2
       });
