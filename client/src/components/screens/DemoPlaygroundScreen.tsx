@@ -639,7 +639,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
               <div 
                 ref={logContainerRef}
                 onScroll={handleLogScroll}
-                className="min-h-[338px] max-h-[413px] overflow-y-auto font-mono text-[10px] space-y-1" 
+                className="min-h-[423px] max-h-[516px] overflow-y-auto font-mono text-[10px] space-y-1" 
                 data-testid="logs-container"
               >
                 {logs.map((log, i) => (
