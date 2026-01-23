@@ -87,6 +87,8 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   const [isSimulated, setIsSimulated] = useState(false);
   const [walletPayouts, setWalletPayouts] = useState(defaultPayouts);
 
+  const queryClient = useQueryClient();
+
   const { data: integrationStatus, isLoading: statusLoading } = useQuery<IntegrationStatus>({
     queryKey: ['/api/integrations/status'],
     enabled: isActive,
@@ -177,8 +179,6 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     if (status === 'pending') return <Clock className="h-3 w-3 text-yellow-500" />;
     return <AlertCircle className="h-3 w-3 text-red-400" />;
   };
-
-  const queryClient = useQueryClient();
 
   const fundTreasuryMutation = useMutation({
     mutationFn: async () => {
