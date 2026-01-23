@@ -441,6 +441,11 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   <p className="text-[10px] text-muted-foreground">Pixel + Event Attribution</p>
                 </div>
                 <ArrowDown className="h-4 w-4 mx-auto text-muted-foreground" />
+                <div className="p-2 rounded bg-purple-500/10 border border-purple-500/30" data-testid="flow-reward-calculator">
+                  <span className="text-[9px] text-purple-400 font-medium">Reward Calculator</span>
+                  <p className="text-[10px] text-muted-foreground">Viral Decay + Split Logic</p>
+                </div>
+                <ArrowDown className="h-4 w-4 mx-auto text-muted-foreground" />
                 <div className="p-2 rounded bg-emerald-500/10 border border-emerald-500/30" data-testid="flow-x402-split">
                   <span className="text-[9px] text-emerald-400 font-medium">x402 Payment Trigger</span>
                   <p className="text-[10px] text-muted-foreground">Atomic Multi-Party Split</p>
