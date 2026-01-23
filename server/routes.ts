@@ -245,6 +245,23 @@ export async function registerRoutes(
     }
   });
 
+  // Get transaction status and txHash - for frontend polling
+  app.get('/api/transactions/:txId', async (req, res) => {
+    try {
+      const { txId } = req.params;
+      const status = await getTransactionStatus(txId);
+      res.json({
+        txId,
+        state: status.state,
+        txHash: status.txHash,
+        error: status.error
+      });
+    } catch (error) {
+      console.error('Transaction status error:', error);
+      res.status(500).json({ error: 'Failed to get transaction status' });
+    }
+  });
+
   // Reset demo via x402 - transfer all user wallet USDC back to treasury using EXACT balances
   app.post('/api/demo/reset', async (req, res) => {
     try {

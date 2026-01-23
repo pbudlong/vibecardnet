@@ -4,28 +4,54 @@ const CIRCLE_W3S_API_BASE = 'https://api.circle.com/v1/w3s';
 const ARC_TESTNET_RPC = 'https://arc-testnet.drpc.org';
 const ARC_USDC_CONTRACT = '0x3600000000000000000000000000000000000000';
 
-// Check transaction status
+// Check transaction status - try multiple Circle API endpoints
 export async function getTransactionStatus(txId: string): Promise<{ state: string; txHash?: string; error?: string }> {
   const apiKey = process.env.CIRCLE_API_KEY;
   if (!apiKey) return { state: 'error', error: 'No API key' };
 
-  try {
-    const response = await fetch(`${CIRCLE_W3S_API_BASE}/transactions/contractExecution/${txId}`, {
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
+  // Try the generic transactions endpoint first (most common)
+  const endpoints = [
+    `${CIRCLE_W3S_API_BASE}/transactions/${txId}`,
+    `${CIRCLE_W3S_API_BASE}/transactions/contractExecution/${txId}`,
+    `${CIRCLE_W3S_API_BASE}/developer/transactions/${txId}`
+  ];
+
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        console.log(`[Circle] Endpoint ${endpoint} returned ${response.status}`);
+        continue;
       }
-    });
-    const data = await response.json();
-    console.log(`[Circle] Transaction ${txId} status:`, JSON.stringify(data.data, null, 2));
-    return {
-      state: data.data?.transaction?.state || 'unknown',
-      txHash: data.data?.transaction?.txHash,
-      error: data.data?.transaction?.errorReason
-    };
-  } catch (error: any) {
-    return { state: 'error', error: error?.message };
+      
+      const data = await response.json();
+      console.log(`[Circle] Transaction ${txId} from ${endpoint}:`, JSON.stringify(data, null, 2));
+      
+      // Try various response paths for txHash
+      const tx = data.data?.transaction || data.transaction || data.data || data;
+      const txHash = tx?.txHash || tx?.transactionHash || tx?.hash;
+      const state = tx?.state || tx?.status || 'unknown';
+      
+      if (txHash) {
+        return { state, txHash };
+      }
+      
+      // If we got a response but no hash, return the state
+      if (state !== 'unknown') {
+        return { state, error: tx?.errorReason };
+      }
+    } catch (error: any) {
+      console.log(`[Circle] Endpoint ${endpoint} error:`, error?.message);
+    }
   }
+
+  return { state: 'pending', error: 'Transaction hash not yet available' };
 }
 
 // Query real USDC balance from Arc blockchain directly
