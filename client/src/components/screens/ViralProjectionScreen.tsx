@@ -100,6 +100,7 @@ export function ViralProjectionScreen() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
+          className="self-end"
         >
           <Card className="p-4">
             <h2 className="font-display text-base font-bold text-foreground mb-3 text-center">
