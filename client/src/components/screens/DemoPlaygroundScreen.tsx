@@ -489,7 +489,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
               {transactionCount > 0 && (
                 <div className="mt-2 text-center">
                   <Badge variant="secondary" className="text-[9px]">
-                    {transactionCount} test{transactionCount > 1 ? 's' : ''} completed - see Treasury, Logs and Wallet Payouts for latest
+                    {transactionCount} test{transactionCount > 1 ? 's' : ''} completed - see Log Screen and Wallet Payouts for latest
                   </Badge>
                 </div>
               )}
@@ -817,18 +817,15 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                               className="mt-2 text-center"
                             >
                               <div className="text-[10px] text-muted-foreground">tx confirmed</div>
-                              <a 
-                                href={`${ARC_EXPLORER_URL}${payout.txId}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[10px] font-mono text-blue-400 hover:underline"
-                                data-testid={`link-tx-${payout.label.toLowerCase()}`}
+                              <div 
+                                className="text-[10px] font-mono text-foreground"
+                                data-testid={`text-tx-${payout.label.toLowerCase()}`}
                               >
                                 {payout.txId.length > 20 
                                   ? `${payout.txId.slice(0, 10)}...${payout.txId.slice(-8)}`
                                   : payout.txId
                                 }
-                              </a>
+                              </div>
                             </motion.div>
                           )}
                         </div>
