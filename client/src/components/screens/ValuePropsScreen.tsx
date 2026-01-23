@@ -259,7 +259,7 @@ export function ValuePropsScreen() {
             Everyone Wins
           </h2>
           
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-2">
             {/* Publishers */}
             <Card className="p-3">
               <div className="flex items-center gap-2 mb-2">
