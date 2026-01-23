@@ -96,10 +96,12 @@ const testTransactionLogs = [
 ];
 
 const defaultPayouts = [
-  { label: "Creator", amount: "$0.00", address: "0x1a2b...3c4d" },
-  { label: "Remixer", amount: "$0.00", address: "0x5e6f...7g8h" },
-  { label: "Sharer", amount: "$0.00", address: "0x9i0j...1k2l" },
+  { label: "Creator", amount: "$0.00", address: "0x1a2b...3c4d", txId: "" },
+  { label: "Remixer", amount: "$0.00", address: "0x5e6f...7g8h", txId: "" },
+  { label: "Sharer", amount: "$0.00", address: "0x9i0j...1k2l", txId: "" },
 ];
+
+const ARC_EXPLORER_URL = "https://testnet.arcscan.io/tx/";
 
 export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenProps) {
   const [logs, setLogs] = useState<Array<{time: string; type: string; message: string}>>([]);
@@ -172,10 +174,11 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   const mannyWallet = arcUserWallets.find(w => w.name.toLowerCase().includes('manny'));
 
   // Create display payouts - use walletPayouts during animation, otherwise use live wallet balances
+  // Preserve txId from walletPayouts when showing live balances
   const displayPayouts = isSynapseAnimating ? walletPayouts : (mattWallet && peteWallet && mannyWallet ? [
-    { label: "Creator", amount: `$${parseFloat(mattWallet.usdcBalance || '0').toFixed(2)}`, address: mattWallet.address ? `${mattWallet.address.slice(0, 6)}...${mattWallet.address.slice(-4)}` : "0x..." },
-    { label: "Remixer", amount: `$${parseFloat(peteWallet.usdcBalance || '0').toFixed(2)}`, address: peteWallet.address ? `${peteWallet.address.slice(0, 6)}...${peteWallet.address.slice(-4)}` : "0x..." },
-    { label: "Sharer", amount: `$${parseFloat(mannyWallet.usdcBalance || '0').toFixed(2)}`, address: mannyWallet.address ? `${mannyWallet.address.slice(0, 6)}...${mannyWallet.address.slice(-4)}` : "0x..." },
+    { label: "Creator", amount: `$${parseFloat(mattWallet.usdcBalance || '0').toFixed(2)}`, address: mattWallet.address ? `${mattWallet.address.slice(0, 6)}...${mattWallet.address.slice(-4)}` : "0x...", txId: walletPayouts[0]?.txId || "" },
+    { label: "Remixer", amount: `$${parseFloat(peteWallet.usdcBalance || '0').toFixed(2)}`, address: peteWallet.address ? `${peteWallet.address.slice(0, 6)}...${peteWallet.address.slice(-4)}` : "0x...", txId: walletPayouts[1]?.txId || "" },
+    { label: "Sharer", amount: `$${parseFloat(mannyWallet.usdcBalance || '0').toFixed(2)}`, address: mannyWallet.address ? `${mannyWallet.address.slice(0, 6)}...${mannyWallet.address.slice(-4)}` : "0x...", txId: walletPayouts[2]?.txId || "" },
   ] : walletPayouts);
 
   // Check if any user wallet has balance above the gas buffer ($0.15)
@@ -202,7 +205,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
           ...data.transfers.map((t: any) => ({
             time,
             type: t.status === 'success' ? 'success' : 'error',
-            message: `${simLabel}${t.to}: $${t.amount} ${t.status === 'success' ? '(confirmed)' : '(failed)'}`
+            message: `${simLabel}${t.to.slice(0, 6)}...${t.to.slice(-4)}: $${t.amount} ${t.status === 'success' ? '(confirmed)' : '(failed)'}${t.txId ? ` [tx:${t.txId.slice(0, 8)}...]` : ''}`
           })),
           { time, type: "info", message: `Treasury balance: $${data.newTreasuryBalance}${gasMsg}` }
         ]);
@@ -213,9 +216,9 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         
         // Reset all wallet amounts to pending state before animation starts
         setWalletPayouts([
-          { label: "Creator", amount: "$--", address: "0x..." },
-          { label: "Remixer", amount: "$--", address: "0x..." },
-          { label: "Sharer", amount: "$--", address: "0x..." }
+          { label: "Creator", amount: "$--", address: "0x...", txId: "" },
+          { label: "Remixer", amount: "$--", address: "0x...", txId: "" },
+          { label: "Sharer", amount: "$--", address: "0x...", txId: "" }
         ]);
         setShowPayouts(true);
         
@@ -233,7 +236,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
             const t = transfers[0];
             const addr = t.to || t.address || "";
             setWalletPayouts(prev => [
-              { label: labels[0], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x..." },
+              { label: labels[0], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x...", txId: t.txId || "" },
               prev[1],
               prev[2]
             ]);
@@ -244,7 +247,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
             const addr = t.to || t.address || "";
             setWalletPayouts(prev => [
               prev[0],
-              { label: labels[1], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x..." },
+              { label: labels[1], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x...", txId: t.txId || "" },
               prev[2]
             ]);
           }, 2100);
@@ -255,7 +258,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
             setWalletPayouts(prev => [
               prev[0],
               prev[1],
-              { label: labels[2], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x..." }
+              { label: labels[2], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x...", txId: t.txId || "" }
             ]);
           }, 3200);
           // Refresh wallet balances after all animations complete
@@ -804,6 +807,26 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                           <div className={`text-xs font-bold mt-1 ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
                             {payout.amount}
                           </div>
+                          {/* Transaction record - shows after animation completes */}
+                          {!isSynapseAnimating && payout.txId && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: 0.2 }}
+                              className="mt-1"
+                            >
+                              <a 
+                                href={`${ARC_EXPLORER_URL}${payout.txId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[7px] text-sky-400 hover:text-sky-300 flex items-center justify-center gap-0.5"
+                                data-testid={`link-tx-${payout.label.toLowerCase()}`}
+                              >
+                                <span>tx:{payout.txId.slice(0, 6)}...{payout.txId.slice(-4)}</span>
+                                <ExternalLink className="h-2 w-2" />
+                              </a>
+                            </motion.div>
+                          )}
                         </motion.div>
                       );
                     })}
