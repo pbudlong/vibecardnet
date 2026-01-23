@@ -439,6 +439,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       queryClient.refetchQueries({ queryKey: ['/api/wallets'] });
       setShowPayouts(false);
       setTransactionCount(0);
+      setWalletPayouts(defaultPayouts); // Clear transaction links
       setIsResetting(false);
     },
     onError: () => {
@@ -507,12 +508,12 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   {(resetDemoMutation.isPending || isResetting) ? (
                     <>
                       <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-                      Recovering funds...
+                      Recovering funds - can take up to 1 min...
                     </>
                   ) : (
                     <>
                       <RefreshCw className="h-3 w-3 mr-1" />
-                      Reset Demo (Recover USDC)
+                      Reset Demo - can take up to 1 min
                     </>
                   )}
                 </Button>
