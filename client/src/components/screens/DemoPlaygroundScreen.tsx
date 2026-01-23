@@ -205,7 +205,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
           ...data.transfers.map((t: any) => ({
             time,
             type: t.status === 'success' ? 'success' : 'error',
-            message: `${simLabel}${t.to.slice(0, 6)}...${t.to.slice(-4)}: $${t.amount} ${t.status === 'success' ? '(confirmed)' : '(failed)'}${t.txId ? ` [tx:${t.txId.slice(0, 8)}...]` : ''}`
+            message: `${simLabel}${t.to ? `${t.to.slice(0, 6)}...${t.to.slice(-4)}` : 'unknown'}: $${t.amount} ${t.status === 'success' ? '(confirmed)' : '(failed)'}${t.txId ? ` [tx:${t.txId.slice(0, 8)}...]` : ''}`
           })),
           { time, type: "info", message: `Treasury balance: $${data.newTreasuryBalance}${gasMsg}` }
         ]);
