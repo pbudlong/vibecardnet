@@ -261,9 +261,9 @@ export function ValuePropsScreen() {
             Everyone Wins
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-6 w-full">
             {/* Publishers */}
-            <Card className="p-3">
+            <Card className="p-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className="p-1.5 rounded-lg bg-primary/10">
                   <Building2 className="h-4 w-4 text-primary" />
@@ -296,7 +296,7 @@ export function ValuePropsScreen() {
             </Card>
 
             {/* Members */}
-            <Card className="p-3">
+            <Card className="p-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className="p-1.5 rounded-lg bg-primary/10">
                   <Users className="h-4 w-4 text-primary" />
