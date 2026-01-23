@@ -155,12 +155,12 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   const peteWallet = arcUserWallets.find(w => w.name.toLowerCase().includes('pete'));
   const mannyWallet = arcUserWallets.find(w => w.name.toLowerCase().includes('manny'));
 
-  // Create display payouts from real wallet balances with correct role mapping
-  const displayPayouts = mattWallet && peteWallet && mannyWallet ? [
+  // Create display payouts - use walletPayouts during animation, otherwise use live wallet balances
+  const displayPayouts = isSynapseAnimating ? walletPayouts : (mattWallet && peteWallet && mannyWallet ? [
     { label: "Creator", amount: `$${parseFloat(mattWallet.usdcBalance || '0').toFixed(2)}`, address: mattWallet.address ? `${mattWallet.address.slice(0, 6)}...${mattWallet.address.slice(-4)}` : "0x..." },
     { label: "Remixer", amount: `$${parseFloat(peteWallet.usdcBalance || '0').toFixed(2)}`, address: peteWallet.address ? `${peteWallet.address.slice(0, 6)}...${peteWallet.address.slice(-4)}` : "0x..." },
     { label: "Sharer", amount: `$${parseFloat(mannyWallet.usdcBalance || '0').toFixed(2)}`, address: mannyWallet.address ? `${mannyWallet.address.slice(0, 6)}...${mannyWallet.address.slice(-4)}` : "0x..." },
-  ] : walletPayouts;
+  ] : walletPayouts);
 
   // Check if any user wallet has balance above the gas buffer ($0.15)
   // Only enable reset if there's actually something to recover
