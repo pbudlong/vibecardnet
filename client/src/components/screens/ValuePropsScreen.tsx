@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { User, ChevronDown, ChevronRight, Coins, Megaphone, Code2, Share2, RefreshCw } from "lucide-react";
+import { User, ChevronDown, ChevronRight, Coins, Megaphone, Code2, Share2, RefreshCw, Building2, Users, Zap, TrendingUp, Wallet, Clock, DollarSign } from "lucide-react";
 import { SiReplit } from "react-icons/si";
 import { Code, FileText, Calculator, ListChecks, BookOpen, Wrench, BarChart3, Users2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -24,43 +24,86 @@ const useCasesWithPeople = [
   { icon: Wrench, label: "Tools" },
 ];
 
+const publisherBenefits = [
+  {
+    icon: TrendingUp,
+    title: "Better CAC Economics",
+    description: "Pay only for results, not impressions or clicks",
+  },
+  {
+    icon: Zap,
+    title: "x402 Atomic Splits",
+    description: "Instant multi-party payouts in a single transaction",
+  },
+  {
+    icon: DollarSign,
+    title: "Pay for Performance",
+    description: "Budget flows to actual conversions, not promises",
+  },
+  {
+    icon: Share2,
+    title: "Viral Distribution",
+    description: "Your best customers become your sales force",
+  },
+];
+
+const memberBenefits = [
+  {
+    icon: Wallet,
+    title: "Instant USDC Earnings",
+    description: "No minimums, no delays, real money in your wallet",
+  },
+  {
+    icon: Clock,
+    title: "Early Bird Advantage",
+    description: "First sharers earn more through upstream rewards",
+  },
+  {
+    icon: Users,
+    title: "One Wallet, All Rewards",
+    description: "Earnings from every publisher in one place",
+  },
+  {
+    icon: Zap,
+    title: "Earn First, Verify Later",
+    description: "DeFi protocols enable instant rewards—KYC only when you're ready to spend",
+  },
+];
+
 export function ValuePropsScreen() {
   return (
-    <div className="h-full w-full flex flex-col items-center justify-start px-8 py-6 overflow-y-auto">
+    <div className="h-full w-full flex flex-col items-center justify-start px-6 py-4 overflow-y-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-8"
+        className="text-center mb-4"
       >
-        <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-3">
+        <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-2">
           The AI-era Solution
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-base text-muted-foreground max-w-2xl mx-auto">
           The first viral growth network backed by stablecoins.
-          <br />
-          Members get paid to create, share and remix.
-          <br />
-          Powered by USDC on Arc.
+          Members get paid to create, share and remix. Powered by USDC on Arc.
         </p>
       </motion.div>
 
-      {/* Two Column Layout */}
-      <div className="w-full max-w-5xl flex flex-col md:flex-row gap-6 items-center">
+      {/* Three Column Layout */}
+      <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-4 items-start">
         {/* Left - Network Diagram */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className="flex-1 flex items-center justify-center"
+          className="flex-shrink-0 flex items-center justify-center"
         >
-          <div className="relative flex items-center justify-center" style={{ width: "380px", height: "380px" }}>
+          <div className="relative flex items-center justify-center" style={{ width: "280px", height: "280px" }}>
             {/* Outer Ring - Use Cases with People */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="relative w-full h-full">
                 {useCasesWithPeople.map((useCase, index) => {
                   const angle = (index * 360) / useCasesWithPeople.length - 90;
-                  const radius = 170;
+                  const radius = 125;
                   const x = Math.cos((angle * Math.PI) / 180) * radius;
                   const y = Math.sin((angle * Math.PI) / 180) * radius;
                   return (
@@ -69,20 +112,20 @@ export function ValuePropsScreen() {
                       initial={{ opacity: 0, scale: 0 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
-                      className="absolute flex items-center gap-1"
+                      className="absolute flex items-center gap-0.5"
                       style={{
-                        left: `calc(50% + ${x}px - 40px)`,
-                        top: `calc(50% + ${y}px - 18px)`,
+                        left: `calc(50% + ${x}px - 32px)`,
+                        top: `calc(50% + ${y}px - 14px)`,
                       }}
                     >
-                      <User className="h-4 w-4 text-muted-foreground/60" />
+                      <User className="h-3 w-3 text-muted-foreground/60" />
                       <div className="flex flex-col items-center">
-                        <div className="p-2 rounded-full bg-muted/50">
-                          <useCase.icon className="h-4 w-4 text-muted-foreground" />
+                        <div className="p-1.5 rounded-full bg-muted/50">
+                          <useCase.icon className="h-3 w-3 text-muted-foreground" />
                         </div>
-                        <span className="text-[10px] text-muted-foreground">{useCase.label}</span>
+                        <span className="text-[8px] text-muted-foreground">{useCase.label}</span>
                       </div>
-                      <User className="h-4 w-4 text-muted-foreground/60" />
+                      <User className="h-3 w-3 text-muted-foreground/60" />
                     </motion.div>
                   );
                 })}
@@ -91,10 +134,10 @@ export function ValuePropsScreen() {
 
             {/* Middle Ring - Platforms */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative w-64 h-64">
+              <div className="relative w-48 h-48">
                 {platforms.map((platform, index) => {
                   const angle = (index * 360) / platforms.length - 90;
-                  const radius = 105;
+                  const radius = 75;
                   const x = Math.cos((angle * Math.PI) / 180) * radius;
                   const y = Math.sin((angle * Math.PI) / 180) * radius;
                   return (
@@ -105,106 +148,181 @@ export function ValuePropsScreen() {
                       transition={{ duration: 0.3, delay: 0.3 + index * 0.08 }}
                       className="absolute flex flex-col items-center"
                       style={{
-                        left: `calc(50% + ${x}px - 24px)`,
-                        top: `calc(50% + ${y}px - 24px)`,
+                        left: `calc(50% + ${x}px - 18px)`,
+                        top: `calc(50% + ${y}px - 18px)`,
                       }}
                     >
-                      <div className="p-2.5 rounded-lg bg-card border shadow-sm">
+                      <div className="p-1.5 rounded-lg bg-card border shadow-sm">
                         {platform.icon ? (
-                          <platform.icon className={`h-5 w-5 ${platform.color}`} />
+                          <platform.icon className={`h-4 w-4 ${platform.color}`} />
                         ) : (
-                          <span className={`text-lg font-bold ${platform.color}`}>{platform.initial}</span>
+                          <span className={`text-sm font-bold ${platform.color}`}>{platform.initial}</span>
                         )}
                       </div>
-                      <span className="text-[10px] text-muted-foreground mt-0.5 whitespace-nowrap max-w-16 truncate">{platform.name}</span>
+                      <span className="text-[8px] text-muted-foreground mt-0.5 whitespace-nowrap max-w-12 truncate">{platform.name}</span>
                     </motion.div>
                   );
                 })}
               </div>
             </div>
 
-            {/* Center - VibeCard stacked in circle */}
+            {/* Center - VibeCard */}
             <motion.div
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="relative z-10 flex flex-col items-center justify-center w-28 h-28 rounded-full bg-primary/10 border-2 border-primary"
+              className="relative z-10 flex flex-col items-center justify-center w-20 h-20 rounded-full bg-primary/10 border-2 border-primary"
             >
-              <span className="font-display text-xl font-bold text-primary leading-none">Vibe</span>
-              <span className="font-display text-xl font-bold text-primary leading-none">Card</span>
+              <span className="font-display text-base font-bold text-primary leading-none">Vibe</span>
+              <span className="font-display text-base font-bold text-primary leading-none">Card</span>
             </motion.div>
           </div>
         </motion.div>
 
-        {/* Right - ICP Flywheel */}
+        {/* Middle - ICP Flywheel */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex-1 flex flex-col items-center"
+          className="flex-shrink-0 flex flex-col items-center"
         >
-          <h2 className="font-display text-xl font-bold text-foreground mb-3">
+          <h2 className="font-display text-lg font-bold text-foreground mb-2">
             Beachhead ICP Flywheel
           </h2>
           
-          <div className="relative flex flex-col items-center gap-1">
-            {/* Step 1 */}
-            <Card className="px-3 py-2 bg-card border text-center w-64">
-              <div className="flex items-center justify-center gap-2">
-                <Coins className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs font-medium text-foreground">Platform funds reward pool</span>
+          <div className="relative flex flex-col items-center gap-0.5">
+            <Card className="px-2 py-1.5 bg-card border text-center w-52">
+              <div className="flex items-center justify-center gap-1.5">
+                <Coins className="h-3 w-3 text-primary flex-shrink-0" />
+                <span className="text-[10px] font-medium text-foreground">Platform funds reward pool</span>
               </div>
             </Card>
-            <ChevronDown className="h-4 w-4 text-primary" />
+            <ChevronDown className="h-3 w-3 text-primary" />
 
-            {/* Step 2 */}
-            <Card className="px-3 py-2 bg-card border text-center w-64">
-              <div className="flex items-center justify-center gap-2">
-                <Megaphone className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs font-medium text-foreground">Promotes to creators</span>
+            <Card className="px-2 py-1.5 bg-card border text-center w-52">
+              <div className="flex items-center justify-center gap-1.5">
+                <Megaphone className="h-3 w-3 text-primary flex-shrink-0" />
+                <span className="text-[10px] font-medium text-foreground">Promotes to creators</span>
               </div>
-              <p className="text-[10px] text-muted-foreground">"Add VibeCard to your app!"</p>
+              <p className="text-[8px] text-muted-foreground">"Add VibeCard to your app!"</p>
             </Card>
-            <ChevronDown className="h-4 w-4 text-primary" />
+            <ChevronDown className="h-3 w-3 text-primary" />
 
-            {/* Step 3 */}
-            <Card className="px-3 py-2 bg-card border text-center w-64">
-              <div className="flex items-center justify-center gap-2">
-                <Code2 className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs font-medium text-foreground">Creators integrate snippet</span>
+            <Card className="px-2 py-1.5 bg-card border text-center w-52">
+              <div className="flex items-center justify-center gap-1.5">
+                <Code2 className="h-3 w-3 text-primary flex-shrink-0" />
+                <span className="text-[10px] font-medium text-foreground">Creators integrate snippet</span>
               </div>
-              <p className="text-[10px] text-muted-foreground">Easy, platform-endorsed</p>
+              <p className="text-[8px] text-muted-foreground">Easy, platform-endorsed</p>
             </Card>
-            <ChevronDown className="h-4 w-4 text-primary" />
+            <ChevronDown className="h-3 w-3 text-primary" />
 
-            {/* Step 4 - Branching */}
-            <Card className="px-3 py-2 bg-card border w-64">
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <Share2 className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs font-medium text-foreground">Content shared with rewards</span>
+            <Card className="px-2 py-1.5 bg-card border w-52">
+              <div className="flex items-center justify-center gap-1.5 mb-0.5">
+                <Share2 className="h-3 w-3 text-primary flex-shrink-0" />
+                <span className="text-[10px] font-medium text-foreground">Content shared with rewards</span>
               </div>
-              <div className="space-y-0.5 text-left pl-4">
-                <div className="flex items-center gap-1">
-                  <ChevronRight className="h-3 w-3 text-primary flex-shrink-0" />
-                  <span className="text-[10px] text-muted-foreground">Sharers earn USDC</span>
+              <div className="space-y-0 text-left pl-3">
+                <div className="flex items-center gap-0.5">
+                  <ChevronRight className="h-2 w-2 text-primary flex-shrink-0" />
+                  <span className="text-[8px] text-muted-foreground">Sharers earn USDC</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <ChevronRight className="h-3 w-3 text-primary flex-shrink-0" />
-                  <span className="text-[10px] text-muted-foreground">Some convert to platform users</span>
+                <div className="flex items-center gap-0.5">
+                  <ChevronRight className="h-2 w-2 text-primary flex-shrink-0" />
+                  <span className="text-[8px] text-muted-foreground">Some convert to platform users</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <ChevronRight className="h-3 w-3 text-primary flex-shrink-0" />
-                  <span className="text-[10px] text-muted-foreground">Some remix, create more content</span>
+                <div className="flex items-center gap-0.5">
+                  <ChevronRight className="h-2 w-2 text-primary flex-shrink-0" />
+                  <span className="text-[8px] text-muted-foreground">Some remix, create more content</span>
                 </div>
               </div>
             </Card>
-            <ChevronDown className="h-4 w-4 text-primary" />
+            <ChevronDown className="h-3 w-3 text-primary" />
 
-            {/* Step 5 - Loop */}
-            <Card className="px-3 py-2 bg-primary/10 border-primary text-center w-64">
-              <div className="flex items-center justify-center gap-2">
-                <RefreshCw className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs font-medium text-primary">Platform grows, funds more rewards, cycle accelerates, more platforms and creators join</span>
+            <Card className="px-2 py-1.5 bg-primary/10 border-primary text-center w-52">
+              <div className="flex items-center justify-center gap-1.5">
+                <RefreshCw className="h-3 w-3 text-primary flex-shrink-0" />
+                <span className="text-[9px] font-medium text-primary">Cycle accelerates</span>
+              </div>
+            </Card>
+          </div>
+        </motion.div>
+
+        {/* Right - Everyone Wins */}
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="flex-1 flex flex-col"
+        >
+          <h2 className="font-display text-lg font-bold text-foreground mb-2 text-center">
+            Everyone Wins
+          </h2>
+          
+          <div className="grid grid-cols-2 gap-3">
+            {/* Publishers */}
+            <Card className="p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-1.5 rounded-lg bg-primary/10">
+                  <Building2 className="h-4 w-4 text-primary" />
+                </div>
+                <h3 className="font-semibold text-foreground text-sm">For Publishers</h3>
+              </div>
+              <div className="space-y-2">
+                {publisherBenefits.map((benefit, index) => (
+                  <motion.div
+                    key={benefit.title}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.6 + index * 0.1 }}
+                    className="flex items-start gap-2"
+                  >
+                    <div className="p-1 rounded-md bg-accent/20 mt-0.5">
+                      <benefit.icon className="h-3 w-3 text-accent-foreground" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-foreground text-[11px]">
+                        {benefit.title}
+                      </h4>
+                      <p className="text-[9px] text-muted-foreground">
+                        {benefit.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Members */}
+            <Card className="p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-1.5 rounded-lg bg-primary/10">
+                  <Users className="h-4 w-4 text-primary" />
+                </div>
+                <h3 className="font-semibold text-foreground text-sm">For Members</h3>
+              </div>
+              <div className="space-y-2">
+                {memberBenefits.map((benefit, index) => (
+                  <motion.div
+                    key={benefit.title}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.6 + index * 0.1 }}
+                    className="flex items-start gap-2"
+                  >
+                    <div className="p-1 rounded-md bg-accent/20 mt-0.5">
+                      <benefit.icon className="h-3 w-3 text-accent-foreground" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-foreground text-[11px]">
+                        {benefit.title}
+                      </h4>
+                      <p className="text-[9px] text-muted-foreground">
+                        {benefit.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             </Card>
           </div>
