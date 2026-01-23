@@ -242,15 +242,17 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
               { label: labels[2], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x..." }
             ]);
           }, 3200);
+          // Refresh wallet balances after all animations complete
+          setTimeout(() => {
+            queryClient.invalidateQueries({ queryKey: ['/api/wallet/balance'] });
+            queryClient.invalidateQueries({ queryKey: ['/api/wallets'] });
+            queryClient.refetchQueries({ queryKey: ['/api/wallet/balance'] });
+            queryClient.refetchQueries({ queryKey: ['/api/wallets'] });
+          }, 4000);
         }
       } else {
         setLogs(prev => [...prev, { time: getPSTTime(), type: "warn", message: data.message || 'Transfer failed' }]);
       }
-      // Force immediate refresh of wallet balances
-      queryClient.invalidateQueries({ queryKey: ['/api/wallet/balance'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/wallets'] });
-      queryClient.refetchQueries({ queryKey: ['/api/wallet/balance'] });
-      queryClient.refetchQueries({ queryKey: ['/api/wallets'] });
       setIsRunning(false);
     },
     onError: (error) => {
