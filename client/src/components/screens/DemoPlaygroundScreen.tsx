@@ -541,11 +541,10 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   {displayPayouts.map((payout, i) => {
                     const hasFunds = parseFloat(payout.amount.replace('$', '')) > 0.02;
                     const roleConfig = {
-                      Creator: { icon: Video, color: 'text-rose-400', bgColor: 'bg-rose-500/20', borderColor: 'border-rose-500/50', split: '50%' },
-                      Remixer: { icon: Users, color: 'text-violet-400', bgColor: 'bg-violet-500/20', borderColor: 'border-violet-500/50', split: '35%' },
-                      Sharer: { icon: Share2, color: 'text-sky-400', bgColor: 'bg-sky-500/20', borderColor: 'border-sky-500/50', split: '15%' }
-                    }[payout.label] || { icon: Wallet, color: 'text-sky-400', bgColor: 'bg-sky-500/20', borderColor: 'border-sky-500/50', split: '' };
-                    const IconComponent = roleConfig.icon;
+                      Creator: { name: 'Matt', displayLabel: 'Creator', color: 'text-rose-400', bgColor: 'bg-rose-500/20', borderColor: 'border-rose-500/50', split: '50%' },
+                      Remixer: { name: 'Pete', displayLabel: 'First Remixer', color: 'text-violet-400', bgColor: 'bg-violet-500/20', borderColor: 'border-violet-500/50', split: '35%' },
+                      Sharer: { name: 'Manny', displayLabel: 'First Sharer', color: 'text-sky-400', bgColor: 'bg-sky-500/20', borderColor: 'border-sky-500/50', split: '15%' }
+                    }[payout.label] || { name: '?', displayLabel: payout.label, color: 'text-sky-400', bgColor: 'bg-sky-500/20', borderColor: 'border-sky-500/50', split: '' };
                     return (
                       <motion.div
                         key={payout.label}
@@ -560,9 +559,9 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                         data-testid={`payout-wallet-${payout.label.toLowerCase()}`}
                       >
                         <div className={`h-8 w-8 rounded-full flex items-center justify-center mx-auto mb-1 ${roleConfig.bgColor} border ${roleConfig.borderColor}`}>
-                          <IconComponent className={`h-4 w-4 ${roleConfig.color}`} />
+                          <span className={`text-[10px] font-bold ${roleConfig.color}`}>{roleConfig.name}</span>
                         </div>
-                        <div className={`text-[10px] font-medium ${roleConfig.color}`}>{payout.label}</div>
+                        <div className={`text-[10px] font-medium ${roleConfig.color}`}>{roleConfig.displayLabel}</div>
                         <div className="text-[8px] text-muted-foreground">({roleConfig.split})</div>
                         <div className={`text-sm font-bold mt-1 ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
                           {payout.amount}
