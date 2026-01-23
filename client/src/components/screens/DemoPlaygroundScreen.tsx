@@ -109,6 +109,9 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   const [isSimulated, setIsSimulated] = useState(false);
   const [walletPayouts, setWalletPayouts] = useState(defaultPayouts);
   const [isResetting, setIsResetting] = useState(false);
+  const [isSynapseAnimating, setIsSynapseAnimating] = useState(false);
+  const [synapseKey, setSynapseKey] = useState(0);
+  const synapseTimerRef = useRef<NodeJS.Timeout | null>(null);
   
   // Auto-scroll log container
   const logContainerRef = useRef<HTMLDivElement>(null);
@@ -201,6 +204,13 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         }
         setShowPayouts(true);
         setTransactionCount(prev => prev + 1);
+        if (synapseTimerRef.current) clearTimeout(synapseTimerRef.current);
+        setIsSynapseAnimating(false);
+        setSynapseKey(k => k + 1);
+        requestAnimationFrame(() => {
+          setIsSynapseAnimating(true);
+          synapseTimerRef.current = setTimeout(() => setIsSynapseAnimating(false), 2000);
+        });
       } else {
         setLogs(prev => [...prev, { time: getPSTTime(), type: "warn", message: data.message || 'Transfer failed' }]);
       }
@@ -274,6 +284,13 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       container.scrollTop = container.scrollHeight;
     }
   }, [logs]);
+
+  // Cleanup synapse animation timer on unmount
+  useEffect(() => {
+    return () => {
+      if (synapseTimerRef.current) clearTimeout(synapseTimerRef.current);
+    };
+  }, []);
 
   // Handle scroll to detect if user scrolled up
   const handleLogScroll = () => {
@@ -537,39 +554,118 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                     </Badge>
                   )}
                 </div>
-                <div className="flex flex-col gap-2 items-end">
-                  {displayPayouts.map((payout, i) => {
-                    const hasFunds = parseFloat(payout.amount.replace('$', '')) > 0.02;
-                    const roleConfig = {
-                      Creator: { name: 'Matt', displayLabel: 'Creator', color: 'text-rose-400', bgColor: 'bg-rose-500/20', borderColor: 'border-rose-500/50', split: '50%' },
-                      Remixer: { name: 'Pete', displayLabel: 'First Remixer', color: 'text-violet-400', bgColor: 'bg-violet-500/20', borderColor: 'border-violet-500/50', split: '35%' },
-                      Sharer: { name: 'Manny', displayLabel: 'First Sharer', color: 'text-sky-400', bgColor: 'bg-sky-500/20', borderColor: 'border-sky-500/50', split: '15%' }
-                    }[payout.label] || { name: '?', displayLabel: payout.label, color: 'text-sky-400', bgColor: 'bg-sky-500/20', borderColor: 'border-sky-500/50', split: '' };
-                    return (
-                      <motion.div
-                        key={payout.label}
-                        initial={{ opacity: 0, x: 10 }}
-                        animate={{ 
-                          opacity: hasFunds ? 1 : 0.4, 
-                          x: hasFunds ? 0 : 10,
-                          scale: hasFunds ? 1 : 0.98
-                        }}
-                        transition={{ duration: 0.3, delay: hasFunds ? i * 0.1 : 0 }}
-                        className={`p-2 rounded ${roleConfig.bgColor} border ${roleConfig.borderColor} w-28 text-center`}
-                        data-testid={`payout-wallet-${payout.label.toLowerCase()}`}
-                      >
-                        <div className={`h-10 w-10 rounded-full flex items-center justify-center mx-auto mb-1 ${roleConfig.bgColor} border ${roleConfig.borderColor}`}>
-                          <span className={`text-[11px] font-bold ${roleConfig.color}`}>{roleConfig.name}</span>
-                        </div>
-                        <div className={`text-[10px] font-medium ${roleConfig.color}`}>{roleConfig.displayLabel}</div>
-                        <div className="text-[8px] text-muted-foreground">({roleConfig.split})</div>
-                        <div className={`text-sm font-bold mt-1 ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
-                          {payout.amount}
-                        </div>
-                        <div className="text-[6px] text-muted-foreground font-mono">{payout.address}</div>
-                      </motion.div>
-                    );
-                  })}
+                <div className="flex items-center gap-2">
+                  <div className="flex flex-col items-center justify-center">
+                    <motion.div 
+                      className="h-12 w-12 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center"
+                      animate={isSynapseAnimating ? { 
+                        boxShadow: ['0 0 0px rgba(16, 185, 129, 0)', '0 0 20px rgba(16, 185, 129, 0.8)', '0 0 0px rgba(16, 185, 129, 0)']
+                      } : {}}
+                      transition={{ duration: 0.8 }}
+                    >
+                      <span className="text-[8px] font-bold text-emerald-400">x402</span>
+                    </motion.div>
+                    <span className="text-[7px] text-muted-foreground mt-1">Gateway</span>
+                  </div>
+                  <div className="flex-1 relative h-36">
+                    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 120 140" preserveAspectRatio="none" key={synapseKey}>
+                      {[
+                        { y: 25, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$2.50' },
+                        { y: 70, color: '#8b5cf6', amount: displayPayouts[1]?.amount || '$1.75' },
+                        { y: 115, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.75' }
+                      ].map((path, i) => (
+                        <g key={i}>
+                          <path
+                            d={`M 0 70 Q 40 70, 60 ${path.y} T 120 ${path.y}`}
+                            fill="none"
+                            stroke={path.color}
+                            strokeWidth="1"
+                            strokeOpacity="0.3"
+                          />
+                          {isSynapseAnimating && (
+                            <>
+                              <circle r="4" fill={path.color}>
+                                <animateMotion
+                                  dur="0.8s"
+                                  begin={`${i * 0.15}s`}
+                                  fill="freeze"
+                                  path={`M 0 70 Q 40 70, 60 ${path.y} T 120 ${path.y}`}
+                                />
+                                <animate
+                                  attributeName="opacity"
+                                  values="0;1;1;0"
+                                  dur="0.8s"
+                                  begin={`${i * 0.15}s`}
+                                  fill="freeze"
+                                />
+                              </circle>
+                              <text
+                                fill={path.color}
+                                fontSize="8"
+                                fontWeight="bold"
+                                opacity="0"
+                              >
+                                {path.amount}
+                                <animateMotion
+                                  dur="0.8s"
+                                  begin={`${i * 0.15}s`}
+                                  fill="freeze"
+                                  path={`M 0 70 Q 40 70, 60 ${path.y} T 120 ${path.y}`}
+                                />
+                                <animate
+                                  attributeName="opacity"
+                                  values="0;1;1;0.8"
+                                  dur="0.8s"
+                                  begin={`${i * 0.15}s`}
+                                  fill="freeze"
+                                />
+                              </text>
+                            </>
+                          )}
+                        </g>
+                      ))}
+                    </svg>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {displayPayouts.map((payout, i) => {
+                      const hasFunds = parseFloat(payout.amount.replace('$', '')) > 0.02;
+                      const roleConfig = {
+                        Creator: { name: 'Matt', displayLabel: 'Creator', color: 'text-rose-400', bgColor: 'bg-rose-500/20', borderColor: 'border-rose-500/50', glowColor: 'rgba(244, 63, 94, 0.6)', split: '50%' },
+                        Remixer: { name: 'Pete', displayLabel: 'First Remixer', color: 'text-violet-400', bgColor: 'bg-violet-500/20', borderColor: 'border-violet-500/50', glowColor: 'rgba(139, 92, 246, 0.6)', split: '35%' },
+                        Sharer: { name: 'Manny', displayLabel: 'First Sharer', color: 'text-sky-400', bgColor: 'bg-sky-500/20', borderColor: 'border-sky-500/50', glowColor: 'rgba(14, 165, 233, 0.6)', split: '15%' }
+                      }[payout.label] || { name: '?', displayLabel: payout.label, color: 'text-sky-400', bgColor: 'bg-sky-500/20', borderColor: 'border-sky-500/50', glowColor: 'rgba(14, 165, 233, 0.6)', split: '' };
+                      return (
+                        <motion.div
+                          key={payout.label}
+                          initial={{ opacity: 0.4 }}
+                          animate={{ 
+                            opacity: hasFunds ? 1 : 0.4,
+                            scale: hasFunds ? 1 : 0.98,
+                            boxShadow: isSynapseAnimating ? [
+                              '0 0 0px transparent',
+                              `0 0 15px ${roleConfig.glowColor}`,
+                              '0 0 0px transparent'
+                            ] : '0 0 0px transparent'
+                          }}
+                          transition={{ 
+                            duration: 0.3,
+                            boxShadow: { duration: 0.8, delay: i * 0.15 + 0.6 }
+                          }}
+                          className={`p-2 rounded ${roleConfig.bgColor} border ${roleConfig.borderColor} w-24 text-center`}
+                          data-testid={`payout-wallet-${payout.label.toLowerCase()}`}
+                        >
+                          <div className={`h-8 w-8 rounded-full flex items-center justify-center mx-auto mb-1 ${roleConfig.bgColor} border ${roleConfig.borderColor}`}>
+                            <span className={`text-[9px] font-bold ${roleConfig.color}`}>{roleConfig.name}</span>
+                          </div>
+                          <div className={`text-[9px] font-medium ${roleConfig.color}`}>{roleConfig.displayLabel}</div>
+                          <div className="text-[7px] text-muted-foreground">({roleConfig.split})</div>
+                          <div className={`text-xs font-bold mt-1 ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
+                            {payout.amount}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
                 </div>
               </Card>
             </motion.div>
