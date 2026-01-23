@@ -90,7 +90,7 @@ function getInitialLogs(status: IntegrationStatus | undefined, treasuryBalance: 
 const testTransactionLogs = [
   { time: "00:00:04", type: "event", message: "Simulating viral share event..." },
   { time: "00:00:05", type: "info", message: "Processing reward calculation (decay: 0.7)" },
-  { time: "00:00:05", type: "info", message: "x402 Batching: Creator 60% | Sharer 25% | Platform 15%" },
+  { time: "00:00:05", type: "info", message: "x402 Payment Trigger: Creator 60% | Sharer 25% | Platform 15%" },
   { time: "00:00:06", type: "success", message: "Non-Custodial payout queued: 3 recipients" },
   { time: "00:00:07", type: "success", message: "[OK] Transaction confirmed on Arc Network" },
 ];
@@ -442,7 +442,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                 </div>
                 <ArrowDown className="h-4 w-4 mx-auto text-muted-foreground" />
                 <div className="p-2 rounded bg-emerald-500/10 border border-emerald-500/30" data-testid="flow-x402-split">
-                  <span className="text-[9px] text-emerald-400 font-medium">x402 Batching</span>
+                  <span className="text-[9px] text-emerald-400 font-medium">x402 Payment Trigger</span>
                   <p className="text-[10px] text-muted-foreground">Atomic Multi-Party Split</p>
                 </div>
                 <ArrowDown className="h-4 w-4 mx-auto text-muted-foreground" />
