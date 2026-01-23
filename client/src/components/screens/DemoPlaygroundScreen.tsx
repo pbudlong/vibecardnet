@@ -73,10 +73,10 @@ const testTransactionLogs = [
   { time: "00:00:07", type: "success", message: "[OK] Transaction confirmed on Arc Network" },
 ];
 
-const walletPayouts = [
-  { label: "Creator", amount: "$3.00", address: "0x1a2b...3c4d" },
-  { label: "Sharer", amount: "$1.25", address: "0x5e6f...7g8h" },
-  { label: "Platform", amount: "$0.75", address: "0x9i0j...1k2l" },
+const defaultPayouts = [
+  { label: "Creator", amount: "$0.00", address: "0x1a2b...3c4d" },
+  { label: "Sharer", amount: "$0.00", address: "0x5e6f...7g8h" },
+  { label: "Platform", amount: "$0.00", address: "0x9i0j...1k2l" },
 ];
 
 export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenProps) {
@@ -85,6 +85,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   const [showPayouts, setShowPayouts] = useState(false);
   const [transactionCount, setTransactionCount] = useState(0);
   const [isSimulated, setIsSimulated] = useState(false);
+  const [walletPayouts, setWalletPayouts] = useState(defaultPayouts);
 
   const { data: integrationStatus, isLoading: statusLoading } = useQuery<IntegrationStatus>({
     queryKey: ['/api/integrations/status'],
@@ -117,6 +118,18 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
           })),
           { time: "00:00:10", type: "info", message: `Treasury balance: $${data.newTreasuryBalance}` }
         ]);
+        // Update wallet payouts with real amounts from transaction
+        if (data.transfers && data.transfers.length >= 3) {
+          const labels = ["Creator", "Sharer", "Platform"];
+          setWalletPayouts(data.transfers.slice(0, 3).map((t: any, i: number) => {
+            const addr = t.to || t.address || "";
+            return {
+              label: labels[i],
+              amount: `$${parseFloat(t.amount).toFixed(2)}`,
+              address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x..."
+            };
+          }));
+        }
         setShowPayouts(true);
         setTransactionCount(prev => prev + 1);
       } else {
@@ -197,6 +210,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       queryClient.refetchQueries({ queryKey: ['/api/wallet/balance'] });
       setShowPayouts(false);
       setTransactionCount(0);
+      setWalletPayouts(defaultPayouts);
     },
     onError: () => {
       setLogs(prev => [...prev, { time: "00:00:10", type: "warn", message: "Reset failed" }]);
