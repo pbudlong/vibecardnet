@@ -209,7 +209,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         setSynapseKey(k => k + 1);
         requestAnimationFrame(() => {
           setIsSynapseAnimating(true);
-          synapseTimerRef.current = setTimeout(() => setIsSynapseAnimating(false), 2000);
+          synapseTimerRef.current = setTimeout(() => setIsSynapseAnimating(false), 3000);
         });
       } else {
         setLogs(prev => [...prev, { time: getPSTTime(), type: "warn", message: data.message || 'Transfer failed' }]);
@@ -570,13 +570,13 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   <div className="flex-1 relative h-36">
                     <svg className="absolute inset-0 w-full h-full" viewBox="0 0 120 140" preserveAspectRatio="none" key={synapseKey}>
                       {[
-                        { y: 25, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$2.50' },
-                        { y: 70, color: '#8b5cf6', amount: displayPayouts[1]?.amount || '$1.75' },
-                        { y: 115, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.75' }
+                        { yEnd: 20, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$2.50' },
+                        { yEnd: 70, color: '#8b5cf6', amount: displayPayouts[1]?.amount || '$1.75' },
+                        { yEnd: 120, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.75' }
                       ].map((path, i) => (
                         <g key={i}>
                           <path
-                            d={`M 0 70 Q 40 70, 60 ${path.y} T 120 ${path.y}`}
+                            d={`M 0 70 Q 60 70, 90 ${path.yEnd} L 120 ${path.yEnd}`}
                             fill="none"
                             stroke={path.color}
                             strokeWidth="1"
@@ -586,16 +586,16 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                             <>
                               <circle r="4" fill={path.color}>
                                 <animateMotion
-                                  dur="0.8s"
-                                  begin={`${i * 0.15}s`}
+                                  dur="1.5s"
+                                  begin={`${i * 0.2}s`}
                                   fill="freeze"
-                                  path={`M 0 70 Q 40 70, 60 ${path.y} T 120 ${path.y}`}
+                                  path={`M 0 70 Q 60 70, 90 ${path.yEnd} L 120 ${path.yEnd}`}
                                 />
                                 <animate
                                   attributeName="opacity"
                                   values="0;1;1;0"
-                                  dur="0.8s"
-                                  begin={`${i * 0.15}s`}
+                                  dur="1.5s"
+                                  begin={`${i * 0.2}s`}
                                   fill="freeze"
                                 />
                               </circle>
@@ -607,16 +607,16 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                               >
                                 {path.amount}
                                 <animateMotion
-                                  dur="0.8s"
-                                  begin={`${i * 0.15}s`}
+                                  dur="1.5s"
+                                  begin={`${i * 0.2}s`}
                                   fill="freeze"
-                                  path={`M 0 70 Q 40 70, 60 ${path.y} T 120 ${path.y}`}
+                                  path={`M 0 70 Q 60 70, 90 ${path.yEnd} L 120 ${path.yEnd}`}
                                 />
                                 <animate
                                   attributeName="opacity"
                                   values="0;1;1;0.8"
-                                  dur="0.8s"
-                                  begin={`${i * 0.15}s`}
+                                  dur="1.5s"
+                                  begin={`${i * 0.2}s`}
                                   fill="freeze"
                                 />
                               </text>
