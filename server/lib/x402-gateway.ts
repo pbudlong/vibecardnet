@@ -171,18 +171,14 @@ export async function executeX402Payment(request: X402PaymentRequest): Promise<{
     );
 
     if (result.success && result.txId) {
-      // Poll for blockchain txHash
-      const txHash = await pollForTxHash(result.txId, 8);
-      
       transfers.push({
         to: split.recipient,
         amount: split.amount,
         status: 'success',
-        txId: result.txId,
-        txHash: txHash
+        txId: result.txId
       });
       totalPaid += parseFloat(split.amount);
-      console.log(`[x402] Transfer success: txId=${result.txId}, txHash=${txHash || 'pending'}`);
+      console.log(`[x402] Transfer success: txId=${result.txId}`);
     } else {
       transfers.push({
         to: split.recipient,
@@ -193,9 +189,9 @@ export async function executeX402Payment(request: X402PaymentRequest): Promise<{
       console.error(`[x402] Transfer failed: ${result.error}`);
     }
 
-    // Small delay between transfers
+    // Add delay between transfers for blockchain processing
     if (request.splits.indexOf(split) < request.splits.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
   }
 
