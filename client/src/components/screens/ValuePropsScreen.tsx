@@ -89,7 +89,7 @@ export function ValuePropsScreen() {
       </motion.div>
 
       {/* Three Column Layout */}
-      <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-4 items-start">
+      <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-8 items-start justify-center">
         {/* Left - Network Diagram */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -253,7 +253,7 @@ export function ValuePropsScreen() {
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="flex-1 flex flex-col"
+          className="flex-shrink-0 w-72 flex flex-col"
         >
           <h2 className="font-display text-lg font-bold text-foreground mb-2 text-center">
             Everyone Wins
