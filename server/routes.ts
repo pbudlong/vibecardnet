@@ -251,6 +251,12 @@ export async function registerRoutes(
 
       const totalRecovered = (Number(totalRecoveredBaseUnits) / 1_000_000).toFixed(2);
 
+      // Wait for final transactions to confirm on blockchain before returning
+      if (transfers.some(t => t.status === 'success')) {
+        console.log('[x402 Reset] Waiting 10s for final confirmations...');
+        await new Promise(resolve => setTimeout(resolve, 10000));
+      }
+
       res.json({
         success: transfers.some(t => t.status === 'success'),
         message: `x402 recovered $${totalRecovered} USDC to treasury (exact balance)`,
