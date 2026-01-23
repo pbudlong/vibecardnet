@@ -10,7 +10,6 @@ import { ValuePropsScreen } from "@/components/screens/ValuePropsScreen";
 import { WhyNowScreen } from "@/components/screens/WhyNowScreen";
 import { SystemArchitectureScreen } from "@/components/screens/SystemArchitectureScreen";
 import { PublisherIntegrationScreen } from "@/components/screens/PublisherIntegrationScreen";
-import { LiveDemoScreen } from "@/components/screens/LiveDemoScreen";
 import { ViralProjectionScreen } from "@/components/screens/ViralProjectionScreen";
 import { NetworkVisionScreen } from "@/components/screens/NetworkVisionScreen";
 import DemoPlaygroundScreen from "@/components/screens/DemoPlaygroundScreen";
@@ -41,7 +40,6 @@ function App() {
           <PublisherIntegrationScreen />
           <ViralProjectionScreen />
           <DemoPlaygroundScreen isActive={currentScreen === 7} />
-          <LiveDemoScreen />
           <NetworkVisionScreen />
         </Presentation>
         <Toaster />

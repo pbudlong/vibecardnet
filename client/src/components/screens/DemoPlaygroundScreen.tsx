@@ -419,14 +419,14 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
 
   return (
     <div className="h-full flex flex-col items-center justify-start py-6 px-8 overflow-y-auto">
-      <motion.h2
+      <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="text-2xl font-bold text-foreground font-display mb-4"
+        className="font-display text-4xl md:text-5xl font-bold text-foreground mb-4"
       >
-        Demo Playground
-      </motion.h2>
+        Live Demo
+      </motion.h1>
 
 
       <motion.div
