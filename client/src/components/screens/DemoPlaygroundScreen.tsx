@@ -101,7 +101,7 @@ const defaultPayouts = [
   { label: "Sharer", amount: "$0.00", address: "0x9i0j...1k2l", txId: "" },
 ];
 
-const ARC_EXPLORER_URL = "https://testnet.arcscan.io/tx/";
+const ARC_EXPLORER_URL = "https://testnet.arcscan.app/tx/";
 
 export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenProps) {
   const [logs, setLogs] = useState<Array<{time: string; type: string; message: string}>>([]);
@@ -207,7 +207,8 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
             type: t.status === 'success' ? 'success' : 'error',
             message: `${simLabel}${t.to ? `${t.to.slice(0, 6)}...${t.to.slice(-4)}` : 'unknown'}: $${t.amount} ${t.status === 'success' ? '(confirmed)' : '(failed)'}${t.txId ? ` [tx:${t.txId.slice(0, 8)}...]` : ''}`
           })),
-          { time, type: "info", message: `Treasury balance: $${data.newTreasuryBalance}${gasMsg}` }
+          { time, type: "info", message: `Treasury balance: $${data.newTreasuryBalance}${gasMsg}` },
+          { time, type: "success", message: `Test completed - see Treasury, Logs and Wallet Payouts for latest status` }
         ]);
         setTransactionCount(prev => prev + 1);
         if (synapseTimerRef.current) clearTimeout(synapseTimerRef.current);
@@ -814,18 +815,15 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                               initial={{ opacity: 0, y: -5 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ duration: 0.3, delay: 0.2 }}
-                              className="mt-2"
+                              className="mt-2 text-center"
                             >
-                              <a 
-                                href={`${ARC_EXPLORER_URL}${payout.txId}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-xs font-medium text-foreground hover:text-primary flex items-center gap-1"
-                                data-testid={`link-tx-${payout.label.toLowerCase()}`}
+                              <div className="text-[10px] text-muted-foreground">tx confirmed</div>
+                              <div 
+                                className="text-xs font-mono font-medium text-foreground"
+                                data-testid={`text-tx-${payout.label.toLowerCase()}`}
                               >
-                                <span>tx:{payout.txId.slice(0, 6)}...{payout.txId.slice(-4)}</span>
-                                <ExternalLink className="h-3 w-3" />
-                              </a>
+                                {payout.txId.slice(0, 8)}...
+                              </div>
                             </motion.div>
                           )}
                         </div>
