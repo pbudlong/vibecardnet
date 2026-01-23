@@ -537,7 +537,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                     </Badge>
                   )}
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 items-end">
                   {displayPayouts.map((payout, i) => {
                     const hasFunds = parseFloat(payout.amount.replace('$', '')) > 0.02;
                     const roleConfig = {
@@ -556,26 +556,18 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                           scale: hasFunds ? 1 : 0.98
                         }}
                         transition={{ duration: 0.3, delay: hasFunds ? i * 0.1 : 0 }}
-                        className={`p-2 rounded ${roleConfig.bgColor} border ${roleConfig.borderColor}`}
+                        className={`p-2 rounded ${roleConfig.bgColor} border ${roleConfig.borderColor} w-28 text-center`}
                         data-testid={`payout-wallet-${payout.label.toLowerCase()}`}
                       >
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2">
-                            <div className={`h-6 w-6 rounded-full flex items-center justify-center ${roleConfig.bgColor} border ${roleConfig.borderColor}`}>
-                              <IconComponent className={`h-3 w-3 ${roleConfig.color}`} />
-                            </div>
-                            <div className="flex flex-col">
-                              <div className="flex items-center gap-1">
-                                <span className={`text-[10px] font-medium ${roleConfig.color}`}>{payout.label}</span>
-                                <span className="text-[8px] text-muted-foreground">({roleConfig.split})</span>
-                              </div>
-                              <span className="text-[7px] text-muted-foreground font-mono">{payout.address}</span>
-                            </div>
-                          </div>
-                          <span className={`text-sm font-bold ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
-                            {payout.amount}
-                          </span>
+                        <div className={`h-8 w-8 rounded-full flex items-center justify-center mx-auto mb-1 ${roleConfig.bgColor} border ${roleConfig.borderColor}`}>
+                          <IconComponent className={`h-4 w-4 ${roleConfig.color}`} />
                         </div>
+                        <div className={`text-[10px] font-medium ${roleConfig.color}`}>{payout.label}</div>
+                        <div className="text-[8px] text-muted-foreground">({roleConfig.split})</div>
+                        <div className={`text-sm font-bold mt-1 ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
+                          {payout.amount}
+                        </div>
+                        <div className="text-[6px] text-muted-foreground font-mono">{payout.address}</div>
                       </motion.div>
                     );
                   })}
