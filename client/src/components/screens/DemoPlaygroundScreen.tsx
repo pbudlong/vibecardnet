@@ -60,7 +60,7 @@ function getInitialLogs(status: IntegrationStatus | undefined, treasuryBalance: 
   }
 
   if (status.x402Batching.status === 'connected') {
-    logs.push({ time, type: "success", message: "x402 Protocol: Connected (atomic splits)" });
+    logs.push({ time, type: "success", message: "x402 Protocol: Connected" });
   } else {
     logs.push({ time, type: "warn", message: "x402 Protocol: Not configured" });
   }
@@ -71,7 +71,12 @@ function getInitialLogs(status: IntegrationStatus | undefined, treasuryBalance: 
     logs.push({ time, type: "warn", message: "Arc Network: Not connected" });
   }
 
-  logs.push({ time, type: "info", message: "Conversion Tracking: Pending (requires wallets + x402)" });
+  // Conversion tracking is enabled when both Circle Wallets and x402 are connected
+  if (status.circleWallets.status === 'connected' && status.x402Batching.status === 'connected') {
+    logs.push({ time, type: "success", message: "Conversion Tracking: Enabled" });
+  } else {
+    logs.push({ time, type: "info", message: "Conversion Tracking: Pending" });
+  }
   
   if (treasuryBalance > 0) {
     logs.push({ time, type: "success", message: `Treasury Funded: $${treasuryBalance.toFixed(2)} USDC` });
