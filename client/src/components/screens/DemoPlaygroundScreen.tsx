@@ -150,8 +150,8 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   // Create display payouts from real wallet balances
   const displayPayouts = arcUserWallets.length >= 3 ? [
     { label: "Creator", amount: `$${parseFloat(arcUserWallets[0]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[0]?.address ? `${arcUserWallets[0].address.slice(0, 6)}...${arcUserWallets[0].address.slice(-4)}` : "0x..." },
-    { label: "Sharer", amount: `$${parseFloat(arcUserWallets[1]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[1]?.address ? `${arcUserWallets[1].address.slice(0, 6)}...${arcUserWallets[1].address.slice(-4)}` : "0x..." },
-    { label: "Platform", amount: `$${parseFloat(arcUserWallets[2]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[2]?.address ? `${arcUserWallets[2].address.slice(0, 6)}...${arcUserWallets[2].address.slice(-4)}` : "0x..." },
+    { label: "Remixer", amount: `$${parseFloat(arcUserWallets[1]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[1]?.address ? `${arcUserWallets[1].address.slice(0, 6)}...${arcUserWallets[1].address.slice(-4)}` : "0x..." },
+    { label: "Sharer", amount: `$${parseFloat(arcUserWallets[2]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[2]?.address ? `${arcUserWallets[2].address.slice(0, 6)}...${arcUserWallets[2].address.slice(-4)}` : "0x..." },
   ] : walletPayouts;
 
   // Check if any user wallet has balance above the gas buffer ($0.15)
@@ -184,7 +184,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         ]);
         // Update wallet payouts with real amounts from transaction
         if (data.transfers && data.transfers.length >= 3) {
-          const labels = ["Creator", "Sharer", "Platform"];
+          const labels = ["Creator", "Remixer", "Sharer"];
           setWalletPayouts(data.transfers.slice(0, 3).map((t: any, i: number) => {
             const addr = t.to || t.address || "";
             return {
@@ -234,8 +234,8 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       setLogs(prev => [
         ...prev,
         { time: time2, type: "success", message: "Conversion tracked: SHARE_COMPLETE" },
-        { time: time2, type: "event", message: "x402 Payment Trigger activated..." },
-        { time: time2, type: "info", message: "Atomic split: Creator 60% | Sharer 25% | Platform 15%" },
+        { time: time2, type: "event", message: "x402 Facilitator activated..." },
+        { time: time2, type: "info", message: "Atomic split: Creator 50% | Remixer 35% | Sharer 15%" },
       ]);
     }, 600);
     
@@ -447,7 +447,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                 </div>
                 <ArrowDown className="h-4 w-4 mx-auto text-muted-foreground" />
                 <div className="p-2 rounded bg-emerald-500/10 border border-emerald-500/30" data-testid="flow-x402-split">
-                  <span className="text-[9px] text-emerald-400 font-medium">x402 Payment Trigger</span>
+                  <span className="text-[9px] text-emerald-400 font-medium">x402 Facilitator</span>
                   <p className="text-[10px] text-muted-foreground">Atomic Multi-Party Split</p>
                 </div>
                 <ArrowDown className="h-4 w-4 mx-auto text-muted-foreground" />
@@ -532,32 +532,36 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                     </Badge>
                   )}
                 </div>
-                <div className="flex justify-center gap-4">
+                <div className="flex flex-col gap-2">
                   {displayPayouts.map((payout, i) => {
                     const hasFunds = parseFloat(payout.amount.replace('$', '')) > 0.02;
                     return (
                       <motion.div
                         key={payout.label}
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0, x: 10 }}
                         animate={{ 
                           opacity: hasFunds ? 1 : 0.4, 
-                          y: hasFunds ? 0 : 10,
-                          scale: hasFunds ? 1 : 0.95
+                          x: hasFunds ? 0 : 10,
+                          scale: hasFunds ? 1 : 0.98
                         }}
                         transition={{ duration: 0.3, delay: hasFunds ? i * 0.1 : 0 }}
-                        className="flex flex-col items-center gap-1"
+                        className="flex items-center justify-between gap-2 p-2 rounded bg-zinc-900/50"
                         data-testid={`payout-wallet-${payout.label.toLowerCase()}`}
                       >
-                        <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                          hasFunds ? 'bg-sky-400/20 border-2 border-sky-400' : 'bg-zinc-800 border-2 border-zinc-700'
-                        }`}>
-                          <Wallet className={`h-4 w-4 ${hasFunds ? 'text-sky-400' : 'text-zinc-600'}`} />
+                        <div className="flex items-center gap-2">
+                          <div className={`h-6 w-6 rounded-full flex items-center justify-center ${
+                            hasFunds ? 'bg-sky-400/20 border border-sky-400' : 'bg-zinc-800 border border-zinc-700'
+                          }`}>
+                            <Wallet className={`h-3 w-3 ${hasFunds ? 'text-sky-400' : 'text-zinc-600'}`} />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[10px] font-medium text-foreground">{payout.label}</span>
+                            <span className="text-[7px] text-muted-foreground font-mono">{payout.address}</span>
+                          </div>
                         </div>
-                        <span className="text-[9px] font-medium text-foreground">{payout.label}</span>
-                        <span className={`text-xs font-bold ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
+                        <span className={`text-sm font-bold ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
                           {payout.amount}
                         </span>
-                        <span className="text-[7px] text-muted-foreground font-mono">{payout.address}</span>
                       </motion.div>
                     );
                   })}
