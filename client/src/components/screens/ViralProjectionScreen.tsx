@@ -103,16 +103,16 @@ export function ViralProjectionScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <Card className="p-5 h-full">
-            <h2 className="font-display text-lg font-bold text-foreground mb-4 text-center">
+          <Card className="p-4">
+            <h2 className="font-display text-base font-bold text-foreground mb-3 text-center">
               Path to 1,000 Actions
             </h2>
-            <table className="w-full text-sm">
+            <table className="w-full text-xs">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-2 text-muted-foreground font-medium">Initial</th>
-                  <th className="text-right py-2 text-muted-foreground font-medium">Without</th>
-                  <th className="text-right py-2 text-primary font-medium">With VibeCard</th>
+                  <th className="text-left py-1 text-muted-foreground font-medium">Initial</th>
+                  <th className="text-right py-1 text-muted-foreground font-medium">Without</th>
+                  <th className="text-right py-1 text-primary font-medium">With VibeCard</th>
                 </tr>
               </thead>
               <tbody>
@@ -124,9 +124,9 @@ export function ViralProjectionScreen() {
                     transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
                     className="border-b border-muted/50"
                   >
-                    <td className="py-2 font-mono">{row.actions}</td>
-                    <td className="py-2 text-right font-mono text-muted-foreground">{row.withoutVibeCard}</td>
-                    <td className="py-2 text-right font-mono font-semibold text-primary">{row.withVibeCard.toLocaleString()}</td>
+                    <td className="py-1 font-mono">{row.actions}</td>
+                    <td className="py-1 text-right font-mono text-muted-foreground">{row.withoutVibeCard}</td>
+                    <td className="py-1 text-right font-mono font-semibold text-primary">{row.withVibeCard.toLocaleString()}</td>
                   </motion.tr>
                 ))}
               </tbody>
@@ -140,29 +140,27 @@ export function ViralProjectionScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <Card className="p-5 h-full">
-            <h2 className="font-display text-lg font-bold text-foreground mb-4 text-center">
-              Windfall Potential <span className="text-sm font-normal text-muted-foreground">(1,000 conversions @ $10)</span>
+          <Card className="p-4">
+            <h2 className="font-display text-base font-bold text-foreground mb-3 text-center">
+              Windfall Potential <span className="text-xs font-normal text-muted-foreground">(1,000 conversions @ $10)</span>
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {windfallPotential.map((item, index) => (
                 <motion.div
                   key={item.role}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, delay: 0.6 + index * 0.1 }}
-                  className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
+                  className="flex items-center justify-between p-2 rounded-lg bg-muted/30"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-full bg-primary/10">
-                      <item.icon className="h-5 w-5 text-primary" />
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <item.icon className="h-4 w-4 text-primary" />
                     <div>
                       <p className="text-sm font-medium text-foreground">{item.role}</p>
                       <p className="text-xs text-muted-foreground">{item.description}</p>
                     </div>
                   </div>
-                  <p className="font-display text-xl font-bold text-foreground">{item.earnings}</p>
+                  <p className="font-display text-lg font-bold text-foreground">{item.earnings}</p>
                 </motion.div>
               ))}
             </div>
