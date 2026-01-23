@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { transferUSDC } from './circle-wallets';
+import { transferUSDC, getTransactionStatus } from './circle-wallets';
 
 const ARC_TESTNET_CHAIN_ID = 5042002;
 const ARC_TESTNET_RPC = 'https://arc-testnet.drpc.org';
@@ -117,9 +117,39 @@ async function verifyPayment(
   };
 }
 
+// Poll Circle API to get the actual blockchain transaction hash
+async function pollForTxHash(txId: string, maxAttempts: number = 10): Promise<string | undefined> {
+  console.log(`[x402] Polling for blockchain txHash for Circle txId: ${txId}`);
+  
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const status = await getTransactionStatus(txId);
+      console.log(`[x402] Attempt ${attempt}: state=${status.state}, txHash=${status.txHash || 'pending'}`);
+      
+      if (status.txHash) {
+        console.log(`[x402] Got blockchain txHash: ${status.txHash}`);
+        return status.txHash;
+      }
+      
+      if (status.state === 'FAILED' || status.state === 'CANCELLED') {
+        console.log(`[x402] Transaction failed: ${status.error}`);
+        return undefined;
+      }
+      
+      // Wait before next poll (1.5 seconds)
+      await new Promise(resolve => setTimeout(resolve, 1500));
+    } catch (error) {
+      console.error(`[x402] Poll attempt ${attempt} error:`, error);
+    }
+  }
+  
+  console.log(`[x402] Gave up polling after ${maxAttempts} attempts`);
+  return undefined;
+}
+
 export async function executeX402Payment(request: X402PaymentRequest): Promise<{
   success: boolean;
-  transfers: Array<{ to: string; amount: string; status: string; txId?: string; error?: string }>;
+  transfers: Array<{ to: string; amount: string; status: string; txId?: string; txHash?: string; error?: string }>;
   totalPaid: string;
   error?: string;
 }> {
@@ -127,7 +157,7 @@ export async function executeX402Payment(request: X402PaymentRequest): Promise<{
   console.log(`[x402] Total amount: $${request.totalAmount} USDC`);
   console.log(`[x402] Splits: ${request.splits.length} recipients`);
 
-  const transfers: Array<{ to: string; amount: string; status: string; txId?: string; error?: string }> = [];
+  const transfers: Array<{ to: string; amount: string; status: string; txId?: string; txHash?: string; error?: string }> = [];
   let totalPaid = 0;
 
   for (const split of request.splits) {
@@ -140,15 +170,19 @@ export async function executeX402Payment(request: X402PaymentRequest): Promise<{
       'ARC-TESTNET'
     );
 
-    if (result.success) {
+    if (result.success && result.txId) {
+      // Poll for blockchain txHash
+      const txHash = await pollForTxHash(result.txId, 8);
+      
       transfers.push({
         to: split.recipient,
         amount: split.amount,
         status: 'success',
-        txId: result.txId
+        txId: result.txId,
+        txHash: txHash
       });
       totalPaid += parseFloat(split.amount);
-      console.log(`[x402] Transfer success: ${result.txId}`);
+      console.log(`[x402] Transfer success: txId=${result.txId}, txHash=${txHash || 'pending'}`);
     } else {
       transfers.push({
         to: split.recipient,
@@ -159,9 +193,9 @@ export async function executeX402Payment(request: X402PaymentRequest): Promise<{
       console.error(`[x402] Transfer failed: ${result.error}`);
     }
 
-    // Add delay between transfers for blockchain processing
+    // Small delay between transfers
     if (request.splits.indexOf(split) < request.splits.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
   }
 

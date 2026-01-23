@@ -96,9 +96,9 @@ const testTransactionLogs = [
 ];
 
 const defaultPayouts = [
-  { label: "Creator", amount: "$0.00", address: "0x1a2b...3c4d", txId: "" },
-  { label: "Remixer", amount: "$0.00", address: "0x5e6f...7g8h", txId: "" },
-  { label: "Sharer", amount: "$0.00", address: "0x9i0j...1k2l", txId: "" },
+  { label: "Creator", amount: "$0.00", address: "0x1a2b...3c4d", txHash: "" },
+  { label: "Remixer", amount: "$0.00", address: "0x5e6f...7g8h", txHash: "" },
+  { label: "Sharer", amount: "$0.00", address: "0x9i0j...1k2l", txHash: "" },
 ];
 
 const ARC_EXPLORER_URL = "https://testnet.arcscan.app/tx/";
@@ -174,11 +174,11 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   const mannyWallet = arcUserWallets.find(w => w.name.toLowerCase().includes('manny'));
 
   // Create display payouts - use walletPayouts during animation, otherwise use live wallet balances
-  // Preserve txId from walletPayouts when showing live balances
+  // Preserve txHash from walletPayouts when showing live balances
   const displayPayouts = isSynapseAnimating ? walletPayouts : (mattWallet && peteWallet && mannyWallet ? [
-    { label: "Creator", amount: `$${parseFloat(mattWallet.usdcBalance || '0').toFixed(2)}`, address: mattWallet.address ? `${mattWallet.address.slice(0, 6)}...${mattWallet.address.slice(-4)}` : "0x...", txId: walletPayouts[0]?.txId || "" },
-    { label: "Remixer", amount: `$${parseFloat(peteWallet.usdcBalance || '0').toFixed(2)}`, address: peteWallet.address ? `${peteWallet.address.slice(0, 6)}...${peteWallet.address.slice(-4)}` : "0x...", txId: walletPayouts[1]?.txId || "" },
-    { label: "Sharer", amount: `$${parseFloat(mannyWallet.usdcBalance || '0').toFixed(2)}`, address: mannyWallet.address ? `${mannyWallet.address.slice(0, 6)}...${mannyWallet.address.slice(-4)}` : "0x...", txId: walletPayouts[2]?.txId || "" },
+    { label: "Creator", amount: `$${parseFloat(mattWallet.usdcBalance || '0').toFixed(2)}`, address: mattWallet.address ? `${mattWallet.address.slice(0, 6)}...${mattWallet.address.slice(-4)}` : "0x...", txHash: walletPayouts[0]?.txHash || "" },
+    { label: "Remixer", amount: `$${parseFloat(peteWallet.usdcBalance || '0').toFixed(2)}`, address: peteWallet.address ? `${peteWallet.address.slice(0, 6)}...${peteWallet.address.slice(-4)}` : "0x...", txHash: walletPayouts[1]?.txHash || "" },
+    { label: "Sharer", amount: `$${parseFloat(mannyWallet.usdcBalance || '0').toFixed(2)}`, address: mannyWallet.address ? `${mannyWallet.address.slice(0, 6)}...${mannyWallet.address.slice(-4)}` : "0x...", txHash: walletPayouts[2]?.txHash || "" },
   ] : walletPayouts);
 
   // Check if any user wallet has balance above the gas buffer ($0.15)
@@ -216,9 +216,9 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         
         // Reset all wallet amounts to pending state before animation starts
         setWalletPayouts([
-          { label: "Creator", amount: "$--", address: "0x...", txId: "" },
-          { label: "Remixer", amount: "$--", address: "0x...", txId: "" },
-          { label: "Sharer", amount: "$--", address: "0x...", txId: "" }
+          { label: "Creator", amount: "$--", address: "0x...", txHash: "" },
+          { label: "Remixer", amount: "$--", address: "0x...", txHash: "" },
+          { label: "Sharer", amount: "$--", address: "0x...", txHash: "" }
         ]);
         setShowPayouts(true);
         
@@ -236,7 +236,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
             const t = transfers[0];
             const addr = t.to || t.address || "";
             setWalletPayouts(prev => [
-              { label: labels[0], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x...", txId: t.txId || "" },
+              { label: labels[0], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x...", txHash: t.txHash || "" },
               prev[1],
               prev[2]
             ]);
@@ -247,7 +247,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
             const addr = t.to || t.address || "";
             setWalletPayouts(prev => [
               prev[0],
-              { label: labels[1], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x...", txId: t.txId || "" },
+              { label: labels[1], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x...", txHash: t.txHash || "" },
               prev[2]
             ]);
           }, 2100);
@@ -258,7 +258,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
             setWalletPayouts(prev => [
               prev[0],
               prev[1],
-              { label: labels[2], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x...", txId: t.txId || "" }
+              { label: labels[2], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x...", txHash: t.txHash || "" }
             ]);
           }, 3200);
           // Refresh wallet balances after all animations complete
@@ -809,7 +809,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                             </div>
                           </motion.div>
                           {/* Transaction record - shows below box after animation completes */}
-                          {!isSynapseAnimating && payout.txId && (
+                          {!isSynapseAnimating && payout.txHash && (
                             <motion.div
                               initial={{ opacity: 0, y: -5 }}
                               animate={{ opacity: 1, y: 0 }}
@@ -817,15 +817,18 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                               className="mt-2 text-center"
                             >
                               <div className="text-[10px] text-muted-foreground">tx confirmed</div>
-                              <div 
-                                className="text-[10px] font-mono text-foreground"
-                                data-testid={`text-tx-${payout.label.toLowerCase()}`}
+                              <a 
+                                href={`${ARC_EXPLORER_URL}${payout.txHash}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[10px] font-mono text-blue-400 hover:underline"
+                                data-testid={`link-tx-${payout.label.toLowerCase()}`}
                               >
-                                {payout.txId.length > 20 
-                                  ? `${payout.txId.slice(0, 10)}...${payout.txId.slice(-8)}`
-                                  : payout.txId
+                                {payout.txHash.length > 20 
+                                  ? `${payout.txHash.slice(0, 10)}...${payout.txHash.slice(-8)}`
+                                  : payout.txHash
                                 }
-                              </div>
+                              </a>
                             </motion.div>
                           )}
                         </div>
