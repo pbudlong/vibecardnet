@@ -440,6 +440,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       setShowPayouts(false);
       setTransactionCount(0);
       setWalletPayouts(defaultPayouts); // Clear transaction links
+      setLogs([]); // Reset logs to initial state
       setIsResetting(false);
     },
     onError: () => {
@@ -508,12 +509,12 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   {(resetDemoMutation.isPending || isResetting) ? (
                     <>
                       <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-                      Recovering funds - can take up to 1 min...
+                      Recovering USDC - can take up to 1 min...
                     </>
                   ) : (
                     <>
                       <RefreshCw className="h-3 w-3 mr-1" />
-                      Reset Demo - can take up to 1 min
+                      Reset Demo & Recover USDC (can take up to 1 min)
                     </>
                   )}
                 </Button>
