@@ -415,38 +415,35 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
               )}
             </Card>
 
-            <Card className="p-3 bg-zinc-950 border-zinc-800" data-testid="card-sdk-snippet">
-              <div className="flex items-center gap-2 mb-2">
-                <Zap className="h-4 w-4 text-amber-400" />
-                <span className="text-xs font-medium text-foreground">Conversion SDK</span>
-              </div>
-              <div className="font-mono text-[9px] leading-relaxed text-zinc-300 overflow-hidden">
-                <div className="text-zinc-500">{"// Track share event"}</div>
-                <div><span className="text-amber-400">vibe</span>.<span className="text-sky-400">trackShare</span>{"({"}</div>
-                <div className="pl-3"><span className="text-emerald-400">contentId</span>: <span className="text-orange-300">'vid-abc123'</span>,</div>
-                <div className="pl-3"><span className="text-emerald-400">sharerId</span>: <span className="text-orange-300">wallet.address</span>,</div>
-                <div className="pl-3"><span className="text-emerald-400">upstreamRef</span>: <span className="text-orange-300">referralCode</span></div>
-                <div>{"});"}</div>
-              </div>
-            </Card>
-
             <Card className="p-3" data-testid="card-transaction-flow">
               <div className="flex items-center gap-2 mb-2">
                 <Wallet className="h-4 w-4 text-sky-400" />
                 <span className="text-xs font-medium text-foreground">Transaction Flow</span>
               </div>
-              <div className="space-y-1 text-center">
-                <div className="p-1.5 rounded bg-sky-400/10 border border-sky-400/30" data-testid="flow-reward-pool">
-                  <span className="text-[9px] text-sky-400 font-medium">Treasury</span>
-                  <p className="text-sm font-bold text-foreground">${treasuryBalance.toFixed(2)}</p>
+              <div className="space-y-2 text-center">
+                <div className="p-2 rounded bg-sky-400/10 border border-sky-400/30" data-testid="flow-reward-pool">
+                  <span className="text-[9px] text-sky-400 font-medium">Reward Pool Treasury - Developer Wallet</span>
+                  <p className="text-sm font-bold text-foreground">${treasuryBalance.toFixed(2)} USDC</p>
+                  {walletAddress && (
+                    <p className="text-[8px] text-muted-foreground font-mono mt-1">
+                      {walletAddress.slice(0, 10)}...{walletAddress.slice(-8)}
+                    </p>
+                  )}
                 </div>
-                <ArrowDown className="h-3 w-3 mx-auto text-muted-foreground" />
-                <div className="p-1.5 rounded bg-emerald-500/10 border border-emerald-500/30" data-testid="flow-x402-split">
-                  <span className="text-[9px] text-emerald-400 font-medium">x402 Split</span>
+                <ArrowDown className="h-4 w-4 mx-auto text-muted-foreground" />
+                <div className="p-2 rounded bg-amber-500/10 border border-amber-500/30" data-testid="flow-conversion-tracking">
+                  <span className="text-[9px] text-amber-400 font-medium">Conversion Tracking</span>
+                  <p className="text-[10px] text-muted-foreground">Pixel + Event Attribution</p>
                 </div>
-                <ArrowDown className="h-3 w-3 mx-auto text-muted-foreground" />
-                <div className="p-1.5 rounded bg-sky-400/10 border border-sky-400/30" data-testid="flow-user-wallets">
-                  <span className="text-[9px] text-sky-400 font-medium">User Wallets</span>
+                <ArrowDown className="h-4 w-4 mx-auto text-muted-foreground" />
+                <div className="p-2 rounded bg-emerald-500/10 border border-emerald-500/30" data-testid="flow-x402-split">
+                  <span className="text-[9px] text-emerald-400 font-medium">x402 Batching</span>
+                  <p className="text-[10px] text-muted-foreground">Atomic Multi-Party Split</p>
+                </div>
+                <ArrowDown className="h-4 w-4 mx-auto text-muted-foreground" />
+                <div className="p-2 rounded bg-sky-400/10 border border-sky-400/30" data-testid="flow-user-wallets">
+                  <span className="text-[9px] text-sky-400 font-medium">Non-Custodial Wallets</span>
+                  <p className="text-[10px] text-muted-foreground">User Payouts</p>
                 </div>
               </div>
             </Card>
