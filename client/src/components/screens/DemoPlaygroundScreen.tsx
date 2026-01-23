@@ -150,7 +150,9 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   ] : walletPayouts;
 
   // Check if any user wallets have funds above gas buffer ($0.10)
-  const hasUserFunds = arcUserWallets.some(w => parseFloat(w.usdcBalance || '0') > 0.10);
+  // Total user funds must be above $0.20 to make reset worthwhile
+  const totalUserFunds = arcUserWallets.reduce((sum, w) => sum + parseFloat(w.usdcBalance || '0'), 0);
+  const hasUserFunds = totalUserFunds > 0.20;
 
   const testTransactionMutation = useMutation({
     mutationFn: async () => {
