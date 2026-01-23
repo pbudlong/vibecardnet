@@ -201,22 +201,39 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         });
         // Update wallet payouts with delays matching animation arrival times
         if (data.transfers && data.transfers.length >= 3) {
+          const transfers = data.transfers.slice(0, 3);
           const labels = ["Creator", "Remixer", "Sharer"];
-          const animationDelays = [1000, 2100, 3200]; // When each animation reaches its target
-          data.transfers.slice(0, 3).forEach((t: any, i: number) => {
-            setTimeout(() => {
-              const addr = t.to || t.address || "";
-              setWalletPayouts(prev => {
-                const updated = [...prev];
-                updated[i] = {
-                  label: labels[i],
-                  amount: `$${parseFloat(t.amount).toFixed(2)}`,
-                  address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x..."
-                };
-                return updated;
-              });
-            }, animationDelays[i]);
-          });
+          // Animation: dur=1s, begin=i*1.1s, so ends at 1s, 2.1s, 3.2s
+          // Creator (i=0): animation ends at 1000ms
+          setTimeout(() => {
+            const t = transfers[0];
+            const addr = t.to || t.address || "";
+            setWalletPayouts(prev => [
+              { label: labels[0], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x..." },
+              prev[1],
+              prev[2]
+            ]);
+          }, 1000);
+          // Remixer (i=1): animation ends at 2100ms
+          setTimeout(() => {
+            const t = transfers[1];
+            const addr = t.to || t.address || "";
+            setWalletPayouts(prev => [
+              prev[0],
+              { label: labels[1], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x..." },
+              prev[2]
+            ]);
+          }, 2100);
+          // Sharer (i=2): animation ends at 3200ms
+          setTimeout(() => {
+            const t = transfers[2];
+            const addr = t.to || t.address || "";
+            setWalletPayouts(prev => [
+              prev[0],
+              prev[1],
+              { label: labels[2], amount: `$${parseFloat(t.amount).toFixed(2)}`, address: addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "0x..." }
+            ]);
+          }, 3200);
         }
       } else {
         setLogs(prev => [...prev, { time: getPSTTime(), type: "warn", message: data.message || 'Transfer failed' }]);
