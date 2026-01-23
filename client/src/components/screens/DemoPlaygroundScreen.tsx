@@ -502,7 +502,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                     For Judges
                   </Badge>
                 </div>
-                <div className="space-y-1 text-[9px]">
+                <div className="text-[9px]">
                   <div className="p-1 rounded bg-muted/30">
                     <span className="text-muted-foreground">API Key: </span>
                     {circleDiagnostics.apiKeyPrefix ? (
