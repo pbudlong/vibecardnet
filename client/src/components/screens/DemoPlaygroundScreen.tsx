@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Circle, Play, RefreshCw, Wallet, ArrowDown, Zap, DollarSign, Clock, AlertCircle } from "lucide-react";
+import { Check, Play, RefreshCw, Wallet, ArrowDown, Zap } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -15,7 +15,18 @@ interface IntegrationStatus {
   circleWallets: { configured: boolean; connected: boolean; status: string };
   x402Batching: { configured: boolean; status: string };
   arcNetwork: { configured: boolean; chainId: number; rpcUrl: string; status: string };
-  viralTracking: { configured: boolean; status: string; dependencies: string[] };
+  conversionTracking: { configured: boolean; status: string; dependencies: string[] };
+}
+
+// Get current PST time formatted as HH:MM:SS
+function getPSTTime(): string {
+  return new Date().toLocaleTimeString('en-US', { 
+    timeZone: 'America/Los_Angeles', 
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
 }
 
 interface WalletBalance {
@@ -26,41 +37,47 @@ interface WalletBalance {
   error?: string;
 }
 
-function getInitialLogs(status: IntegrationStatus | undefined): Array<{time: string; type: string; message: string}> {
+function getInitialLogs(status: IntegrationStatus | undefined, treasuryBalance: number): Array<{time: string; type: string; message: string}> {
+  const time = getPSTTime();
   if (!status) {
     return [
-      { time: "00:00:01", type: "info", message: "Initializing VibeCard Demo Environment..." },
-      { time: "00:00:02", type: "info", message: "Fetching integration status..." },
+      { time, type: "info", message: "Initializing VibeCard Demo Environment..." },
+      { time, type: "info", message: "Fetching integration status..." },
     ];
   }
   
   const logs = [
-    { time: "00:00:01", type: "info", message: "Initializing VibeCard Demo Environment..." },
-    { time: "00:00:02", type: "info", message: "Checking integrations..." },
+    { time, type: "info", message: "Initializing VibeCard Demo Environment..." },
+    { time, type: "info", message: "Checking integrations..." },
   ];
 
   if (status.circleWallets.status === 'connected') {
-    logs.push({ time: "00:00:02", type: "success", message: "Circle Wallets: Connected" });
+    logs.push({ time, type: "success", message: "Circle Wallets: Connected" });
   } else if (status.circleWallets.configured) {
-    logs.push({ time: "00:00:02", type: "warn", message: "Circle Wallets: Configured (pending connection)" });
+    logs.push({ time, type: "warn", message: "Circle Wallets: Configured (pending connection)" });
   } else {
-    logs.push({ time: "00:00:02", type: "warn", message: "Circle Wallets: Not configured" });
+    logs.push({ time, type: "warn", message: "Circle Wallets: Not configured" });
   }
 
   if (status.x402Batching.status === 'connected') {
-    logs.push({ time: "00:00:02", type: "success", message: "x402 Protocol: Connected (atomic splits)" });
+    logs.push({ time, type: "success", message: "x402 Protocol: Connected (atomic splits)" });
   } else {
-    logs.push({ time: "00:00:02", type: "warn", message: "x402 Protocol: Not configured" });
+    logs.push({ time, type: "warn", message: "x402 Protocol: Not configured" });
   }
 
   if (status.arcNetwork.status === 'connected') {
-    logs.push({ time: "00:00:02", type: "success", message: `Arc Network: Connected (Chain ${status.arcNetwork.chainId})` });
+    logs.push({ time, type: "success", message: `Arc Network: Connected (Chain ${status.arcNetwork.chainId})` });
   } else {
-    logs.push({ time: "00:00:02", type: "warn", message: "Arc Network: Not connected" });
+    logs.push({ time, type: "warn", message: "Arc Network: Not connected" });
   }
 
-  logs.push({ time: "00:00:03", type: "info", message: "Viral Tracking: Pending (requires wallets + x402)" });
-  logs.push({ time: "00:00:03", type: "info", message: "Ready for testing..." });
+  logs.push({ time, type: "info", message: "Conversion Tracking: Pending (requires wallets + x402)" });
+  
+  if (treasuryBalance > 0) {
+    logs.push({ time, type: "success", message: `Treasury Funded: $${treasuryBalance.toFixed(2)} USDC` });
+  }
+  
+  logs.push({ time, type: "info", message: "Ready for testing..." });
 
   return logs;
 }
@@ -143,15 +160,16 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         const gasMsg = data.gasCost && parseFloat(data.gasCost) > 0 
           ? ` (gas: $${data.gasCost})` 
           : '';
+        const time = getPSTTime();
         setLogs(prev => [
           ...prev,
-          { time: "00:00:06", type: "success", message: `${simLabel}Sent $${data.totalSent} USDC to ${data.transfers.length} recipients` },
-          ...data.transfers.map((t: any, i: number) => ({
-            time: `00:00:0${7 + i}`,
+          { time, type: "success", message: `${simLabel}Sent $${data.totalSent} USDC to ${data.transfers.length} recipients` },
+          ...data.transfers.map((t: any) => ({
+            time,
             type: t.status === 'success' ? 'success' : 'error',
             message: `${simLabel}${t.to}: $${t.amount} ${t.status === 'success' ? '(confirmed)' : '(failed)'}`
           })),
-          { time: "00:00:10", type: "info", message: `Treasury balance: $${data.newTreasuryBalance}${gasMsg}` }
+          { time, type: "info", message: `Treasury balance: $${data.newTreasuryBalance}${gasMsg}` }
         ]);
         // Update wallet payouts with real amounts from transaction
         if (data.transfers && data.transfers.length >= 3) {
@@ -168,7 +186,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         setShowPayouts(true);
         setTransactionCount(prev => prev + 1);
       } else {
-        setLogs(prev => [...prev, { time: "00:00:06", type: "warn", message: data.message || 'Transfer failed' }]);
+        setLogs(prev => [...prev, { time: getPSTTime(), type: "warn", message: data.message || 'Transfer failed' }]);
       }
       // Force immediate refresh of wallet balances
       queryClient.invalidateQueries({ queryKey: ['/api/wallet/balance'] });
@@ -178,7 +196,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       setIsRunning(false);
     },
     onError: (error) => {
-      setLogs(prev => [...prev, { time: "00:00:06", type: "error", message: `Transaction error: ${error}` }]);
+      setLogs(prev => [...prev, { time: getPSTTime(), type: "error", message: `Transaction error: ${error}` }]);
       setIsRunning(false);
     }
   });
@@ -189,10 +207,11 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     setShowPayouts(false);
     
     // Add initial logs
+    const time = getPSTTime();
     setLogs(prev => [
       ...prev,
-      { time: "00:00:04", type: "event", message: "x402 Payment Trigger activated..." },
-      { time: "00:00:05", type: "info", message: "Atomic split: Creator 60% | Sharer 25% | Platform 15%" },
+      { time, type: "event", message: "x402 Payment Trigger activated..." },
+      { time, type: "info", message: "Atomic split: Creator 60% | Sharer 25% | Platform 15%" },
     ]);
     
     // Execute real transfer after log animation
@@ -204,16 +223,12 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
 
   useEffect(() => {
     if (isActive && integrationStatus) {
-      setLogs(getInitialLogs(integrationStatus));
+      const balance = walletBalance?.balance ? parseFloat(walletBalance.balance) : 0;
+      setLogs(getInitialLogs(integrationStatus, balance));
       setShowPayouts(false);
     }
-  }, [isActive, integrationStatus]);
+  }, [isActive, integrationStatus, walletBalance]);
 
-  const getStatusIcon = (status: string) => {
-    if (status === 'connected') return <Check className="h-3 w-3 text-emerald-400" />;
-    if (status === 'pending') return <Clock className="h-3 w-3 text-yellow-500" />;
-    return <AlertCircle className="h-3 w-3 text-red-400" />;
-  };
 
   const fundTreasuryMutation = useMutation({
     mutationFn: async () => {
@@ -221,11 +236,11 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       return response.json();
     },
     onSuccess: () => {
-      setLogs(prev => [...prev, { time: "00:00:10", type: "success", message: "Faucet request submitted - USDC incoming!" }]);
+      setLogs(prev => [...prev, { time: getPSTTime(), type: "success", message: "Faucet request submitted - USDC incoming!" }]);
       queryClient.invalidateQueries({ queryKey: ['/api/wallet/balance'] });
     },
     onError: () => {
-      setLogs(prev => [...prev, { time: "00:00:10", type: "warn", message: "Faucet failed - visit faucet.circle.com" }]);
+      setLogs(prev => [...prev, { time: getPSTTime(), type: "warn", message: "Faucet failed - visit faucet.circle.com" }]);
     }
   });
 
@@ -236,15 +251,15 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     },
     onMutate: () => {
       setIsResetting(true);
-      setLogs(prev => [...prev, { time: "00:00:09", type: "info", message: "Recovering funds from user wallets..." }]);
+      setLogs(prev => [...prev, { time: getPSTTime(), type: "info", message: "Recovering funds from user wallets..." }]);
     },
     onSuccess: (data) => {
       if (data.success) {
         const gasSpent = data.gasSpent ? ` (gas: $${data.gasSpent})` : '';
         const newBalance = data.newTreasuryBalance ? ` Treasury: $${parseFloat(data.newTreasuryBalance).toFixed(2)}` : '';
-        setLogs(prev => [...prev, { time: "00:00:10", type: "success", message: `Recovered $${data.totalRecovered} USDC${gasSpent}${newBalance}` }]);
+        setLogs(prev => [...prev, { time: getPSTTime(), type: "success", message: `Recovered $${data.totalRecovered} USDC${gasSpent}${newBalance}` }]);
       } else {
-        setLogs(prev => [...prev, { time: "00:00:10", type: "info", message: "No funds to recover from user wallets" }]);
+        setLogs(prev => [...prev, { time: getPSTTime(), type: "info", message: "No funds to recover from user wallets" }]);
       }
       // Force immediate refresh of wallet balances
       queryClient.invalidateQueries({ queryKey: ['/api/wallet/balance'] });
@@ -256,7 +271,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       setIsResetting(false);
     },
     onError: () => {
-      setLogs(prev => [...prev, { time: "00:00:10", type: "warn", message: "Reset failed" }]);
+      setLogs(prev => [...prev, { time: getPSTTime(), type: "warn", message: "Reset failed" }]);
       setIsResetting(false);
     }
   });
@@ -285,36 +300,6 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       >
         <div className="flex gap-4 flex-1">
           <div className="flex flex-col gap-2 w-1/2">
-            <Card className={`p-3 ${statusLoading ? 'border-zinc-500/30 bg-zinc-500/5' : 'border-emerald-500/30 bg-emerald-500/5'}`} data-testid="card-integration-status">
-              <div className="flex items-center gap-2 mb-2">
-                <Zap className={`h-4 w-4 ${statusLoading ? 'text-zinc-400' : 'text-emerald-400'}`} />
-                <span className="text-xs font-medium text-foreground">Integration Status</span>
-                {statusLoading && <RefreshCw className="h-3 w-3 text-zinc-400 animate-spin" />}
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2" data-testid="status-viral-tracking">
-                  {getStatusIcon(integrationStatus?.viralTracking.status || 'pending')}
-                  <ArrowDown className={`h-3 w-3 ${integrationStatus?.viralTracking.status === 'connected' ? 'text-emerald-500' : 'text-emerald-500/50'}`} />
-                  <span className="text-[10px] text-muted-foreground">Viral Tracking</span>
-                </div>
-                <div className="flex items-center gap-2" data-testid="status-circle-wallets">
-                  {getStatusIcon(integrationStatus?.circleWallets.status || 'pending')}
-                  <Wallet className={`h-3 w-3 ${integrationStatus?.circleWallets.status === 'connected' ? 'text-sky-400' : 'text-sky-400/50'}`} />
-                  <span className="text-[10px] text-muted-foreground">Circle Wallets</span>
-                </div>
-                <div className="flex items-center gap-2" data-testid="status-x402">
-                  {getStatusIcon(integrationStatus?.x402Batching.status || 'pending')}
-                  <Circle className={`h-3 w-3 ${integrationStatus?.x402Batching.status === 'connected' ? 'text-sky-400' : 'text-sky-400/50'}`} />
-                  <span className="text-[10px] text-muted-foreground">x402 Protocol</span>
-                </div>
-                <div className="flex items-center gap-2" data-testid="status-arc">
-                  {getStatusIcon(integrationStatus?.arcNetwork.status || 'pending')}
-                  <Zap className={`h-3 w-3 ${integrationStatus?.arcNetwork.status === 'connected' ? 'text-emerald-500' : 'text-emerald-500/50'}`} />
-                  <span className="text-[10px] text-muted-foreground">Arc Network</span>
-                </div>
-              </div>
-            </Card>
-
             <Card className="p-3">
               <div className="flex items-center gap-2 mb-2">
                 <Play className="h-4 w-4 text-emerald-400" />
@@ -357,31 +342,6 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                     <>
                       <RefreshCw className="h-3 w-3 mr-1" />
                       Reset Demo (Recover USDC)
-                    </>
-                  )}
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="w-full text-[10px] border-sky-400/50 text-sky-400"
-                  onClick={() => fundTreasuryMutation.mutate()}
-                  disabled={fundTreasuryMutation.isPending || isTreasuryFunded}
-                  data-testid="button-fund-treasury"
-                >
-                  {fundTreasuryMutation.isPending ? (
-                    <>
-                      <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-                      Requesting USDC...
-                    </>
-                  ) : isTreasuryFunded ? (
-                    <>
-                      <Check className="h-3 w-3 mr-1" />
-                      Treasury Funded
-                    </>
-                  ) : (
-                    <>
-                      <DollarSign className="h-3 w-3 mr-1" />
-                      Fund Treasury (Testnet)
                     </>
                   )}
                 </Button>
@@ -475,7 +435,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
 
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: showPayouts ? 1 : 0.3 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
               className="flex-1"
             >
