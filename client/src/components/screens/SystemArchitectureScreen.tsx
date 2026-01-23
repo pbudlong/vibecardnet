@@ -44,7 +44,7 @@ function SimpleView() {
                 <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-sky-400 flex items-center justify-center">
                   <span className="text-white font-bold text-lg">◎</span>
                 </div>
-                <p className="text-xs font-medium text-foreground">Circle Mint</p>
+                <p className="text-xs font-medium text-foreground">Arc Onramp</p>
                 <p className="text-[10px] text-muted-foreground">Fiat → USDC</p>
               </Card>
             </motion.div>
@@ -90,7 +90,7 @@ function SimpleView() {
                   <div className="bg-card border rounded-md px-3 py-2 text-center w-36">
                     <Zap className="h-4 w-4 mx-auto mb-1 text-primary" />
                     <p className="text-[10px] font-medium">x402 Splits</p>
-                    <p className="text-[8px] text-muted-foreground">Circle Batching SDK</p>
+                    <p className="text-[8px] text-muted-foreground">Circle Gateway SDK</p>
                   </div>
                   
                   <ArrowDown className="h-3 w-3 text-primary/60" />
@@ -120,7 +120,7 @@ function SimpleView() {
                 <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-sky-400 flex items-center justify-center">
                   <span className="text-white font-bold text-lg">◎</span>
                 </div>
-                <p className="text-xs font-medium text-foreground">Circle Mint</p>
+                <p className="text-xs font-medium text-foreground">Arc Onramp</p>
                 <p className="text-[10px] text-muted-foreground">USDC → Fiat</p>
               </Card>
             </motion.div>
@@ -184,10 +184,10 @@ function DetailedView() {
           className="flex items-center pt-12 self-start"
         >
           <div className="flex flex-col items-center gap-2" style={{ marginTop: '-35px' }}>
-            <Card className="p-3 w-28 text-center border-sky-400/50">
-              <Wallet className="h-6 w-6 mx-auto mb-1 text-sky-400" />
-              <p className="text-[10px] font-medium text-foreground">Developer Wallet</p>
-              <p className="text-[8px] text-muted-foreground">USDC Funding</p>
+            <Card className="p-3 w-28 text-center">
+              <SiStripe className="h-6 w-6 mx-auto mb-1 text-[#635BFF]" />
+              <p className="text-[10px] font-medium text-foreground">Stripe Payments</p>
+              <p className="text-[8px] text-muted-foreground">USD funding</p>
             </Card>
             
             <ArrowDown className="h-3 w-3 text-muted-foreground" />
