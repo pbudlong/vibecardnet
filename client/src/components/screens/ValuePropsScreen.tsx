@@ -72,14 +72,15 @@ const memberBenefits = [
 
 export function ValuePropsScreen() {
   return (
-    <div className="h-full w-full flex flex-col items-center justify-start px-6 py-3 overflow-y-auto">
+    <div className="h-full w-full flex flex-col items-center justify-start px-6 py-4 overflow-y-auto">
+      {/* Title */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-3"
+        className="text-center mb-6"
       >
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-1">
+        <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
           The AI-era Solution
         </h1>
         <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
@@ -88,9 +89,10 @@ export function ValuePropsScreen() {
         </p>
       </motion.div>
 
-      <div className="w-full max-w-6xl flex flex-col gap-4">
-        {/* Top Row: Network Diagram + ICP Flywheel */}
-        <div className="flex flex-row gap-6 items-start justify-center">
+      {/* Content container - width defined by top row content */}
+      <div className="inline-flex flex-col items-stretch gap-6">
+        {/* Top Row: Network Diagram + ICP Flywheel - defines the width */}
+        <div className="flex flex-row gap-16 items-start">
           {/* Left - Network Diagram */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -98,13 +100,13 @@ export function ValuePropsScreen() {
             transition={{ duration: 0.5, delay: 0.15 }}
             className="flex-shrink-0 flex items-center justify-center"
           >
-            <div className="relative flex items-center justify-center" style={{ width: "260px", height: "260px" }}>
+            <div className="relative flex items-center justify-center" style={{ width: "320px", height: "320px" }}>
               {/* Outer Ring - Use Cases with People */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="relative w-full h-full">
                   {useCasesWithPeople.map((useCase, index) => {
                     const angle = (index * 360) / useCasesWithPeople.length - 90;
-                    const radius = 115;
+                    const radius = 140;
                     const x = Math.cos((angle * Math.PI) / 180) * radius;
                     const y = Math.sin((angle * Math.PI) / 180) * radius;
                     return (
@@ -121,10 +123,10 @@ export function ValuePropsScreen() {
                       >
                         <User className="h-3 w-3 text-muted-foreground/60" />
                         <div className="flex flex-col items-center">
-                          <div className="p-1 rounded-full bg-muted/50">
-                            <useCase.icon className="h-3 w-3 text-muted-foreground" />
+                          <div className="p-1.5 rounded-full bg-muted/50">
+                            <useCase.icon className="h-3.5 w-3.5 text-muted-foreground" />
                           </div>
-                          <span className="text-[7px] text-muted-foreground">{useCase.label}</span>
+                          <span className="text-[8px] text-muted-foreground">{useCase.label}</span>
                         </div>
                         <User className="h-3 w-3 text-muted-foreground/60" />
                       </motion.div>
@@ -135,10 +137,10 @@ export function ValuePropsScreen() {
 
               {/* Middle Ring - Platforms */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative w-44 h-44">
+                <div className="relative w-52 h-52">
                   {platforms.map((platform, index) => {
                     const angle = (index * 360) / platforms.length - 90;
-                    const radius = 68;
+                    const radius = 82;
                     const x = Math.cos((angle * Math.PI) / 180) * radius;
                     const y = Math.sin((angle * Math.PI) / 180) * radius;
                     return (
@@ -149,18 +151,18 @@ export function ValuePropsScreen() {
                         transition={{ duration: 0.3, delay: 0.3 + index * 0.08 }}
                         className="absolute flex flex-col items-center"
                         style={{
-                          left: `calc(50% + ${x}px - 18px)`,
-                          top: `calc(50% + ${y}px - 18px)`,
+                          left: `calc(50% + ${x}px - 20px)`,
+                          top: `calc(50% + ${y}px - 20px)`,
                         }}
                       >
-                        <div className="p-1 rounded-lg bg-card border shadow-sm">
+                        <div className="p-1.5 rounded-lg bg-card border shadow-sm">
                           {platform.icon ? (
-                            <platform.icon className={`h-3.5 w-3.5 ${platform.color}`} />
+                            <platform.icon className={`h-4 w-4 ${platform.color}`} />
                           ) : (
-                            <span className={`text-xs font-bold ${platform.color}`}>{platform.initial}</span>
+                            <span className={`text-sm font-bold ${platform.color}`}>{platform.initial}</span>
                           )}
                         </div>
-                        <span className="text-[7px] text-muted-foreground mt-0.5 whitespace-nowrap max-w-10 truncate">{platform.name}</span>
+                        <span className="text-[8px] text-muted-foreground mt-0.5 whitespace-nowrap max-w-12 truncate">{platform.name}</span>
                       </motion.div>
                     );
                   })}
@@ -172,10 +174,10 @@ export function ValuePropsScreen() {
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="relative z-10 flex flex-col items-center justify-center w-16 h-16 rounded-full bg-primary/10 border-2 border-primary"
+                className="relative z-10 flex flex-col items-center justify-center w-20 h-20 rounded-full bg-primary/10 border-2 border-primary"
               >
-                <span className="font-display text-sm font-bold text-primary leading-none">Vibe</span>
-                <span className="font-display text-sm font-bold text-primary leading-none">Card</span>
+                <span className="font-display text-base font-bold text-primary leading-none">Vibe</span>
+                <span className="font-display text-base font-bold text-primary leading-none">Card</span>
               </motion.div>
             </div>
           </motion.div>
@@ -187,90 +189,89 @@ export function ValuePropsScreen() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="flex-shrink-0 flex flex-col items-center"
           >
-            <h2 className="font-display text-base font-bold text-foreground mb-2">
+            <h2 className="font-display text-lg font-bold text-foreground mb-3">
               Beachhead ICP Flywheel
             </h2>
             
-            <div className="relative flex flex-col items-center gap-0.5">
-              <Card className="px-2 py-1 bg-card border text-center w-48">
-                <div className="flex items-center justify-center gap-1">
-                  <Coins className="h-3 w-3 text-primary flex-shrink-0" />
-                  <span className="text-[9px] font-medium text-foreground">Platform funds reward pool</span>
+            <div className="relative flex flex-col items-center gap-1">
+              <Card className="px-3 py-1.5 bg-card border text-center w-56">
+                <div className="flex items-center justify-center gap-1.5">
+                  <Coins className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                  <span className="text-[10px] font-medium text-foreground">Platform funds reward pool</span>
                 </div>
               </Card>
               <ChevronDown className="h-3 w-3 text-primary" />
 
-              <Card className="px-2 py-1 bg-card border text-center w-48">
-                <div className="flex items-center justify-center gap-1">
-                  <Megaphone className="h-3 w-3 text-primary flex-shrink-0" />
-                  <span className="text-[9px] font-medium text-foreground">Promotes to creators</span>
+              <Card className="px-3 py-1.5 bg-card border text-center w-56">
+                <div className="flex items-center justify-center gap-1.5">
+                  <Megaphone className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                  <span className="text-[10px] font-medium text-foreground">Promotes to creators</span>
                 </div>
-                <p className="text-[7px] text-muted-foreground">"Add VibeCard to your app!"</p>
+                <p className="text-[8px] text-muted-foreground">"Add VibeCard to your app!"</p>
               </Card>
               <ChevronDown className="h-3 w-3 text-primary" />
 
-              <Card className="px-2 py-1 bg-card border text-center w-48">
-                <div className="flex items-center justify-center gap-1">
-                  <Code2 className="h-3 w-3 text-primary flex-shrink-0" />
-                  <span className="text-[9px] font-medium text-foreground">Creators integrate snippet</span>
+              <Card className="px-3 py-1.5 bg-card border text-center w-56">
+                <div className="flex items-center justify-center gap-1.5">
+                  <Code2 className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                  <span className="text-[10px] font-medium text-foreground">Creators integrate snippet</span>
                 </div>
-                <p className="text-[7px] text-muted-foreground">Easy, platform-endorsed</p>
+                <p className="text-[8px] text-muted-foreground">Easy, platform-endorsed</p>
               </Card>
               <ChevronDown className="h-3 w-3 text-primary" />
 
-              <Card className="px-2 py-1 bg-card border w-48">
-                <div className="flex items-center justify-center gap-1 mb-0.5">
-                  <Share2 className="h-3 w-3 text-primary flex-shrink-0" />
-                  <span className="text-[9px] font-medium text-foreground">Content shared with rewards</span>
+              <Card className="px-3 py-1.5 bg-card border w-56">
+                <div className="flex items-center justify-center gap-1.5 mb-0.5">
+                  <Share2 className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                  <span className="text-[10px] font-medium text-foreground">Content shared with rewards</span>
                 </div>
-                <div className="space-y-0 text-left pl-2">
+                <div className="space-y-0 text-left pl-3">
                   <div className="flex items-center gap-0.5">
                     <ChevronRight className="h-2 w-2 text-primary flex-shrink-0" />
-                    <span className="text-[7px] text-muted-foreground">Sharers earn USDC</span>
+                    <span className="text-[8px] text-muted-foreground">Sharers earn USDC</span>
                   </div>
                   <div className="flex items-center gap-0.5">
                     <ChevronRight className="h-2 w-2 text-primary flex-shrink-0" />
-                    <span className="text-[7px] text-muted-foreground">Some convert to platform users</span>
+                    <span className="text-[8px] text-muted-foreground">Some convert to platform users</span>
                   </div>
                   <div className="flex items-center gap-0.5">
                     <ChevronRight className="h-2 w-2 text-primary flex-shrink-0" />
-                    <span className="text-[7px] text-muted-foreground">Some remix, create more content</span>
+                    <span className="text-[8px] text-muted-foreground">Some remix, create more content</span>
                   </div>
                 </div>
               </Card>
               <ChevronDown className="h-3 w-3 text-primary" />
 
-              <Card className="px-2 py-1 bg-primary/10 border-primary text-center w-48">
-                <div className="flex items-center justify-center gap-1">
-                  <RefreshCw className="h-3 w-3 text-primary flex-shrink-0" />
-                  <span className="text-[8px] font-medium text-primary">Cycle accelerates</span>
+              <Card className="px-3 py-1.5 bg-primary/10 border-primary text-center w-56">
+                <div className="flex items-center justify-center gap-1.5">
+                  <RefreshCw className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                  <span className="text-[9px] font-medium text-primary">Cycle accelerates</span>
                 </div>
               </Card>
             </div>
           </motion.div>
         </div>
 
-        {/* Bottom Row: Everyone Wins */}
+        {/* Bottom Row: Everyone Wins - matches width of top row */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="w-full"
         >
-          <h2 className="font-display text-base font-bold text-foreground mb-2 text-center">
+          <h2 className="font-display text-lg font-bold text-foreground mb-3 text-center">
             Everyone Wins
           </h2>
           
-          <div className="grid grid-cols-2 gap-6 w-full">
+          <div className="grid grid-cols-2 gap-8">
             {/* Publishers */}
             <Card className="p-4">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-3">
                 <div className="p-1.5 rounded-lg bg-primary/10">
-                  <Building2 className="h-4 w-4 text-primary" />
+                  <Building2 className="h-5 w-5 text-primary" />
                 </div>
-                <h3 className="font-semibold text-foreground text-sm">For Publishers</h3>
+                <h3 className="font-semibold text-foreground text-base">For Publishers</h3>
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 {publisherBenefits.map((benefit, index) => (
                   <motion.div
                     key={benefit.title}
@@ -280,13 +281,13 @@ export function ValuePropsScreen() {
                     className="flex items-start gap-2"
                   >
                     <div className="p-1 rounded-md bg-accent/20 mt-0.5">
-                      <benefit.icon className="h-3 w-3 text-accent-foreground" />
+                      <benefit.icon className="h-3.5 w-3.5 text-accent-foreground" />
                     </div>
                     <div>
-                      <h4 className="font-medium text-foreground text-[10px]">
+                      <h4 className="font-medium text-foreground text-xs">
                         {benefit.title}
                       </h4>
-                      <p className="text-[8px] text-muted-foreground">
+                      <p className="text-[10px] text-muted-foreground">
                         {benefit.description}
                       </p>
                     </div>
@@ -297,13 +298,13 @@ export function ValuePropsScreen() {
 
             {/* Members */}
             <Card className="p-4">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-3">
                 <div className="p-1.5 rounded-lg bg-primary/10">
-                  <Users className="h-4 w-4 text-primary" />
+                  <Users className="h-5 w-5 text-primary" />
                 </div>
-                <h3 className="font-semibold text-foreground text-sm">For Members</h3>
+                <h3 className="font-semibold text-foreground text-base">For Members</h3>
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 {memberBenefits.map((benefit, index) => (
                   <motion.div
                     key={benefit.title}
@@ -313,13 +314,13 @@ export function ValuePropsScreen() {
                     className="flex items-start gap-2"
                   >
                     <div className="p-1 rounded-md bg-accent/20 mt-0.5">
-                      <benefit.icon className="h-3 w-3 text-accent-foreground" />
+                      <benefit.icon className="h-3.5 w-3.5 text-accent-foreground" />
                     </div>
                     <div>
-                      <h4 className="font-medium text-foreground text-[10px]">
+                      <h4 className="font-medium text-foreground text-xs">
                         {benefit.title}
                       </h4>
-                      <p className="text-[8px] text-muted-foreground">
+                      <p className="text-[10px] text-muted-foreground">
                         {benefit.description}
                       </p>
                     </div>
