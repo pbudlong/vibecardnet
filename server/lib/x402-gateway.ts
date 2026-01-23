@@ -130,81 +130,36 @@ export async function executeX402Payment(request: X402PaymentRequest): Promise<{
   const transfers: Array<{ to: string; amount: string; status: string; txId?: string; error?: string }> = [];
   let totalPaid = 0;
 
-  // Max chunk size to avoid Arc transfer limits
-  const MAX_CHUNK = 1.00;
-
   for (const split of request.splits) {
-    const splitAmount = parseFloat(split.amount);
     console.log(`[x402] Processing split: $${split.amount} to ${split.recipient} (${split.role})`);
     
-    // Chunk large transfers into $1 pieces
-    if (splitAmount > MAX_CHUNK) {
-      let remaining = splitAmount;
-      let chunkSuccess = true;
-      let lastTxId = '';
-      
-      while (remaining > 0 && chunkSuccess) {
-        const chunkAmount = Math.min(remaining, MAX_CHUNK);
-        console.log(`[x402] Chunk transfer: $${chunkAmount.toFixed(2)} to ${split.recipient}`);
-        
-        const result = await transferUSDC(
-          request.sourceWalletId,
-          split.recipient,
-          chunkAmount.toFixed(2),
-          'ARC-TESTNET'
-        );
-        
-        if (result.success) {
-          totalPaid += chunkAmount;
-          remaining -= chunkAmount;
-          lastTxId = result.txId || '';
-          // Delay between chunks
-          if (remaining > 0) {
-            await new Promise(resolve => setTimeout(resolve, 2000));
-          }
-        } else {
-          chunkSuccess = false;
-          console.error(`[x402] Chunk failed: ${result.error}`);
-        }
-      }
-      
+    const result = await transferUSDC(
+      request.sourceWalletId,
+      split.recipient,
+      split.amount,
+      'ARC-TESTNET'
+    );
+
+    if (result.success) {
       transfers.push({
         to: split.recipient,
         amount: split.amount,
-        status: chunkSuccess && remaining <= 0 ? 'success' : 'partial',
-        txId: lastTxId,
-        error: chunkSuccess ? undefined : 'Transfer interrupted'
+        status: 'success',
+        txId: result.txId
       });
+      totalPaid += parseFloat(split.amount);
+      console.log(`[x402] Transfer success: ${result.txId}`);
     } else {
-      // Small transfer - do directly
-      const result = await transferUSDC(
-        request.sourceWalletId,
-        split.recipient,
-        split.amount,
-        'ARC-TESTNET'
-      );
-
-      if (result.success) {
-        transfers.push({
-          to: split.recipient,
-          amount: split.amount,
-          status: 'success',
-          txId: result.txId
-        });
-        totalPaid += splitAmount;
-        console.log(`[x402] Transfer success: ${result.txId}`);
-      } else {
-        transfers.push({
-          to: split.recipient,
-          amount: split.amount,
-          status: 'failed',
-          error: result.error
-        });
-        console.error(`[x402] Transfer failed: ${result.error}`);
-      }
+      transfers.push({
+        to: split.recipient,
+        amount: split.amount,
+        status: 'failed',
+        error: result.error
+      });
+      console.error(`[x402] Transfer failed: ${result.error}`);
     }
 
-    // Add delay between recipients for blockchain processing
+    // Add delay between transfers for blockchain processing
     if (request.splits.indexOf(split) < request.splits.length - 1) {
       await new Promise(resolve => setTimeout(resolve, 2000));
     }
