@@ -41,18 +41,18 @@ export function ViralProjectionScreen() {
         </p>
       </motion.div>
 
-      <div className="w-full max-w-6xl grid lg:grid-cols-3 gap-6">
+      <div className="w-full max-w-6xl grid lg:grid-cols-4 gap-4">
         {/* K-Factor Comparison */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <Card className="p-5 h-full">
-            <h2 className="font-display text-lg font-bold text-foreground mb-4 text-center">
-              K-Factor Comparison
+          <Card className="p-4 h-full">
+            <h2 className="font-display text-base font-bold text-foreground mb-3 text-center">
+              K-Factor
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {kFactorData.map((item, index) => (
                 <motion.div
                   key={item.label}
@@ -63,10 +63,10 @@ export function ViralProjectionScreen() {
                   <div className="flex justify-between items-center gap-2 mb-1">
                     <span className="text-xs font-medium text-foreground">{item.label}</span>
                     <Badge variant={item.value >= 1 ? "default" : "secondary"} className="font-mono text-xs">
-                      K = {item.value}
+                      {item.value}
                     </Badge>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
+                  <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min(item.value / 1.5 * 100, 100)}%` }}
@@ -74,15 +74,49 @@ export function ViralProjectionScreen() {
                       className={`h-full rounded-full ${item.color}`}
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
                 </motion.div>
               ))}
             </div>
-            <div className="mt-4 pt-3 border-t">
-              <p className="text-xs text-center text-muted-foreground">
-                <span className="font-semibold text-primary">K &gt; 1</span> = Each share generates more than one new share
-              </p>
-            </div>
+            <p className="text-xs text-center text-muted-foreground mt-3">
+              <span className="font-semibold text-primary">K &gt; 1</span> = viral growth
+            </p>
+          </Card>
+        </motion.div>
+
+        {/* Growth Projection Table */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <Card className="p-4 h-full">
+            <h2 className="font-display text-base font-bold text-foreground mb-3 text-center">
+              Path to 1,000
+            </h2>
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-1 text-muted-foreground font-medium">Start</th>
+                  <th className="text-right py-1 text-muted-foreground font-medium">w/o</th>
+                  <th className="text-right py-1 text-primary font-medium">w/</th>
+                </tr>
+              </thead>
+              <tbody>
+                {projectionData.map((row, index) => (
+                  <motion.tr
+                    key={row.actions}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
+                    className="border-b border-muted/50"
+                  >
+                    <td className="py-1 font-mono">{row.actions}</td>
+                    <td className="py-1 text-right font-mono text-muted-foreground">{row.withoutVibeCard}</td>
+                    <td className="py-1 text-right font-mono font-semibold text-primary">{row.withVibeCard.toLocaleString()}</td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
           </Card>
         </motion.div>
 
@@ -91,40 +125,40 @@ export function ViralProjectionScreen() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="lg:col-span-2 h-[320px]"
+          className="lg:col-span-2 h-[280px]"
         >
           <ViralMindmapAnimation />
         </motion.div>
       </div>
 
-      {/* Windfall Potential */}
+      {/* Windfall Potential - Compact */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.5 }}
-        className="w-full max-w-5xl mt-6"
+        className="w-full max-w-5xl mt-4"
       >
-        <Card className="p-5">
-          <h2 className="font-display text-xl font-bold text-foreground mb-4 text-center">
-            Windfall Potential (1,000 conversions @ $10 each)
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="p-3">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <h2 className="font-display text-sm font-bold text-foreground">
+              Windfall Potential
+            </h2>
+            <span className="text-xs text-muted-foreground">(1,000 conversions @ $10)</span>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
             {windfallPotential.map((item, index) => (
               <motion.div
                 key={item.role}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: 0.6 + index * 0.1 }}
-                className="text-center p-4 rounded-lg bg-muted/30"
+                className="text-center p-2 rounded-lg bg-muted/30"
               >
-                <div className="flex justify-center mb-2">
-                  <div className="p-2 rounded-full bg-primary/10">
-                    <item.icon className="h-5 w-5 text-primary" />
-                  </div>
+                <div className="flex items-center justify-center gap-2">
+                  <item.icon className="h-4 w-4 text-primary" />
+                  <p className="text-xs text-muted-foreground">{item.role}</p>
                 </div>
-                <p className="text-sm text-muted-foreground mb-1">{item.role}</p>
-                <p className="font-display text-2xl font-bold text-foreground">{item.earnings}</p>
-                <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+                <p className="font-display text-lg font-bold text-foreground">{item.earnings}</p>
               </motion.div>
             ))}
           </div>
