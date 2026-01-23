@@ -147,11 +147,16 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     w => w.blockchain === 'ARC-TESTNET' && w.name.includes('Arc') && !w.name.includes('Treasury')
   ) || [];
 
-  // Create display payouts from real wallet balances
-  const displayPayouts = arcUserWallets.length >= 3 ? [
-    { label: "Creator", amount: `$${parseFloat(arcUserWallets[0]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[0]?.address ? `${arcUserWallets[0].address.slice(0, 6)}...${arcUserWallets[0].address.slice(-4)}` : "0x..." },
-    { label: "Remixer", amount: `$${parseFloat(arcUserWallets[1]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[1]?.address ? `${arcUserWallets[1].address.slice(0, 6)}...${arcUserWallets[1].address.slice(-4)}` : "0x..." },
-    { label: "Sharer", amount: `$${parseFloat(arcUserWallets[2]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[2]?.address ? `${arcUserWallets[2].address.slice(0, 6)}...${arcUserWallets[2].address.slice(-4)}` : "0x..." },
+  // Map wallets by name: Creator=Matt, Remixer=Pete, Sharer=Manny
+  const mattWallet = arcUserWallets.find(w => w.name.toLowerCase().includes('matt'));
+  const peteWallet = arcUserWallets.find(w => w.name.toLowerCase().includes('pete'));
+  const mannyWallet = arcUserWallets.find(w => w.name.toLowerCase().includes('manny'));
+
+  // Create display payouts from real wallet balances with correct role mapping
+  const displayPayouts = mattWallet && peteWallet && mannyWallet ? [
+    { label: "Creator", amount: `$${parseFloat(mattWallet.usdcBalance || '0').toFixed(2)}`, address: mattWallet.address ? `${mattWallet.address.slice(0, 6)}...${mattWallet.address.slice(-4)}` : "0x..." },
+    { label: "Remixer", amount: `$${parseFloat(peteWallet.usdcBalance || '0').toFixed(2)}`, address: peteWallet.address ? `${peteWallet.address.slice(0, 6)}...${peteWallet.address.slice(-4)}` : "0x..." },
+    { label: "Sharer", amount: `$${parseFloat(mannyWallet.usdcBalance || '0').toFixed(2)}`, address: mannyWallet.address ? `${mannyWallet.address.slice(0, 6)}...${mannyWallet.address.slice(-4)}` : "0x..." },
   ] : walletPayouts;
 
   // Check if any user wallet has balance above the gas buffer ($0.15)

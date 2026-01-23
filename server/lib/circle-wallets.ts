@@ -287,7 +287,7 @@ export async function createArcTestnetWallets(): Promise<{
       const walletSetResponse = await client.createWalletSet({
         name: 'VibeCard Arc Wallets'
       });
-      walletSetId = walletSetResponse.data?.walletSet?.id;
+      walletSetId = walletSetResponse.data?.walletSet?.id || '';
       
       if (!walletSetId) {
         return { success: false, wallets: [], error: 'Failed to create wallet set' };
@@ -632,31 +632,41 @@ export async function runTestTransaction(): Promise<{
   }
 
   // Find user wallets on the same blockchain as treasury
-  const userWallets = wallets.filter(w => 
+  const allUserWallets = wallets.filter(w => 
     w.blockchain === treasury.blockchain &&
     !w.refId?.includes('treasury') && 
     !w.name?.toLowerCase().includes('treasury')
-  ).slice(0, 3); // Take up to 3 user wallets
+  );
 
-  if (userWallets.length === 0) {
+  if (allUserWallets.length === 0) {
     console.log('[Demo] No user wallets found');
     return { success: false, transfers: [], totalSent: '0', newTreasuryBalance: treasury.usdcBalance };
   }
 
+  // Map wallets by name: Creator=Matt, Remixer=Pete, Sharer=Manny
+  const findWallet = (name: string) => allUserWallets.find(w => 
+    w.name?.toLowerCase().includes(name.toLowerCase()) || 
+    w.refId?.toLowerCase().includes(name.toLowerCase())
+  );
+  
+  const mattWallet = findWallet('matt');
+  const peteWallet = findWallet('pete');
+  const mannyWallet = findWallet('manny');
+
   // Calculate payout amounts (Creator 50%, Remixer 35%, Sharer 15% of $5 total)
   const payoutTotal = Math.min(5, treasuryBalance); // Cap at $5 per test or available balance
-  const payoutAmounts = [
-    { label: 'Creator', ratio: 0.50 },
-    { label: 'Remixer', ratio: 0.35 },
-    { label: 'Sharer', ratio: 0.15 }
-  ];
+  const payoutConfig = [
+    { label: 'Creator', ratio: 0.50, wallet: mattWallet },
+    { label: 'Remixer', ratio: 0.35, wallet: peteWallet },
+    { label: 'Sharer', ratio: 0.15, wallet: mannyWallet }
+  ].filter(p => p.wallet); // Only include wallets that exist
 
-  const transfers: Array<{ to: string; amount: string; status: string; txId?: string }> = [];
+  const transfers: Array<{ to: string; amount: string; status: string; txId?: string; address?: string }> = [];
   let totalSent = 0;
 
-  for (let i = 0; i < Math.min(userWallets.length, payoutAmounts.length); i++) {
-    const userWallet = userWallets[i];
-    const amount = (payoutTotal * payoutAmounts[i].ratio).toFixed(2);
+  for (const payout of payoutConfig) {
+    const userWallet = payout.wallet!;
+    const amount = (payoutTotal * payout.ratio).toFixed(2);
     
     console.log(`[Demo] Sending $${amount} to ${userWallet.name || userWallet.refId} (${userWallet.address})`);
     
@@ -668,10 +678,11 @@ export async function runTestTransaction(): Promise<{
     );
     
     transfers.push({
-      to: userWallet.name || userWallet.refId || payoutAmounts[i].label,
+      to: payout.label,
       amount,
       status: result.success ? 'success' : 'failed',
-      txId: result.txId
+      txId: result.txId,
+      address: userWallet.address
     });
 
     if (result.success) {
