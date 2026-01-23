@@ -502,8 +502,8 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                     For Judges
                   </Badge>
                 </div>
-                <div className="space-y-2 text-[9px]">
-                  <div className="p-1.5 rounded bg-muted/30">
+                <div className="space-y-1 text-[9px]">
+                  <div className="p-1 rounded bg-muted/30">
                     <span className="text-muted-foreground">API Key: </span>
                     {circleDiagnostics.apiKeyPrefix ? (
                       <>
@@ -514,14 +514,14 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                       <span className="text-amber-400">not configured</span>
                     )}
                   </div>
-                  <div className="p-1.5 rounded bg-muted/30">
+                  <div className="p-1 rounded bg-muted/30">
                     <span className="text-muted-foreground">Entity Secret: </span>
                     <span className={circleDiagnostics.entitySecretConfigured ? "text-emerald-400" : "text-amber-400"}>
                       {circleDiagnostics.entitySecretConfigured ? "configured" : "not configured"}
                     </span>
                   </div>
                   {circleDiagnostics.entity && (
-                    <div className="p-1.5 rounded bg-muted/30">
+                    <div className="p-1 rounded bg-muted/30">
                       <span className="text-muted-foreground">Entity ID: </span>
                       <span className="text-foreground font-mono">{circleDiagnostics.entity.id}</span>
                       {circleDiagnostics.entity.appId && (
@@ -530,17 +530,17 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                     </div>
                   )}
                   {circleDiagnostics.walletSet && (
-                    <div className="p-1.5 rounded bg-muted/30">
+                    <div className="p-1 rounded bg-muted/30">
                       <span className="text-muted-foreground">Wallet Set: </span>
                       <span className="text-foreground font-mono">{circleDiagnostics.walletSet.name || circleDiagnostics.walletSet.id}</span>
                       <span className="text-muted-foreground ml-2">({circleDiagnostics.walletSet.custodyType})</span>
                     </div>
                   )}
-                  <div className="p-1.5 rounded bg-muted/30">
+                  <div className="p-1 rounded bg-muted/30">
                     <span className="text-muted-foreground">Network: </span>
                     <span className="text-foreground">{circleDiagnostics.arcNetwork.name} (Chain {circleDiagnostics.arcNetwork.chainId})</span>
                   </div>
-                  <div className="p-1.5 rounded bg-muted/30">
+                  <div className="p-1 rounded bg-muted/30">
                     <span className="text-muted-foreground">USDC Contract: </span>
                     <a 
                       href={`${circleDiagnostics.arcNetwork.explorerUrl}/address/${circleDiagnostics.arcNetwork.usdcContract}`}
@@ -639,7 +639,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
               <div 
                 ref={logContainerRef}
                 onScroll={handleLogScroll}
-                className="min-h-[270px] max-h-[330px] overflow-y-auto font-mono text-[10px] space-y-1" 
+                className="min-h-[338px] max-h-[413px] overflow-y-auto font-mono text-[10px] space-y-1" 
                 data-testid="logs-container"
               >
                 {logs.map((log, i) => (
