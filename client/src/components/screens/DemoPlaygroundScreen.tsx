@@ -207,8 +207,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
             type: t.status === 'success' ? 'success' : 'error',
             message: `${simLabel}${t.to ? `${t.to.slice(0, 6)}...${t.to.slice(-4)}` : 'unknown'}: $${t.amount} ${t.status === 'success' ? '(confirmed)' : '(failed)'}${t.txId ? ` [tx:${t.txId.slice(0, 8)}...]` : ''}`
           })),
-          { time, type: "info", message: `Treasury balance: $${data.newTreasuryBalance}${gasMsg}` },
-          { time, type: "success", message: `Test completed - see Treasury, Logs and Wallet Payouts for latest status` }
+          { time, type: "info", message: `Treasury balance: $${data.newTreasuryBalance}${gasMsg}` }
         ]);
         setTransactionCount(prev => prev + 1);
         if (synapseTimerRef.current) clearTimeout(synapseTimerRef.current);
@@ -490,7 +489,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
               {transactionCount > 0 && (
                 <div className="mt-2 text-center">
                   <Badge variant="secondary" className="text-[9px]">
-                    {transactionCount} test{transactionCount > 1 ? 's' : ''} completed
+                    {transactionCount} test{transactionCount > 1 ? 's' : ''} completed - see Treasury, Logs and Wallet Payouts for latest
                   </Badge>
                 </div>
               )}
