@@ -104,6 +104,10 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   const [isSimulated, setIsSimulated] = useState(false);
   const [walletPayouts, setWalletPayouts] = useState(defaultPayouts);
   const [isResetting, setIsResetting] = useState(false);
+  
+  // Auto-scroll log container
+  const logContainerRef = useRef<HTMLDivElement>(null);
+  const shouldAutoScroll = useRef(true);
 
   const queryClient = useQueryClient();
 
@@ -236,6 +240,23 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       logsInitialized.current = false;
     }
   }, [isActive, integrationStatus, walletBalance]);
+
+  // Auto-scroll to bottom when logs change (if user is already at bottom)
+  useEffect(() => {
+    const container = logContainerRef.current;
+    if (container && shouldAutoScroll.current) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [logs]);
+
+  // Handle scroll to detect if user scrolled up
+  const handleLogScroll = () => {
+    const container = logContainerRef.current;
+    if (container) {
+      const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 20;
+      shouldAutoScroll.current = isAtBottom;
+    }
+  };
 
 
   const fundTreasuryMutation = useMutation({
@@ -407,7 +428,12 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   LIVE
                 </Badge>
               </div>
-              <div className="min-h-[270px] max-h-[330px] overflow-y-auto font-mono text-[10px] space-y-1" data-testid="logs-container">
+              <div 
+                ref={logContainerRef}
+                onScroll={handleLogScroll}
+                className="min-h-[270px] max-h-[330px] overflow-y-auto font-mono text-[10px] space-y-1" 
+                data-testid="logs-container"
+              >
                 {logs.map((log, i) => (
                   <motion.div
                     key={i}

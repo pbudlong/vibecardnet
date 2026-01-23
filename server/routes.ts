@@ -139,6 +139,9 @@ export async function registerRoutes(
         reason: 'x402 Viral Reward Demo'
       });
 
+      // Wait briefly for Arc blockchain to process before checking balance
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
       // Get updated treasury balance and calculate gas cost
       const { treasury: updatedTreasury } = await getArcWallets();
       const newBalance = parseFloat(updatedTreasury?.balance || '0');
@@ -179,7 +182,7 @@ export async function registerRoutes(
       // Get EXACT balance in base units for each user wallet
       // Subtract larger gas buffer since USDC is gas on Arc and transfer also costs gas
       // 0.10 USDC = 100000 base units - enough for gas + transfer fee
-      const GAS_BUFFER = BigInt(100000); // 0.10 USDC for gas
+      const GAS_BUFFER = BigInt(150000); // 0.15 USDC for gas buffer per wallet
       
       const usersWithExactBalance = await Promise.all(users.map(async (user) => {
         const exactBalanceRaw = await getArcUsdcBalanceBaseUnits(user.address);
@@ -256,8 +259,8 @@ export async function registerRoutes(
       }
 
       const totalRecovered = (Number(totalRecoveredBaseUnits) / 1_000_000).toFixed(2);
-      // Gas buffer is $0.10 per wallet that had funds
-      const totalGasReserved = (usersWithBalance.length * 0.10).toFixed(2);
+      // Gas buffer is $0.15 per wallet that had funds
+      const totalGasReserved = (usersWithBalance.length * 0.15).toFixed(2);
 
       // Wait for final transactions to confirm on blockchain before returning
       // Arc blockchain takes ~15s to confirm, so wait 20s to be safe
