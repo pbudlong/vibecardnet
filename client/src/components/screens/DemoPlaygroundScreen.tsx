@@ -190,11 +190,19 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
           })),
           { time, type: "info", message: `Treasury balance: $${data.newTreasuryBalance}${gasMsg}` }
         ]);
-        setShowPayouts(true);
         setTransactionCount(prev => prev + 1);
         if (synapseTimerRef.current) clearTimeout(synapseTimerRef.current);
         setIsSynapseAnimating(false);
         setSynapseKey(k => k + 1);
+        
+        // Reset all wallet amounts to pending state before animation starts
+        setWalletPayouts([
+          { label: "Creator", amount: "$--", address: "0x..." },
+          { label: "Remixer", amount: "$--", address: "0x..." },
+          { label: "Sharer", amount: "$--", address: "0x..." }
+        ]);
+        setShowPayouts(true);
+        
         requestAnimationFrame(() => {
           setIsSynapseAnimating(true);
           synapseTimerRef.current = setTimeout(() => setIsSynapseAnimating(false), 4500);
