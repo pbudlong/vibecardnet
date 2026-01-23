@@ -440,7 +440,9 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       setShowPayouts(false);
       setTransactionCount(0);
       setWalletPayouts(defaultPayouts); // Clear transaction links
-      setLogs([]); // Reset logs to initial state
+      // Reset logs to initial verified state
+      const newBalance = data.newTreasuryBalance ? parseFloat(data.newTreasuryBalance) : (walletBalance?.balance ? parseFloat(walletBalance.balance) : 0);
+      setLogs(getInitialLogs(integrationStatus, newBalance));
       setIsResetting(false);
     },
     onError: () => {
