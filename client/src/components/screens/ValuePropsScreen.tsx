@@ -90,7 +90,7 @@ export function ValuePropsScreen() {
 
       <div className="w-full max-w-6xl flex flex-col gap-4">
         {/* Top Row: Network Diagram + ICP Flywheel */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start justify-center">
+        <div className="flex flex-row gap-6 items-start justify-center">
           {/* Left - Network Diagram */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -270,7 +270,7 @@ export function ValuePropsScreen() {
                 </div>
                 <h3 className="font-semibold text-foreground text-sm">For Publishers</h3>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1.5">
                 {publisherBenefits.map((benefit, index) => (
                   <motion.div
                     key={benefit.title}
@@ -303,7 +303,7 @@ export function ValuePropsScreen() {
                 </div>
                 <h3 className="font-semibold text-foreground text-sm">For Members</h3>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1.5">
                 {memberBenefits.map((benefit, index) => (
                   <motion.div
                     key={benefit.title}
