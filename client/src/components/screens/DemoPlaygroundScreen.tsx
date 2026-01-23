@@ -568,13 +568,13 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                     <span className="text-[7px] text-muted-foreground mt-1">Gateway</span>
                   </div>
                   <div className="flex-1 relative h-36">
-                    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" key={synapseKey}>
+                    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" key={synapseKey}>
                       {[
-                        { yEnd: 15, ctrlY: 30, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$2.50' },
-                        { yEnd: 50, ctrlY: 50, color: '#8b5cf6', amount: displayPayouts[1]?.amount || '$1.75' },
-                        { yEnd: 85, ctrlY: 70, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.75' }
+                        { yEnd: 17, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$2.50' },
+                        { yEnd: 50, color: '#8b5cf6', amount: displayPayouts[1]?.amount || '$1.75' },
+                        { yEnd: 83, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.75' }
                       ].map((path, i) => {
-                        const pathD = `M 0 50 C 40 50, 60 ${path.ctrlY}, 100 ${path.yEnd}`;
+                        const pathD = `M 0 50 Q 50 ${path.yEnd}, 100 ${path.yEnd}`;
                         return (
                           <g key={i}>
                             <path
