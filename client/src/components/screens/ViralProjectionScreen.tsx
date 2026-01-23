@@ -48,7 +48,7 @@ export function ViralProjectionScreen() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="w-full max-w-4xl h-[350px]"
+          className="w-full max-w-4xl h-[380px]"
         >
           <ViralMindmapAnimation />
         </motion.div>
