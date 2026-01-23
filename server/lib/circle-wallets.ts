@@ -643,12 +643,12 @@ export async function runTestTransaction(): Promise<{
     return { success: false, transfers: [], totalSent: '0', newTreasuryBalance: treasury.usdcBalance };
   }
 
-  // Calculate payout amounts (Creator 60%, Sharer 25%, Platform 15% of $5 total)
+  // Calculate payout amounts (Creator 50%, Remixer 35%, Sharer 15% of $5 total)
   const payoutTotal = Math.min(5, treasuryBalance); // Cap at $5 per test or available balance
   const payoutAmounts = [
-    { label: 'Creator', ratio: 0.60 },
-    { label: 'Sharer', ratio: 0.25 },
-    { label: 'Platform', ratio: 0.15 }
+    { label: 'Creator', ratio: 0.50 },
+    { label: 'Remixer', ratio: 0.35 },
+    { label: 'Sharer', ratio: 0.15 }
   ];
 
   const transfers: Array<{ to: string; amount: string; status: string; txId?: string }> = [];

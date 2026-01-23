@@ -90,15 +90,15 @@ function getInitialLogs(status: IntegrationStatus | undefined, treasuryBalance: 
 const testTransactionLogs = [
   { time: "00:00:04", type: "event", message: "Simulating viral share event..." },
   { time: "00:00:05", type: "info", message: "Processing reward calculation (decay: 0.7)" },
-  { time: "00:00:05", type: "info", message: "x402 Payment Trigger: Creator 60% | Sharer 25% | Platform 15%" },
+  { time: "00:00:05", type: "info", message: "x402 Facilitator: Creator 50% | Remixer 35% | Sharer 15%" },
   { time: "00:00:06", type: "success", message: "Non-Custodial payout queued: 3 recipients" },
   { time: "00:00:07", type: "success", message: "[OK] Transaction confirmed on Arc Network" },
 ];
 
 const defaultPayouts = [
   { label: "Creator", amount: "$0.00", address: "0x1a2b...3c4d" },
-  { label: "Sharer", amount: "$0.00", address: "0x5e6f...7g8h" },
-  { label: "Platform", amount: "$0.00", address: "0x9i0j...1k2l" },
+  { label: "Remixer", amount: "$0.00", address: "0x5e6f...7g8h" },
+  { label: "Sharer", amount: "$0.00", address: "0x9i0j...1k2l" },
 ];
 
 export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenProps) {
