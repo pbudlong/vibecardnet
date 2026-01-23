@@ -817,12 +817,18 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                               className="mt-2 text-center"
                             >
                               <div className="text-[10px] text-muted-foreground">tx confirmed</div>
-                              <div 
-                                className="text-xs font-mono font-medium text-foreground"
-                                data-testid={`text-tx-${payout.label.toLowerCase()}`}
+                              <a 
+                                href={`${ARC_EXPLORER_URL}${payout.txId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[10px] font-mono text-blue-400 hover:underline"
+                                data-testid={`link-tx-${payout.label.toLowerCase()}`}
                               >
-                                {payout.txId.slice(0, 8)}...
-                              </div>
+                                {payout.txId.length > 20 
+                                  ? `${payout.txId.slice(0, 10)}...${payout.txId.slice(-8)}`
+                                  : payout.txId
+                                }
+                              </a>
                             </motion.div>
                           )}
                         </div>
