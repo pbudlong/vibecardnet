@@ -614,7 +614,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                 </div>
                 <ArrowDown className="h-4 w-4 mx-auto text-muted-foreground" />
                 <div className="p-2 rounded bg-sky-400/10 border border-sky-400/30" data-testid="flow-user-wallets">
-                  <span className="text-[9px] text-sky-400 font-medium">Non-Custodial Wallets</span>
+                  <span className="text-[9px] text-sky-400 font-medium">Non-Custodial Wallets (Using Developer for Hackathon)</span>
                   <p className="text-[10px] text-muted-foreground">User Payouts</p>
                 </div>
               </div>
