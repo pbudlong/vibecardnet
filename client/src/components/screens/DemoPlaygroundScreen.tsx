@@ -568,62 +568,65 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                     <span className="text-[7px] text-muted-foreground mt-1">Gateway</span>
                   </div>
                   <div className="flex-1 relative h-36">
-                    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 120 140" preserveAspectRatio="none" key={synapseKey}>
+                    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" key={synapseKey}>
                       {[
-                        { yEnd: 20, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$2.50' },
-                        { yEnd: 70, color: '#8b5cf6', amount: displayPayouts[1]?.amount || '$1.75' },
-                        { yEnd: 120, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.75' }
-                      ].map((path, i) => (
-                        <g key={i}>
-                          <path
-                            d={`M 0 70 Q 60 70, 90 ${path.yEnd} L 120 ${path.yEnd}`}
-                            fill="none"
-                            stroke={path.color}
-                            strokeWidth="1"
-                            strokeOpacity="0.3"
-                          />
-                          {isSynapseAnimating && (
-                            <>
-                              <circle r="4" fill={path.color}>
-                                <animateMotion
-                                  dur="1.5s"
-                                  begin={`${i * 0.2}s`}
-                                  fill="freeze"
-                                  path={`M 0 70 Q 60 70, 90 ${path.yEnd} L 120 ${path.yEnd}`}
-                                />
-                                <animate
-                                  attributeName="opacity"
-                                  values="0;1;1;0"
-                                  dur="1.5s"
-                                  begin={`${i * 0.2}s`}
-                                  fill="freeze"
-                                />
-                              </circle>
-                              <text
-                                fill={path.color}
-                                fontSize="8"
-                                fontWeight="bold"
-                                opacity="0"
-                              >
-                                {path.amount}
-                                <animateMotion
-                                  dur="1.5s"
-                                  begin={`${i * 0.2}s`}
-                                  fill="freeze"
-                                  path={`M 0 70 Q 60 70, 90 ${path.yEnd} L 120 ${path.yEnd}`}
-                                />
-                                <animate
-                                  attributeName="opacity"
-                                  values="0;1;1;0.8"
-                                  dur="1.5s"
-                                  begin={`${i * 0.2}s`}
-                                  fill="freeze"
-                                />
-                              </text>
-                            </>
-                          )}
-                        </g>
-                      ))}
+                        { yEnd: 15, ctrlY: 30, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$2.50' },
+                        { yEnd: 50, ctrlY: 50, color: '#8b5cf6', amount: displayPayouts[1]?.amount || '$1.75' },
+                        { yEnd: 85, ctrlY: 70, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.75' }
+                      ].map((path, i) => {
+                        const pathD = `M 0 50 C 40 50, 60 ${path.ctrlY}, 100 ${path.yEnd}`;
+                        return (
+                          <g key={i}>
+                            <path
+                              d={pathD}
+                              fill="none"
+                              stroke={path.color}
+                              strokeWidth="2.5"
+                              strokeOpacity="0.4"
+                            />
+                            {isSynapseAnimating && (
+                              <>
+                                <circle r="5" fill={path.color}>
+                                  <animateMotion
+                                    dur="1.5s"
+                                    begin={`${i * 0.2}s`}
+                                    fill="freeze"
+                                    path={pathD}
+                                  />
+                                  <animate
+                                    attributeName="opacity"
+                                    values="0;1;1;0"
+                                    dur="1.5s"
+                                    begin={`${i * 0.2}s`}
+                                    fill="freeze"
+                                  />
+                                </circle>
+                                <text
+                                  fill={path.color}
+                                  fontSize="8"
+                                  fontWeight="bold"
+                                  opacity="0"
+                                >
+                                  {path.amount}
+                                  <animateMotion
+                                    dur="1.5s"
+                                    begin={`${i * 0.2}s`}
+                                    fill="freeze"
+                                    path={pathD}
+                                  />
+                                  <animate
+                                    attributeName="opacity"
+                                    values="0;1;1;0.8"
+                                    dur="1.5s"
+                                    begin={`${i * 0.2}s`}
+                                    fill="freeze"
+                                  />
+                                </text>
+                              </>
+                            )}
+                          </g>
+                        );
+                      })}
                     </svg>
                   </div>
                   <div className="flex flex-col gap-2">
