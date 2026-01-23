@@ -102,6 +102,35 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     refetchInterval: 15000,
   });
 
+  // Fetch all wallets to show user wallet balances
+  interface WalletInfo {
+    id: string;
+    name: string;
+    address: string;
+    blockchain: string;
+    usdcBalance: string;
+  }
+  const { data: allWallets } = useQuery<{ wallets: WalletInfo[] }>({
+    queryKey: ['/api/wallets'],
+    enabled: isActive,
+    refetchInterval: 10000,
+  });
+
+  // Get Arc user wallets with balances
+  const arcUserWallets = allWallets?.wallets?.filter(
+    w => w.blockchain === 'ARC-TESTNET' && w.name.includes('Arc') && !w.name.includes('Treasury')
+  ) || [];
+
+  // Create display payouts from real wallet balances
+  const displayPayouts = arcUserWallets.length >= 3 ? [
+    { label: "Creator", amount: `$${parseFloat(arcUserWallets[0]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[0]?.address ? `${arcUserWallets[0].address.slice(0, 6)}...${arcUserWallets[0].address.slice(-4)}` : "0x..." },
+    { label: "Sharer", amount: `$${parseFloat(arcUserWallets[1]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[1]?.address ? `${arcUserWallets[1].address.slice(0, 6)}...${arcUserWallets[1].address.slice(-4)}` : "0x..." },
+    { label: "Platform", amount: `$${parseFloat(arcUserWallets[2]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[2]?.address ? `${arcUserWallets[2].address.slice(0, 6)}...${arcUserWallets[2].address.slice(-4)}` : "0x..." },
+  ] : walletPayouts;
+
+  // Check if any user wallets have funds
+  const hasUserFunds = arcUserWallets.some(w => parseFloat(w.usdcBalance || '0') > 0.02);
+
   const testTransactionMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest('POST', '/api/demo/test-transaction');
@@ -141,9 +170,11 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       } else {
         setLogs(prev => [...prev, { time: "00:00:06", type: "warn", message: data.message || 'Transfer failed' }]);
       }
-      // Force immediate refresh of wallet balance
+      // Force immediate refresh of wallet balances
       queryClient.invalidateQueries({ queryKey: ['/api/wallet/balance'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/wallets'] });
       queryClient.refetchQueries({ queryKey: ['/api/wallet/balance'] });
+      queryClient.refetchQueries({ queryKey: ['/api/wallets'] });
       setIsRunning(false);
     },
     onError: (error) => {
@@ -213,12 +244,13 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       } else {
         setLogs(prev => [...prev, { time: "00:00:10", type: "info", message: "No funds to recover from user wallets" }]);
       }
-      // Force immediate refresh of wallet balance
+      // Force immediate refresh of wallet balances
       queryClient.invalidateQueries({ queryKey: ['/api/wallet/balance'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/wallets'] });
       queryClient.refetchQueries({ queryKey: ['/api/wallet/balance'] });
+      queryClient.refetchQueries({ queryKey: ['/api/wallets'] });
       setShowPayouts(false);
       setTransactionCount(0);
-      setWalletPayouts(defaultPayouts);
       setIsResetting(false);
     },
     onError: () => {
@@ -451,7 +483,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                     <Wallet className="h-4 w-4 text-sky-400" />
                     <span className="text-xs font-medium text-foreground">Wallet Payouts</span>
                   </div>
-                  {showPayouts && (
+                  {hasUserFunds && (
                     <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[9px]" data-testid="badge-distributed">
                       <Check className="h-2 w-2 mr-1" />
                       Distributed
@@ -459,31 +491,34 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   )}
                 </div>
                 <div className="flex justify-center gap-4">
-                  {walletPayouts.map((payout, i) => (
-                    <motion.div
-                      key={payout.label}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ 
-                        opacity: showPayouts ? 1 : 0.4, 
-                        y: showPayouts ? 0 : 10,
-                        scale: showPayouts ? 1 : 0.95
-                      }}
-                      transition={{ duration: 0.3, delay: showPayouts ? i * 0.1 : 0 }}
-                      className="flex flex-col items-center gap-1"
-                      data-testid={`payout-wallet-${payout.label.toLowerCase()}`}
-                    >
-                      <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                        showPayouts ? 'bg-sky-400/20 border-2 border-sky-400' : 'bg-zinc-800 border-2 border-zinc-700'
-                      }`}>
-                        <Wallet className={`h-4 w-4 ${showPayouts ? 'text-sky-400' : 'text-zinc-600'}`} />
-                      </div>
-                      <span className="text-[9px] font-medium text-foreground">{payout.label}</span>
-                      <span className={`text-xs font-bold ${showPayouts ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
-                        {payout.amount}
-                      </span>
-                      <span className="text-[7px] text-muted-foreground font-mono">{payout.address}</span>
-                    </motion.div>
-                  ))}
+                  {displayPayouts.map((payout, i) => {
+                    const hasFunds = parseFloat(payout.amount.replace('$', '')) > 0.02;
+                    return (
+                      <motion.div
+                        key={payout.label}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ 
+                          opacity: hasFunds ? 1 : 0.4, 
+                          y: hasFunds ? 0 : 10,
+                          scale: hasFunds ? 1 : 0.95
+                        }}
+                        transition={{ duration: 0.3, delay: hasFunds ? i * 0.1 : 0 }}
+                        className="flex flex-col items-center gap-1"
+                        data-testid={`payout-wallet-${payout.label.toLowerCase()}`}
+                      >
+                        <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                          hasFunds ? 'bg-sky-400/20 border-2 border-sky-400' : 'bg-zinc-800 border-2 border-zinc-700'
+                        }`}>
+                          <Wallet className={`h-4 w-4 ${hasFunds ? 'text-sky-400' : 'text-zinc-600'}`} />
+                        </div>
+                        <span className="text-[9px] font-medium text-foreground">{payout.label}</span>
+                        <span className={`text-xs font-bold ${hasFunds ? 'text-emerald-400' : 'text-zinc-600'}`} data-testid={`text-payout-${payout.label.toLowerCase()}`}>
+                          {payout.amount}
+                        </span>
+                        <span className="text-[7px] text-muted-foreground font-mono">{payout.address}</span>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </Card>
             </motion.div>
