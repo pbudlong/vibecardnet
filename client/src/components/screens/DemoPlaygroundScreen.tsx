@@ -209,7 +209,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
         setSynapseKey(k => k + 1);
         requestAnimationFrame(() => {
           setIsSynapseAnimating(true);
-          synapseTimerRef.current = setTimeout(() => setIsSynapseAnimating(false), 3000);
+          synapseTimerRef.current = setTimeout(() => setIsSynapseAnimating(false), 4500);
         });
       } else {
         setLogs(prev => [...prev, { time: getPSTTime(), type: "warn", message: data.message || 'Transfer failed' }]);
@@ -570,9 +570,9 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   <div className="flex-1 relative h-36">
                     <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" key={synapseKey}>
                       {[
-                        { yEnd: 17, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$2.50' },
-                        { yEnd: 50, color: '#8b5cf6', amount: displayPayouts[1]?.amount || '$1.75' },
-                        { yEnd: 83, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.75' }
+                        { yEnd: 8, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$1.00' },
+                        { yEnd: 50, color: '#8b5cf6', amount: displayPayouts[1]?.amount || '$0.70' },
+                        { yEnd: 92, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.30' }
                       ].map((path, i) => {
                         const pathD = `M 0 50 Q 50 ${path.yEnd}, 100 ${path.yEnd}`;
                         return (
@@ -588,16 +588,16 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                               <>
                                 <circle r="5" fill={path.color}>
                                   <animateMotion
-                                    dur="1.5s"
-                                    begin={`${i * 0.2}s`}
+                                    dur="1s"
+                                    begin={`${i * 1.1}s`}
                                     fill="freeze"
                                     path={pathD}
                                   />
                                   <animate
                                     attributeName="opacity"
                                     values="0;1;1;0"
-                                    dur="1.5s"
-                                    begin={`${i * 0.2}s`}
+                                    dur="1s"
+                                    begin={`${i * 1.1}s`}
                                     fill="freeze"
                                   />
                                 </circle>
@@ -609,16 +609,16 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                                 >
                                   {path.amount}
                                   <animateMotion
-                                    dur="1.5s"
-                                    begin={`${i * 0.2}s`}
+                                    dur="1s"
+                                    begin={`${i * 1.1}s`}
                                     fill="freeze"
                                     path={pathD}
                                   />
                                   <animate
                                     attributeName="opacity"
                                     values="0;1;1;0.8"
-                                    dur="1.5s"
-                                    begin={`${i * 0.2}s`}
+                                    dur="1s"
+                                    begin={`${i * 1.1}s`}
                                     fill="freeze"
                                   />
                                 </text>
