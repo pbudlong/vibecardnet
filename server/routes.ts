@@ -252,9 +252,10 @@ export async function registerRoutes(
       const totalRecovered = (Number(totalRecoveredBaseUnits) / 1_000_000).toFixed(2);
 
       // Wait for final transactions to confirm on blockchain before returning
+      // Arc blockchain takes ~15s to confirm, so wait 20s to be safe
       if (transfers.some(t => t.status === 'success')) {
-        console.log('[x402 Reset] Waiting 10s for final confirmations...');
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        console.log('[x402 Reset] Waiting 20s for Arc blockchain confirmations...');
+        await new Promise(resolve => setTimeout(resolve, 20000));
       }
 
       res.json({
