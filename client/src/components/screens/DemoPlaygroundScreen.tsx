@@ -458,7 +458,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   ) : (
                     <>
                       <Play className="h-3 w-3 mr-1" />
-                      Run Test Transaction
+                      Run Demo
                     </>
                   )}
                 </Button>
@@ -552,8 +552,8 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                       <ExternalLink className="h-2.5 w-2.5 inline ml-0.5" />
                     </a>
                   </div>
-                  <div className="mt-2 pt-2 border-t border-muted/50">
-                    <p className="text-muted-foreground mb-1">Arc Testnet Wallets:</p>
+                  <div className="pt-1 border-t border-muted/50">
+                    <p className="text-muted-foreground">Arc Testnet Wallets:</p>
                     <div className="space-y-1">
                       {circleDiagnostics.wallets.map(w => (
                         <div key={w.id} className="flex items-center justify-between p-1 rounded bg-muted/20">
