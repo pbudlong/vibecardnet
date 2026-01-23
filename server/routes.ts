@@ -209,16 +209,18 @@ export async function registerRoutes(
 
       // Transfer in SMALL CHUNKS ($1 max per transfer) to avoid Arc transfer limit issues
       const MAX_CHUNK_BASE_UNITS = BigInt(1_000_000); // $1.00 max per transfer
-      const transfers: Array<{ from: string; amount: string; status: string; txId?: string; error?: string }> = [];
+      const transfers: Array<{ from: string; fromAddress: string; amount: string; gasSpent: string; status: string; txId?: string; error?: string }> = [];
       let totalRecoveredBaseUnits = BigInt(0);
 
       for (const user of usersWithBalance) {
-        let remainingBalance = BigInt(user.exactBalance);
+        const originalBalance = BigInt(user.exactBalance) + GAS_BUFFER; // What they had before buffer subtraction
+        let remainingToTransfer = BigInt(user.exactBalance);
+        let totalTransferredFromUser = BigInt(0);
         console.log(`[x402 Reset] Recovering $${user.displayBalance} from ${user.name} in chunks`);
         
-        while (remainingBalance > BigInt(0)) {
+        while (remainingToTransfer > BigInt(0)) {
           // Transfer min of remaining balance or max chunk size
-          const chunkAmount = remainingBalance > MAX_CHUNK_BASE_UNITS ? MAX_CHUNK_BASE_UNITS : remainingBalance;
+          const chunkAmount = remainingToTransfer > MAX_CHUNK_BASE_UNITS ? MAX_CHUNK_BASE_UNITS : remainingToTransfer;
           const chunkDisplay = (Number(chunkAmount) / 1_000_000).toFixed(2);
           
           console.log(`[x402 Reset] Chunk transfer: $${chunkDisplay} from ${user.name}`);
@@ -232,33 +234,48 @@ export async function registerRoutes(
 
           if (result.success) {
             totalRecoveredBaseUnits += chunkAmount;
-            remainingBalance -= chunkAmount;
-            
-            // Only record final transfer for this user
-            if (remainingBalance <= BigInt(0)) {
-              transfers.push({
-                from: user.name,
-                amount: user.displayBalance,
-                status: 'success',
-                txId: result.txId
-              });
-            }
+            totalTransferredFromUser += chunkAmount;
+            remainingToTransfer -= chunkAmount;
             
             // Wait for blockchain confirmation between chunks
             await new Promise(resolve => setTimeout(resolve, 3000));
           } else {
             transfers.push({
               from: user.name,
-              amount: user.displayBalance,
+              fromAddress: user.address,
+              amount: (Number(totalTransferredFromUser) / 1_000_000).toFixed(2),
+              gasSpent: '0.00',
               status: 'partial',
               error: result.error
             });
             break; // Stop trying for this user
           }
         }
+        
+        // After all chunks transferred, get remaining balance and calculate gas
+        if (remainingToTransfer <= BigInt(0)) {
+          const remainingBalanceRaw = await getArcUsdcBalanceBaseUnits(user.address);
+          const remainingBalance = BigInt(remainingBalanceRaw);
+          // Gas = original balance - transferred - remaining
+          const gasSpentBaseUnits = originalBalance - totalTransferredFromUser - remainingBalance;
+          const gasSpent = Math.max(0, Number(gasSpentBaseUnits) / 1_000_000).toFixed(2);
+          
+          console.log(`[x402 Reset] ${user.name}: transferred $${user.displayBalance}, gas $${gasSpent}, remaining $${(Number(remainingBalance) / 1_000_000).toFixed(2)}`);
+          
+          transfers.push({
+            from: user.name,
+            fromAddress: user.address,
+            amount: user.displayBalance,
+            gasSpent,
+            status: 'success',
+            txId: 'confirmed'
+          });
+        }
       }
 
       const totalRecovered = (Number(totalRecoveredBaseUnits) / 1_000_000).toFixed(2);
+      // Calculate total gas spent by all users
+      const totalUserGasSpent = transfers.reduce((sum, t) => sum + parseFloat(t.gasSpent || '0'), 0).toFixed(2);
       // Gas buffer is $0.15 per wallet that had funds
       const totalGasReserved = (usersWithBalance.length * 0.15).toFixed(2);
 
@@ -283,6 +300,7 @@ export async function registerRoutes(
         transfers,
         totalRecovered,
         totalGasReserved,
+        totalUserGasSpent,
         gasSpent,
         newTreasuryBalance,
         x402Version: 2

@@ -286,9 +286,24 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     },
     onSuccess: (data) => {
       if (data.success) {
-        const gasSpent = data.gasSpent ? ` (gas: $${data.gasSpent})` : '';
+        // Show per-user recovery with gas
+        const newLogs: Array<{time: string; type: string; message: string}> = [];
+        if (data.transfers && data.transfers.length > 0) {
+          for (const transfer of data.transfers) {
+            const addr = transfer.fromAddress ? `${transfer.fromAddress.slice(0, 6)}...${transfer.fromAddress.slice(-4)}` : transfer.from;
+            const gasInfo = parseFloat(transfer.gasSpent || '0') > 0 ? ` (gas: $${transfer.gasSpent})` : '';
+            newLogs.push({ 
+              time: getPSTTime(), 
+              type: "event", 
+              message: `${addr}: recovered $${transfer.amount}${gasInfo}` 
+            });
+          }
+        }
+        // Summary line
+        const totalGas = data.totalUserGasSpent && parseFloat(data.totalUserGasSpent) > 0 ? ` (total gas: $${data.totalUserGasSpent})` : '';
         const newBalance = data.newTreasuryBalance ? ` Treasury: $${parseFloat(data.newTreasuryBalance).toFixed(2)}` : '';
-        setLogs(prev => [...prev, { time: getPSTTime(), type: "success", message: `Recovered $${data.totalRecovered} USDC${gasSpent}${newBalance}` }]);
+        newLogs.push({ time: getPSTTime(), type: "success", message: `Recovered $${data.totalRecovered} USDC${totalGas}${newBalance}` });
+        setLogs(prev => [...prev, ...newLogs]);
       } else {
         setLogs(prev => [...prev, { time: getPSTTime(), type: "info", message: "No funds to recover from user wallets" }]);
       }
