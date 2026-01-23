@@ -555,7 +555,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="flex flex-col items-center justify-center">
+                  <div className="flex flex-col items-center justify-center mt-[5px]">
                     <motion.div 
                       className="h-12 w-12 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center"
                       animate={isSynapseAnimating ? { 
@@ -565,14 +565,13 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                     >
                       <span className="text-[8px] font-bold text-emerald-400">x402</span>
                     </motion.div>
-                    <span className="text-[7px] text-muted-foreground mt-1">Gateway</span>
                   </div>
                   <div className="flex-1 relative h-36">
                     <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" key={synapseKey}>
                       {[
-                        { yEnd: 8, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$1.00' },
+                        { yEnd: -28, color: '#f43f5e', amount: displayPayouts[0]?.amount || '$1.00' },
                         { yEnd: 50, color: '#8b5cf6', amount: displayPayouts[1]?.amount || '$0.70' },
-                        { yEnd: 92, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.30' }
+                        { yEnd: 128, color: '#0ea5e9', amount: displayPayouts[2]?.amount || '$0.30' }
                       ].map((path, i) => {
                         const pathD = `M 0 50 Q 50 ${path.yEnd}, 100 ${path.yEnd}`;
                         return (
