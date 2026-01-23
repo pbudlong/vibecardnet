@@ -149,10 +149,10 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
     { label: "Platform", amount: `$${parseFloat(arcUserWallets[2]?.usdcBalance || '0').toFixed(2)}`, address: arcUserWallets[2]?.address ? `${arcUserWallets[2].address.slice(0, 6)}...${arcUserWallets[2].address.slice(-4)}` : "0x..." },
   ] : walletPayouts;
 
-  // Check if any user wallets have funds above gas buffer ($0.10)
-  // Total user funds must be above $0.20 to make reset worthwhile
-  const totalUserFunds = arcUserWallets.reduce((sum, w) => sum + parseFloat(w.usdcBalance || '0'), 0);
-  const hasUserFunds = totalUserFunds > 0.20;
+  // Check if any user wallet has balance above the gas buffer ($0.15)
+  // Only enable reset if there's actually something to recover
+  const GAS_BUFFER = 0.15;
+  const hasUserFunds = arcUserWallets.some(w => parseFloat(w.usdcBalance || '0') > GAS_BUFFER);
 
   const testTransactionMutation = useMutation({
     mutationFn: async () => {
