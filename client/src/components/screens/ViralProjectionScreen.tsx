@@ -41,7 +41,7 @@ export function ViralProjectionScreen() {
         </p>
       </motion.div>
 
-      <div className="w-full max-w-6xl flex flex-col gap-4">
+      <div className="w-full max-w-6xl flex flex-col gap-2">
         {/* Top Row: K-Factor + Tree - align items to top */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
           {/* Top Left: K-Factor Comparison */}
