@@ -92,7 +92,7 @@ export function ValuePropsScreen() {
       {/* Content container - width defined by top row content */}
       <div className="inline-flex flex-col items-stretch gap-6">
         {/* Top Row: Network Diagram + ICP Flywheel - defines the width */}
-        <div className="flex flex-row gap-16 items-start">
+        <div className="flex flex-row gap-16 items-start justify-center">
           {/* Left - Network Diagram */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -264,7 +264,7 @@ export function ValuePropsScreen() {
           
           <div className="grid grid-cols-2 gap-8">
             {/* Publishers */}
-            <Card className="p-4">
+            <Card className="p-4 bg-transparent">
               <div className="flex items-center gap-2 mb-3">
                 <div className="p-1.5 rounded-lg bg-primary/10">
                   <Building2 className="h-5 w-5 text-primary" />
@@ -297,7 +297,7 @@ export function ValuePropsScreen() {
             </Card>
 
             {/* Members */}
-            <Card className="p-4">
+            <Card className="p-4 bg-transparent">
               <div className="flex items-center gap-2 mb-3">
                 <div className="p-1.5 rounded-lg bg-primary/10">
                   <Users className="h-5 w-5 text-primary" />
