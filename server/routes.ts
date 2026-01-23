@@ -139,14 +139,18 @@ export async function registerRoutes(
         reason: 'x402 Viral Reward Demo'
       });
 
-      // Get updated treasury balance
+      // Get updated treasury balance and calculate gas cost
       const { treasury: updatedTreasury } = await getArcWallets();
+      const newBalance = parseFloat(updatedTreasury?.balance || '0');
+      const expectedBalance = parseFloat(treasury.balance) - parseFloat(result.totalPaid);
+      const gasCost = Math.max(0, expectedBalance - newBalance).toFixed(2);
       
       res.json({
         success: result.success,
         message: `x402 sent $${result.totalPaid} USDC to ${result.transfers.length} recipients`,
         transfers: result.transfers,
         totalSent: result.totalPaid,
+        gasCost,
         newTreasuryBalance: updatedTreasury?.balance || '0',
         blockchain: 'ARC-TESTNET',
         x402Version: 2

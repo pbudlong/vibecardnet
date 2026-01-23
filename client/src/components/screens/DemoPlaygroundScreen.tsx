@@ -86,6 +86,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   const [transactionCount, setTransactionCount] = useState(0);
   const [isSimulated, setIsSimulated] = useState(false);
   const [walletPayouts, setWalletPayouts] = useState(defaultPayouts);
+  const [isResetting, setIsResetting] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -110,6 +111,9 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       if (data.success) {
         const simLabel = data.simulated ? "[SIM] " : "";
         setIsSimulated(data.simulated || false);
+        const gasMsg = data.gasCost && parseFloat(data.gasCost) > 0 
+          ? ` (gas: $${data.gasCost})` 
+          : '';
         setLogs(prev => [
           ...prev,
           { time: "00:00:06", type: "success", message: `${simLabel}Sent $${data.totalSent} USDC to ${data.transfers.length} recipients` },
@@ -118,7 +122,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
             type: t.status === 'success' ? 'success' : 'error',
             message: `${simLabel}${t.to}: $${t.amount} ${t.status === 'success' ? '(confirmed)' : '(failed)'}`
           })),
-          { time: "00:00:10", type: "info", message: `Treasury balance: $${data.newTreasuryBalance}` }
+          { time: "00:00:10", type: "info", message: `Treasury balance: $${data.newTreasuryBalance}${gasMsg}` }
         ]);
         // Update wallet payouts with real amounts from transaction
         if (data.transfers && data.transfers.length >= 3) {
@@ -199,6 +203,10 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       const response = await apiRequest('POST', '/api/demo/reset');
       return response.json();
     },
+    onMutate: () => {
+      setIsResetting(true);
+      setLogs(prev => [...prev, { time: "00:00:09", type: "info", message: "Recovering funds from user wallets..." }]);
+    },
     onSuccess: (data) => {
       if (data.success) {
         setLogs(prev => [...prev, { time: "00:00:10", type: "success", message: `Recovered $${data.totalRecovered} USDC to treasury` }]);
@@ -211,9 +219,11 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
       setShowPayouts(false);
       setTransactionCount(0);
       setWalletPayouts(defaultPayouts);
+      setIsResetting(false);
     },
     onError: () => {
       setLogs(prev => [...prev, { time: "00:00:10", type: "warn", message: "Reset failed" }]);
+      setIsResetting(false);
     }
   });
 
@@ -301,10 +311,10 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   variant="outline" 
                   className="w-full text-[10px]"
                   onClick={() => resetDemoMutation.mutate()}
-                  disabled={resetDemoMutation.isPending}
+                  disabled={resetDemoMutation.isPending || isResetting}
                   data-testid="button-reset-demo"
                 >
-                  {resetDemoMutation.isPending ? (
+                  {(resetDemoMutation.isPending || isResetting) ? (
                     <>
                       <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
                       Recovering funds...
