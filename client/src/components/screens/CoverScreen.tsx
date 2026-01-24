@@ -42,7 +42,7 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
           transition={{ duration: 0.6, delay: 0.2 }}
           data-testid="text-subtitle"
         >
-          Viral Rewards Network
+          Viral Growth Network
         </motion.h2>
 
         <motion.div
