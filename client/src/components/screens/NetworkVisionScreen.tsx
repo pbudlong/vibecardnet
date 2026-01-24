@@ -12,8 +12,8 @@ const platforms = [
 ];
 
 const phases = [
-  { phase: "Phase 1", title: "Platform Partners", description: "Integrated into dev tools & AI platforms", status: "current" },
-  { phase: "Phase 2", title: "Individual Creators", description: "Any creator can become a publisher", status: "next" },
+  { phase: "Phase 1", title: "Platform Partners", description: "Integrated into AI platforms", status: "current" },
+  { phase: "Phase 2", title: "Individual Creators", description: "Any vibecoder can publish", status: "next" },
   { phase: "Phase 3", title: "Major Publishers", description: "Alternative organic channel", status: "future" },
   { phase: "Phase 4", title: "Agent-to-Agent", description: "When robot money takes over", status: "future" },
 ];
@@ -138,9 +138,9 @@ export function NetworkVisionScreen() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mb-6"
         >
-          <Card className="p-5">
+          <Card className="p-4">
             <h2 className="font-display text-xl font-bold text-foreground mb-4 text-center">
-              Progression
+              GTM Progression
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {phases.map((item, index) => (
