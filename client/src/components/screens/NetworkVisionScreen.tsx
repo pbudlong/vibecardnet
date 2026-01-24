@@ -64,6 +64,16 @@ export function NetworkVisionScreen() {
                   </motion.div>
                 ))}
                 
+                {/* Viral Network Hub */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: 0.7 }}
+                  className="flex flex-col items-center p-3 rounded-lg bg-primary/20 border border-primary w-20"
+                >
+                  <Globe className="h-6 w-6 text-primary mb-1" />
+                  <span className="text-xs text-muted-foreground text-center">Viral Network</span>
+                </motion.div>
               </div>
 
               {/* Arrow */}
@@ -75,36 +85,15 @@ export function NetworkVisionScreen() {
                 <ArrowRight className="h-8 w-8 text-primary" />
               </motion.div>
 
-              {/* Viral Network Hub */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.75 }}
-                className="flex flex-col items-center justify-center p-4 rounded-xl bg-primary/10 border-2 border-primary w-28 h-24"
-              >
-                <Globe className="h-8 w-8 text-primary mb-1" />
-                <span className="font-display font-bold text-foreground text-sm text-center">Viral Network</span>
-                <span className="text-xs text-muted-foreground">Rewards Hub</span>
-              </motion.div>
-
-              {/* Arrow */}
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.8 }}
-              >
-                <ArrowRight className="h-8 w-8 text-primary" />
-              </motion.div>
-
               {/* User Wallet */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 0.8 }}
-                className="flex flex-col items-center justify-center p-4 rounded-xl bg-accent/10 border-2 border-accent w-28 h-24"
+                className="flex flex-col items-center p-4 rounded-xl bg-accent/10 border-2 border-accent"
               >
                 <CreditCard className="h-8 w-8 text-accent-foreground mb-1" />
-                <span className="font-display font-bold text-foreground text-sm">Your Wallet</span>
+                <span className="font-display font-bold text-foreground">Your Wallet</span>
                 <span className="text-xs text-muted-foreground">USDC → USD</span>
               </motion.div>
 
@@ -122,10 +111,10 @@ export function NetworkVisionScreen() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 1 }}
-                className="flex flex-col items-center justify-center p-4 rounded-xl bg-primary/10 border-2 border-primary w-28 h-24"
+                className="flex flex-col items-center p-4 rounded-xl bg-primary/10 border-2 border-primary"
               >
                 <Globe className="h-8 w-8 text-primary mb-1" />
-                <span className="font-display font-bold text-foreground text-sm">VibeCard</span>
+                <span className="font-display font-bold text-foreground">VibeCard</span>
                 <span className="text-xs text-muted-foreground">Actions to Cash</span>
               </motion.div>
             </div>
