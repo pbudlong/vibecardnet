@@ -280,7 +280,6 @@ export function ViralMindmapAnimation() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.5 }}
         className="w-full flex flex-col items-start mb-2"
-        style={{ marginTop: '20px', marginLeft: '20px' }}
       >
         <div className="flex gap-6">
           <div className="flex items-center gap-2">
