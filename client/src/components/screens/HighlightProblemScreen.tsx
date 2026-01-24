@@ -21,7 +21,8 @@ const problemPoints = [
   {
     icon: Lightbulb,
     era: "Opportunity abounds - Andrew Chen (a16z)",
-    description: "Time to revive the discipline and adapt it for modern product-led growth and AI-era growth loops.",
+    description: "Time to revive the discipline and ",
+    boldPart: "adapt it for modern product-led growth and AI-era growth loops.",
   },
 ];
 
@@ -58,6 +59,7 @@ export function HighlightProblemScreen() {
                   </h3>
                   <p className="text-muted-foreground text-base">
                     {point.description}
+                    {point.boldPart && <span className="font-bold">{point.boldPart}</span>}
                   </p>
                 </div>
               </div>
