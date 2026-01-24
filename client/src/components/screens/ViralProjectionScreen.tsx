@@ -97,8 +97,8 @@ export function ViralProjectionScreen() {
           </motion.div>
         </div>
 
-        {/* Bottom Row: Path to 1k + Windfall - align items to top */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 items-start">
+        {/* Bottom Row: Path to 1k + Windfall - align items to bottom */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 items-end">
           {/* Bottom Left: Path to 1,000 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
