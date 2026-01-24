@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
 import { Globe, ArrowRight, CreditCard } from "lucide-react";
-import { SiReplit } from "react-icons/si";
+import { SiReplit, SiOpenai } from "react-icons/si";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 const platforms = [
-  { name: "Lovable", icon: null, label: "Lovable" },
   { name: "Replit", icon: SiReplit },
-  { name: "Bolt", icon: null, label: "Bolt" },
+  { name: "Claude", icon: null, label: "Claude" },
   { name: "Cursor", icon: null, label: "Cursor" },
+  { name: "ChatGPT", icon: SiOpenai },
 ];
 
 const phases = [
@@ -74,37 +74,16 @@ export function NetworkVisionScreen() {
                 <ArrowRight className="h-8 w-8 text-primary" />
               </motion.div>
 
-              {/* Viral Network Hub */}
+              {/* VibeCard Hub */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.75 }}
+                transition={{ duration: 0.4, delay: 0.8 }}
                 className="flex flex-col items-center p-4 rounded-xl bg-primary/10 border-2 border-primary"
               >
                 <Globe className="h-8 w-8 text-primary mb-1" />
-                <span className="font-display font-bold text-foreground">Viral Network</span>
+                <span className="font-display font-bold text-foreground">VibeCard</span>
                 <span className="text-xs text-muted-foreground">Rewards Hub</span>
-              </motion.div>
-
-              {/* Arrow */}
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.8 }}
-              >
-                <ArrowRight className="h-8 w-8 text-primary" />
-              </motion.div>
-
-              {/* User Wallet */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.85 }}
-                className="flex flex-col items-center p-4 rounded-xl bg-accent/10 border-2 border-accent"
-              >
-                <CreditCard className="h-8 w-8 text-accent-foreground mb-1" />
-                <span className="font-display font-bold text-foreground">Your Wallet</span>
-                <span className="text-xs text-muted-foreground">USDC → USD</span>
               </motion.div>
 
               {/* Arrow */}
@@ -116,16 +95,16 @@ export function NetworkVisionScreen() {
                 <ArrowRight className="h-8 w-8 text-primary" />
               </motion.div>
 
-              {/* VibeCard Hub */}
+              {/* User Wallet */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 1 }}
-                className="flex flex-col items-center p-4 rounded-xl bg-primary/10 border-2 border-primary"
+                className="flex flex-col items-center p-4 rounded-xl bg-accent/10 border-2 border-accent"
               >
-                <Globe className="h-8 w-8 text-primary mb-1" />
-                <span className="font-display font-bold text-foreground">VibeCard</span>
-                <span className="text-xs text-muted-foreground">Actions to Cash</span>
+                <CreditCard className="h-8 w-8 text-accent-foreground mb-1" />
+                <span className="font-display font-bold text-foreground">Your Wallet</span>
+                <span className="text-xs text-muted-foreground">USDC → USD</span>
               </motion.div>
             </div>
           </Card>
