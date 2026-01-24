@@ -96,7 +96,7 @@ export function PublisherIntegrationScreen() {
         </p>
       </motion.div>
 
-      <div className="w-full max-w-6xl grid grid-cols-[1fr_1.5fr_1fr] gap-4">
+      <div className="w-full max-w-6xl grid grid-cols-[0.8fr_1.5fr_0.8fr] gap-4">
         {/* Benefits - Left Side */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
