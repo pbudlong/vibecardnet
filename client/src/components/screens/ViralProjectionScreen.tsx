@@ -41,9 +41,9 @@ export function ViralProjectionScreen() {
         </p>
       </motion.div>
 
-      <div className="w-full max-w-6xl flex flex-col gap-2">
+      <div className="w-full max-w-6xl flex flex-col gap-0">
         {/* Top Row: K-Factor + Tree - align items to top */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 items-start">
           {/* Top Left: K-Factor Comparison */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -91,14 +91,14 @@ export function ViralProjectionScreen() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="min-h-[280px] flex items-center justify-center"
+            className="min-h-[220px] flex items-start justify-center"
           >
             <ViralMindmapAnimation />
           </motion.div>
         </div>
 
-        {/* Bottom Row: Path to 1k + Windfall - align items to bottom */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-end">
+        {/* Bottom Row: Path to 1k + Windfall - align items to top */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 items-start">
           {/* Bottom Left: Path to 1,000 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
