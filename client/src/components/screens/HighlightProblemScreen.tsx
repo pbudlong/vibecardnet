@@ -5,22 +5,22 @@ import { Card } from "@/components/ui/card";
 const problemPoints = [
   {
     icon: TrendingUp,
-    era: "Web 2.0 (2005-2010)",
+    era: "The heyday of viral growth - Web 2.0 (2000s)",
     description: "Systematically engineered viral loops drove exponential growth for Facebook, LinkedIn, YouTube through measurement and A/B testing.",
   },
   {
     icon: Smartphone,
-    era: "Mobile killed it",
+    era: "Last decade mobile killed it",
     description: "Email-based invite mechanics disappeared, spam filters rose, and SMS/contacts-based invites were throttled by anti-spam regs.",
   },
   {
     icon: Sparkles,
-    era: "AI flash",
+    era: "AI flash bringing it back but spiky",
     description: "Same pattern repeating with ChatGPT wrappers, Midjourney, Lensa—fast viral spikes, low retention. Simple tools, explosive growth, spiky engagement.",
   },
   {
     icon: Lightbulb,
-    era: "Andrew Chen (a16z)",
+    era: "Opportunity abounds - Andrew Chen (a16z)",
     description: "Time to revive the discipline and adapt it for modern product-led growth and AI-era growth loops.",
   },
 ];
@@ -53,10 +53,10 @@ export function HighlightProblemScreen() {
                   <point.icon className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-display font-bold text-foreground text-lg mb-1">
+                  <h3 className="font-display font-bold text-foreground text-xl mb-1">
                     {point.era}
                   </h3>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-muted-foreground text-base">
                     {point.description}
                   </p>
                 </div>
