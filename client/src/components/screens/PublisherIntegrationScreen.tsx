@@ -181,23 +181,23 @@ export function PublisherIntegrationScreen() {
           <Card className="p-3 overflow-hidden">
             <div className="mb-2">
               <h3 className="font-display font-bold text-foreground text-sm">Solar System Visualization</h3>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
                 <p className="text-[10px] text-muted-foreground">Interactive 3D solar system visualization</p>
                 <span className="text-[10px] text-muted-foreground">Created by Matt P.</span>
               </div>
             </div>
-            <div className="flex items-center gap-2 mb-2">
-              <Button size="sm" variant="outline" className="text-[10px] h-7 px-3 text-orange-500 border-orange-500">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              <Button size="sm" variant="outline" data-testid="button-view-app" className="text-[10px] text-orange-500 border-orange-500">
                 View App
               </Button>
-              <Button size="sm" variant="outline" className="text-[10px] h-7 px-3 ring-2 ring-red-500 ring-offset-2 ring-offset-background">
+              <Button size="sm" variant="outline" data-testid="button-remix-template" className="text-[10px] ring-2 ring-red-500 ring-offset-2 ring-offset-background">
                 Remix Template
               </Button>
               <div className="flex items-center gap-2 ml-auto text-[10px] text-muted-foreground">
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1" data-testid="text-views-count">
                   <Eye className="h-3 w-3" /> 3,214
                 </span>
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1" data-testid="text-forks-count">
                   <GitBranch className="h-3 w-3" /> 6
                 </span>
               </div>
