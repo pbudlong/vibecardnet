@@ -51,7 +51,7 @@ const memberBenefits = [
   },
 ];
 
-const codeSnippet = `// Initialize VibeCard
+const codeSnippet = `// Initialize VibeCard for your project
 import { VibeCard } from '@vibecard/sdk';
 
 const vibe = new VibeCard({
@@ -66,12 +66,17 @@ vibe.trackRemix({
   remixerId: user.walletAddress,
   upstreamRef: referralCode,
 });
-
 // Track a share action
 vibe.trackShare({
   contentId: 'project-123',
   sharerId: user.walletAddress,
   upstreamRef: referralCode,
+});
+// Track a conversion (triggers x402 payout)
+vibe.trackConversion({
+  contentId: 'project-123',
+  userId: user.walletAddress,
+  value: 10.00,  // USDC value
 });`;
 
 export function PublisherIntegrationScreen() {
@@ -84,7 +89,7 @@ export function PublisherIntegrationScreen() {
         className="text-center mb-4"
       >
         <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
-          Content Tracking
+          How It Works
         </h1>
         <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
           Platforms and creators can add viral rewards to projects in minutes.
@@ -92,42 +97,38 @@ export function PublisherIntegrationScreen() {
       </motion.div>
 
       <div className="w-full max-w-6xl grid grid-cols-[1fr_1.5fr_1fr] gap-4">
-        {/* Everyone Wins - Left Side */}
+        {/* Benefits - Left Side */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="flex flex-col gap-3"
         >
-          <h2 className="font-display text-sm font-bold text-foreground text-center">
-            Everyone Wins
-          </h2>
-          
           {/* Publishers */}
-          <Card className="p-2.5">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <div className="p-1 rounded-md bg-primary/10">
-                <Building2 className="h-3 w-3 text-primary" />
+          <Card className="p-3 flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 rounded-md bg-primary/10">
+                <Building2 className="h-4 w-4 text-primary" />
               </div>
-              <h3 className="font-semibold text-foreground text-xs">For Publishers</h3>
+              <h3 className="font-semibold text-foreground text-sm">For Publishers</h3>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-2">
               {publisherBenefits.map((benefit, index) => (
                 <motion.div
                   key={benefit.title}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
-                  className="flex items-start gap-1.5"
+                  className="flex items-start gap-2"
                 >
-                  <div className="p-0.5 rounded bg-accent/20 mt-0.5">
-                    <benefit.icon className="h-2.5 w-2.5 text-accent-foreground" />
+                  <div className="p-1 rounded bg-accent/20 mt-0.5">
+                    <benefit.icon className="h-3 w-3 text-accent-foreground" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-foreground text-[9px] leading-tight">
+                    <h4 className="font-medium text-foreground text-xs leading-tight">
                       {benefit.title}
                     </h4>
-                    <p className="text-[7px] text-muted-foreground leading-tight">
+                    <p className="text-[10px] text-muted-foreground leading-tight">
                       {benefit.description}
                     </p>
                   </div>
@@ -137,30 +138,30 @@ export function PublisherIntegrationScreen() {
           </Card>
 
           {/* Members */}
-          <Card className="p-2.5">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <div className="p-1 rounded-md bg-primary/10">
-                <Users className="h-3 w-3 text-primary" />
+          <Card className="p-3 flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 rounded-md bg-primary/10">
+                <Users className="h-4 w-4 text-primary" />
               </div>
-              <h3 className="font-semibold text-foreground text-xs">For Members</h3>
+              <h3 className="font-semibold text-foreground text-sm">For Members</h3>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-2">
               {memberBenefits.map((benefit, index) => (
                 <motion.div
                   key={benefit.title}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
-                  className="flex items-start gap-1.5"
+                  className="flex items-start gap-2"
                 >
-                  <div className="p-0.5 rounded bg-accent/20 mt-0.5">
-                    <benefit.icon className="h-2.5 w-2.5 text-accent-foreground" />
+                  <div className="p-1 rounded bg-accent/20 mt-0.5">
+                    <benefit.icon className="h-3 w-3 text-accent-foreground" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-foreground text-[9px] leading-tight">
+                    <h4 className="font-medium text-foreground text-xs leading-tight">
                       {benefit.title}
                     </h4>
-                    <p className="text-[7px] text-muted-foreground leading-tight">
+                    <p className="text-[10px] text-muted-foreground leading-tight">
                       {benefit.description}
                     </p>
                   </div>
