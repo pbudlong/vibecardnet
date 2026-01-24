@@ -67,7 +67,7 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
-          <span>Track: Best Gateway-Based Micropayments Integration</span>
+          <span className="font-bold mb-2">Track: Best Gateway-Based Micropayments Integration</span>
           <span>Pete Budlong</span>
           <span>100% Vibecoded on Replit</span>
         </motion.div>
