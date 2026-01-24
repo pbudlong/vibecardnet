@@ -63,6 +63,17 @@ export function NetworkVisionScreen() {
                     <span className="text-xs text-muted-foreground">{platform.name}</span>
                   </motion.div>
                 ))}
+                
+                {/* Viral Network Hub */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: 0.7 }}
+                  className="flex flex-col items-center p-3 rounded-lg bg-primary/20 border border-primary w-20"
+                >
+                  <Globe className="h-6 w-6 text-primary mb-1" />
+                  <span className="text-xs text-muted-foreground text-center">Viral Network</span>
+                </motion.div>
               </div>
 
               {/* Arrow */}
