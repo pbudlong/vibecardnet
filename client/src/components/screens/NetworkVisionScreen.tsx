@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Globe, ArrowRight, CreditCard, Rocket } from "lucide-react";
+import { Globe, ArrowRight, CreditCard } from "lucide-react";
 import { SiReplit, SiOpenai } from "react-icons/si";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +14,8 @@ const platforms = [
 const phases = [
   { phase: "Phase 1", title: "Platform Partners", description: "Integrated into dev tools & AI platforms", status: "current" },
   { phase: "Phase 2", title: "Individual Creators", description: "Any creator can become a publisher", status: "next" },
-  { phase: "Phase 3", title: "Enterprise", description: "White-label rewards for brands", status: "future" },
+  { phase: "Phase 3", title: "Major Publishers", description: "Alternative organic channel", status: "future" },
+  { phase: "Phase 4", title: "Agent-to-Agent", description: "When robot money takes over", status: "future" },
 ];
 
 export function NetworkVisionScreen() {
@@ -73,16 +74,16 @@ export function NetworkVisionScreen() {
                 <ArrowRight className="h-8 w-8 text-primary" />
               </motion.div>
 
-              {/* VibeCard Hub */}
+              {/* User Wallet */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 0.8 }}
-                className="flex flex-col items-center p-4 rounded-xl bg-primary/10 border-2 border-primary"
+                className="flex flex-col items-center p-4 rounded-xl bg-accent/10 border-2 border-accent"
               >
-                <Globe className="h-8 w-8 text-primary mb-1" />
-                <span className="font-display font-bold text-foreground">VibeCard</span>
-                <span className="text-xs text-muted-foreground">Rewards Hub</span>
+                <CreditCard className="h-8 w-8 text-accent-foreground mb-1" />
+                <span className="font-display font-bold text-foreground">Your Wallet</span>
+                <span className="text-xs text-muted-foreground">USDC → USD</span>
               </motion.div>
 
               {/* Arrow */}
@@ -94,16 +95,16 @@ export function NetworkVisionScreen() {
                 <ArrowRight className="h-8 w-8 text-primary" />
               </motion.div>
 
-              {/* User Wallet */}
+              {/* VibeCard Hub */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 1 }}
-                className="flex flex-col items-center p-4 rounded-xl bg-accent/10 border-2 border-accent"
+                className="flex flex-col items-center p-4 rounded-xl bg-primary/10 border-2 border-primary"
               >
-                <CreditCard className="h-8 w-8 text-accent-foreground mb-1" />
-                <span className="font-display font-bold text-foreground">Your Wallet</span>
-                <span className="text-xs text-muted-foreground">USDC → USD</span>
+                <Globe className="h-8 w-8 text-primary mb-1" />
+                <span className="font-display font-bold text-foreground">VibeCard</span>
+                <span className="text-xs text-muted-foreground">Rewards Hub</span>
               </motion.div>
             </div>
           </Card>
@@ -118,9 +119,9 @@ export function NetworkVisionScreen() {
         >
           <Card className="p-5">
             <h2 className="font-display text-xl font-bold text-foreground mb-4 text-center">
-              Rollout Timeline
+              Progression
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {phases.map((item, index) => (
                 <motion.div
                   key={item.phase}
@@ -155,7 +156,6 @@ export function NetworkVisionScreen() {
         >
           <Card className="p-6 bg-primary/5 border-primary border-2">
             <div className="text-center">
-              <Rocket className="h-10 w-10 text-primary mx-auto mb-3" />
               <h2 className="font-display text-2xl font-bold text-foreground mb-2">
                 Built for Arc Hackathon
               </h2>
