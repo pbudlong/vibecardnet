@@ -62,12 +62,14 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
         </motion.div>
 
         <motion.div
-          className="mt-16 flex items-center gap-6 text-sm text-muted-foreground"
+          className="mt-16 flex flex-col items-center gap-1 text-sm text-muted-foreground"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
-          <span>Best Gateway-Based Micropayments Integration</span>
+          <span>Track: Best Gateway-Based Micropayments Integration</span>
+          <span>Pete Budlong</span>
+          <span>100% Vibecoded on Replit</span>
         </motion.div>
       </div>
     </div>
