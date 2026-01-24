@@ -274,25 +274,28 @@ export function ViralMindmapAnimation() {
       title="Click to regrow"
       data-testid="button-regrow-mindmap"
     >
-      {/* Legend at top */}
+      {/* Legend at top - left justified */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.5 }}
-        className="flex gap-6 mb-2"
+        className="w-full flex flex-col items-start mb-2"
       >
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: nodeColors.creator }} />
-          <span className="text-xs text-muted-foreground">Creator</span>
+        <div className="flex gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: nodeColors.creator }} />
+            <span className="text-xs text-muted-foreground">Creator</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: nodeColors.remix }} />
+            <span className="text-xs text-muted-foreground">Remix</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: nodeColors.share }} />
+            <span className="text-xs text-muted-foreground">Share</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: nodeColors.remix }} />
-          <span className="text-xs text-muted-foreground">Remix</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: nodeColors.share }} />
-          <span className="text-xs text-muted-foreground">Share</span>
-        </div>
+        <p className="text-xs text-muted-foreground/60 mt-1">Click to regrow</p>
       </motion.div>
 
       <svg
@@ -323,8 +326,6 @@ export function ViralMindmapAnimation() {
           <NodeCircle key={node.id} node={node} />
         ))}
       </svg>
-      
-      <p className="text-xs text-muted-foreground/60 mt-1">Click to regrow</p>
     </div>
   );
 }
