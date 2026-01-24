@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 
 const platforms = [
   { name: "Replit", icon: SiReplit },
-  { name: "Claude", icon: null, label: "Claude" },
+  { name: "Bolt", icon: null, label: "Bolt" },
   { name: "Cursor", icon: null, label: "Cursor" },
   { name: "ChatGPT", icon: SiOpenai },
 ];
@@ -82,7 +82,7 @@ export function NetworkVisionScreen() {
                 className="flex flex-col items-center p-4 rounded-xl bg-primary/10 border-2 border-primary"
               >
                 <Globe className="h-8 w-8 text-primary mb-1" />
-                <span className="font-display font-bold text-foreground">VibeCard</span>
+                <span className="font-display font-bold text-foreground">Network</span>
                 <span className="text-xs text-muted-foreground">Rewards Hub</span>
               </motion.div>
 
