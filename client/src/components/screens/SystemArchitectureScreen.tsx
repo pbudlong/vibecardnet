@@ -271,14 +271,6 @@ function DetailedView() {
                     <div>Trigger</div>
                   </div>
                 </div>
-                <div className="text-center text-foreground/60 mt-1">│</div>
-                <div className="text-center text-foreground/60">▼</div>
-                <div className="flex justify-center">
-                  <div className="border border-foreground/30 px-2 py-0.5 text-[8px]">
-                    <div>Conversion Attribution</div>
-                    <div className="text-muted-foreground">(tracks CAC)</div>
-                  </div>
-                </div>
               </div>
               
               <div className="text-center text-foreground/60">│</div>
@@ -287,7 +279,7 @@ function DetailedView() {
               {/* Circle Batching SDK */}
               <div className="flex justify-center mb-1">
                 <div className="border border-sky-400/60 px-4 py-1 text-center">
-                  <div className="font-semibold text-sky-400">Circle Batching SDK</div>
+                  <div className="font-semibold text-sky-400">Circle Gateway SDK</div>
                   <div className="text-muted-foreground">(x402 atomic splits)</div>
                 </div>
               </div>
