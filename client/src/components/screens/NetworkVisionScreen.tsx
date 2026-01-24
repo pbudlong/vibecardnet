@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
 import { Globe, ArrowRight, CreditCard } from "lucide-react";
-import { SiReplit, SiOpenai } from "react-icons/si";
+import { SiReplit } from "react-icons/si";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 const platforms = [
+  { name: "Lovable", icon: null, label: "Lovable" },
   { name: "Replit", icon: SiReplit },
-  { name: "Claude", icon: null, label: "Claude" },
+  { name: "Bolt", icon: null, label: "Bolt" },
   { name: "Cursor", icon: null, label: "Cursor" },
-  { name: "ChatGPT", icon: SiOpenai },
 ];
 
 const phases = [
@@ -104,7 +104,7 @@ export function NetworkVisionScreen() {
               >
                 <Globe className="h-8 w-8 text-primary mb-1" />
                 <span className="font-display font-bold text-foreground">VibeCard</span>
-                <span className="text-xs text-muted-foreground">Rewards Hub</span>
+                <span className="text-xs text-muted-foreground">Actions to Cash</span>
               </motion.div>
             </div>
           </Card>
