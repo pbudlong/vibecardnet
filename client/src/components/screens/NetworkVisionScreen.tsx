@@ -117,8 +117,8 @@ export function NetworkVisionScreen() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mb-6"
         >
-          <Card className="p-4">
-            <h2 className="font-display text-xl font-bold text-foreground mb-4 text-center">
+          <Card className="p-3">
+            <h2 className="font-display text-xl font-bold text-foreground mb-3 text-center">
               GTM Progression
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -128,7 +128,7 @@ export function NetworkVisionScreen() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
-                  className={`p-4 rounded-lg text-center ${
+                  className={`p-3 rounded-lg text-center ${
                     item.status === "current" 
                       ? "bg-primary/10 border-2 border-primary" 
                       : "bg-muted/30"
@@ -154,12 +154,12 @@ export function NetworkVisionScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.7 }}
         >
-          <Card className="p-6 bg-primary/5 border-primary border-2">
+          <Card className="p-4 bg-primary/5 border-primary border-2">
             <div className="text-center">
-              <h2 className="font-display text-2xl font-bold text-foreground mb-2">
+              <h2 className="font-display text-xl font-bold text-foreground mb-2">
                 Built for Arc Hackathon
               </h2>
-              <p className="text-muted-foreground mb-4 max-w-xl mx-auto">
+              <p className="text-muted-foreground text-sm mb-3 max-w-xl mx-auto">
                 VibeCard demonstrates the power of native USDC, embedded wallets, and atomic micropayments. 
                 This wasn't possible before Arc. Now it's inevitable.
               </p>
