@@ -279,7 +279,7 @@ export function ViralMindmapAnimation() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.5 }}
-        className="w-full flex flex-col items-start mb-2"
+        className="w-full flex flex-row items-center justify-between mb-2"
       >
         <div className="flex gap-6">
           <div className="flex items-center gap-2">
@@ -295,7 +295,7 @@ export function ViralMindmapAnimation() {
             <span className="text-xs text-muted-foreground">Share</span>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground/60 mt-1">Click to regrow</p>
+        <p className="text-xs text-muted-foreground/60">Click to regrow</p>
       </motion.div>
 
       <svg
