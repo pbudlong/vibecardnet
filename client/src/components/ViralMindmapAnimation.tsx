@@ -300,7 +300,7 @@ export function ViralMindmapAnimation() {
 
       <svg
         key={key}
-        viewBox="0 0 800 400"
+        viewBox="0 50 800 320"
         className="w-full max-w-3xl h-auto"
         style={{ overflow: "visible" }}
       >
