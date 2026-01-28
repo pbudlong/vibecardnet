@@ -26,7 +26,7 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
           </Badge>
           <Badge 
             variant="outline" 
-            className="px-4 py-1.5 text-sm font-bold border-primary bg-primary/10 text-primary"
+            className="px-4 py-1.5 text-sm font-bold border-amber-600 bg-amber-600/15 text-amber-600 dark:border-amber-500 dark:bg-amber-500/15 dark:text-amber-500"
           >
             On-site Hackathon Winner - 3rd place - $1,000 in USDC
           </Badge>
