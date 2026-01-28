@@ -15,15 +15,21 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-6 text-center"
+          className="mb-6 flex flex-col items-center gap-2"
           data-testid="badge-hackathon"
         >
-          <p className="text-sm font-medium text-muted-foreground">
+          <Badge 
+            variant="outline" 
+            className="px-4 py-1.5 text-sm font-medium border-accent bg-accent/10 text-accent-foreground"
+          >
             Agentic Commerce On Arc Hackathon - January 23, 2026
-          </p>
-          <p className="text-sm font-bold text-primary">
+          </Badge>
+          <Badge 
+            variant="outline" 
+            className="px-4 py-1.5 text-sm font-bold border-primary bg-primary/10 text-primary"
+          >
             On-site Hackathon Winner - 3rd place - $1,000 in USDC
-          </p>
+          </Badge>
         </motion.div>
 
         <motion.h1
