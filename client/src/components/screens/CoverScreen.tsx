@@ -37,7 +37,7 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
         </motion.h1>
 
         <motion.h2
-          className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold text-primary mb-16"
+          className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold text-primary mb-12"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -63,7 +63,7 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
         </motion.div>
 
         <motion.div
-          className="mt-16 flex flex-col items-center gap-1 text-sm text-muted-foreground"
+          className="mt-12 flex flex-col items-center gap-1 text-sm text-muted-foreground"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}
