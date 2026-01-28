@@ -10,12 +10,12 @@ interface CoverScreenProps {
 export function CoverScreen({ onStart }: CoverScreenProps) {
   return (
     <div className="relative h-full w-full flex items-center justify-center overflow-hidden">
-      <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl -mt-12">
+      <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl -mt-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-6 flex flex-col items-center gap-2"
+          className="mb-6"
           data-testid="badge-hackathon"
         >
           <Badge 
@@ -23,12 +23,6 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
             className="px-4 py-1.5 text-sm font-medium border-accent bg-accent/10 text-accent-foreground"
           >
             Agentic Commerce On Arc Hackathon - January 23, 2026
-          </Badge>
-          <Badge 
-            variant="outline" 
-            className="px-4 py-1.5 text-sm font-bold border-amber-600 bg-amber-600/15 text-amber-600 dark:border-amber-500 dark:bg-amber-500/15 dark:text-amber-500"
-          >
-            On-site Hackathon Winner - 3rd place - $1,000 in USDC
           </Badge>
         </motion.div>
 
@@ -77,6 +71,12 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
           <span className="font-bold mb-2">Track: Best Gateway-Based Micropayments Integration</span>
           <span>Pete Budlong</span>
           <span>100% Vibecoded on Replit</span>
+          <Badge 
+            variant="outline" 
+            className="mt-3 px-4 py-1.5 text-sm font-bold border-amber-600 bg-amber-600/15 text-amber-600 dark:border-amber-500 dark:bg-amber-500/15 dark:text-amber-500"
+          >
+            On-site Hackathon Winner - 3rd place - $1,000 in USDC
+          </Badge>
         </motion.div>
       </div>
     </div>
