@@ -456,7 +456,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
   const walletAddress = walletBalance?.address;
 
   return (
-    <div className="h-full flex flex-col items-center justify-start py-6 px-8 overflow-y-auto">
+    <div className="w-full flex flex-col items-center justify-start py-6 px-8">
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

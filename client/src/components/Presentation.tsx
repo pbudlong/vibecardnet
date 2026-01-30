@@ -40,7 +40,7 @@ export function Presentation({ children, currentScreen, onScreenChange }: Presen
   }, [goNext, goPrev]);
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-background">
+    <div className="relative h-screen w-screen overflow-y-auto bg-background">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentScreen}
@@ -48,18 +48,63 @@ export function Presentation({ children, currentScreen, onScreenChange }: Presen
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -100, opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="h-full w-full"
+          className="min-h-screen flex flex-col"
         >
-          {children[currentScreen]}
+          {/* Slide content */}
+          <div className="flex-1">
+            {children[currentScreen]}
+          </div>
+
+          {/* Pagination - flows below content */}
+          <div className="py-6 flex flex-col items-center gap-2">
+            <div className="flex items-center gap-3">
+              {currentScreen > 0 && (
+                <button
+                  onClick={goPrev}
+                  className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                  data-testid="button-pagination-prev"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+              )}
+              <div className="flex gap-2">
+                {Array.from({ length: totalScreens }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => onScreenChange(index)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      index === currentScreen
+                        ? "w-8 bg-primary"
+                        : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                    }`}
+                    data-testid={`button-dot-${index}`}
+                  />
+                ))}
+              </div>
+              {currentScreen < totalScreens - 1 && (
+                <button
+                  onClick={goNext}
+                  className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                  data-testid="button-pagination-next"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {currentScreen + 1} / {totalScreens}
+            </span>
+          </div>
         </motion.div>
       </AnimatePresence>
 
+      {/* Side navigation arrows - keep these fixed */}
       {currentScreen > 0 && (
         <Button
           variant="ghost"
           size="icon"
           onClick={goPrev}
-          className="absolute left-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-lg z-50"
+          className="fixed left-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-lg z-50"
           data-testid="button-prev-screen"
         >
           <ChevronLeft className="h-6 w-6" />
@@ -71,52 +116,12 @@ export function Presentation({ children, currentScreen, onScreenChange }: Presen
           variant="ghost"
           size="icon"
           onClick={goNext}
-          className="absolute right-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-lg z-50"
+          className="fixed right-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-lg z-50"
           data-testid="button-next-screen"
         >
           <ChevronRight className="h-6 w-6" />
         </Button>
       )}
-
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50">
-        <div className="flex items-center gap-3">
-          {currentScreen > 0 && (
-            <button
-              onClick={goPrev}
-              className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-              data-testid="button-pagination-prev"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-          )}
-          <div className="flex gap-2">
-            {Array.from({ length: totalScreens }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => onScreenChange(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentScreen
-                    ? "w-8 bg-primary"
-                    : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                }`}
-                data-testid={`button-dot-${index}`}
-              />
-            ))}
-          </div>
-          {currentScreen < totalScreens - 1 && (
-            <button
-              onClick={goNext}
-              className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-              data-testid="button-pagination-next"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-        <span className="text-xs text-muted-foreground">
-          {currentScreen + 1} / {totalScreens}
-        </span>
-      </div>
     </div>
   );
 }

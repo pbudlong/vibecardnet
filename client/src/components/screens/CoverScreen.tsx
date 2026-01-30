@@ -9,7 +9,7 @@ interface CoverScreenProps {
 
 export function CoverScreen({ onStart }: CoverScreenProps) {
   return (
-    <div className="relative h-full w-full flex items-center justify-center overflow-hidden">
+    <div className="relative w-full min-h-[80vh] flex items-center justify-center">
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl -mt-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

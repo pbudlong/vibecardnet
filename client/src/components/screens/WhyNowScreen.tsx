@@ -74,7 +74,7 @@ const enablers = [
 
 export function WhyNowScreen() {
   return (
-    <div className="h-full w-full flex flex-col items-center justify-start px-8 py-8 overflow-y-auto">
+    <div className="w-full flex flex-col items-center justify-start px-8 py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

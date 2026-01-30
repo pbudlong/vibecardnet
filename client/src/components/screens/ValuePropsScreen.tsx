@@ -26,7 +26,7 @@ const useCasesWithPeople = [
 
 export function ValuePropsScreen() {
   return (
-    <div className="h-full w-full flex flex-col items-center justify-start px-8 py-6 overflow-y-auto">
+    <div className="w-full flex flex-col items-center justify-start px-8 py-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
