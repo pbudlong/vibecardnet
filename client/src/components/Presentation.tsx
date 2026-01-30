@@ -80,19 +80,39 @@ export function Presentation({ children, currentScreen, onScreenChange }: Presen
 
       {currentScreen !== 7 && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50">
-          <div className="flex gap-2">
-            {Array.from({ length: totalScreens }).map((_, index) => (
+          <div className="flex items-center gap-3">
+            {currentScreen > 0 && (
               <button
-                key={index}
-                onClick={() => onScreenChange(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentScreen
-                    ? "w-8 bg-primary"
-                    : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                }`}
-                data-testid={`button-dot-${index}`}
-              />
-            ))}
+                onClick={goPrev}
+                className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                data-testid="button-pagination-prev"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+            )}
+            <div className="flex gap-2">
+              {Array.from({ length: totalScreens }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => onScreenChange(index)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === currentScreen
+                      ? "w-8 bg-primary"
+                      : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                  }`}
+                  data-testid={`button-dot-${index}`}
+                />
+              ))}
+            </div>
+            {currentScreen < totalScreens - 1 && (
+              <button
+                onClick={goNext}
+                className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                data-testid="button-pagination-next"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            )}
           </div>
           <span className="text-xs text-muted-foreground">
             {currentScreen + 1} / {totalScreens}

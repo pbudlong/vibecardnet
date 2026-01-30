@@ -71,6 +71,7 @@ export function CoverScreen({ onStart }: CoverScreenProps) {
           <span className="font-bold mb-2">Track: Best Gateway-Based Micropayments Integration</span>
           <span>Pete Budlong</span>
           <span>100% Vibecoded on Replit</span>
+          <span className="text-xs text-muted-foreground/70">(Best viewed on desktop - not optimized for mobile)</span>
           <Badge 
             variant="outline" 
             className="mt-3 px-4 py-1.5 text-sm font-bold border-amber-600 bg-amber-600/15 text-amber-600 dark:border-amber-500 dark:bg-amber-500/15 dark:text-amber-500"
