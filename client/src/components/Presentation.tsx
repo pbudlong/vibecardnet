@@ -56,7 +56,7 @@ export function Presentation({ children, currentScreen, onScreenChange }: Presen
           </div>
 
           {/* Pagination - flows below content */}
-          <div className="py-6 flex flex-col items-center gap-2">
+          <div className="py-3 flex flex-col items-center gap-2">
             <div className="flex items-center gap-3">
               {currentScreen > 0 && (
                 <button
