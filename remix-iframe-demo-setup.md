@@ -16,7 +16,7 @@ This guide sets up the VibeCard live demo as a full-screen webview (iframe) in y
 The standalone demo endpoint on the original app is:
 
 ```
-https://<original-app-name>.replit.app/demo
+https://VibeCardNet.replit.app/demo
 ```
 
 Open that URL in a browser first to confirm it loads the live demo full-screen before wiring up the iframe.
@@ -33,7 +33,7 @@ interface LiveDemoScreenProps {
 }
 
 export function LiveDemoScreen({ isActive }: LiveDemoScreenProps) {
-  const DEMO_URL = "https://<original-app-name>.replit.app/demo";
+  const DEMO_URL = "https://VibeCardNet.replit.app/demo";
 
   if (!isActive) {
     return <div className="h-screen w-screen bg-background" />;
