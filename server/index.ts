@@ -22,6 +22,13 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 
+// Allow this app to be embedded as an iframe on any domain (for remix webview support)
+app.use((_req, res, next) => {
+  res.setHeader("X-Frame-Options", "ALLOWALL");
+  res.setHeader("Content-Security-Policy", "frame-ancestors *");
+  next();
+});
+
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
