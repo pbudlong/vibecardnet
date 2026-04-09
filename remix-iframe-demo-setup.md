@@ -7,7 +7,6 @@ This guide sets up the VibeCard live demo as a full-screen webview (iframe) in y
 ## Prerequisites
 
 - The original VibeCard app must be **deployed** (published on Replit) so it has a stable `*.replit.app` URL
-- Your remix uses the same presentation shell (`Presentation.tsx`) described in `presentation-layout-spec.md`
 
 ---
 
@@ -97,12 +96,6 @@ Remove the old `DemoPlaygroundScreen` import line entirely — you no longer nee
 ## Sizing notes
 
 The iframe is `h-screen` (100vh) because it sits inside the presentation shell's `min-h-screen flex flex-col` wrapper. The demo renders with its own internal padding and layout — no additional wrapper padding needed on your side.
-
-If your remix's slide content has a different background color than the original app's `--background` (white in light mode), you may see a thin flash of white before the iframe loads. To minimize this, set the placeholder div's background to match the demo's background:
-
-```tsx
-<div className="h-screen w-screen" style={{ background: "#ffffff" }} />
-```
 
 ---
 
