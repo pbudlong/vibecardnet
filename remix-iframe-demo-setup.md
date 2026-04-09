@@ -4,12 +4,6 @@ This guide sets up the VibeCard live demo as a full-screen webview (iframe) in y
 
 ---
 
-## Prerequisites
-
-- The original VibeCard app must be **deployed** (published on Replit) so it has a stable `*.replit.app` URL
-
----
-
 ## Step 1 — Get the deployed demo URL
 
 The standalone demo endpoint on the original app is:
