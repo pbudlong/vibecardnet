@@ -567,13 +567,6 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                       )}
                     </div>
                   )}
-                  {circleDiagnostics.walletSet && (
-                    <div className="p-1 rounded bg-muted/30">
-                      <span className="text-muted-foreground">Wallet Set: </span>
-                      <span className="text-foreground font-mono">{circleDiagnostics.walletSet.name || circleDiagnostics.walletSet.id}</span>
-                      <span className="text-muted-foreground ml-2">({circleDiagnostics.walletSet.custodyType})</span>
-                    </div>
-                  )}
                   <div className="p-1 rounded bg-muted/30">
                     <span className="text-muted-foreground">Network: </span>
                     <span className="text-foreground">{circleDiagnostics.arcNetwork.name} (Chain {circleDiagnostics.arcNetwork.chainId})</span>
