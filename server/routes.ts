@@ -97,7 +97,7 @@ export async function registerRoutes(
         } : null,
         walletSet: walletSetInfo ? {
           id: walletSetInfo.id,
-          name: 'VibeCard Arc Wallets',
+          name: 'VibeCard Demo Wallets',
           custodyType: walletSetInfo.custodyType,
           createDate: walletSetInfo.createDate
         } : null,
