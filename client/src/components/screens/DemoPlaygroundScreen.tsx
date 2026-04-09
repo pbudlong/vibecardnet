@@ -586,7 +586,7 @@ export default function DemoPlaygroundScreen({ isActive }: DemoPlaygroundScreenP
                   <div className="pt-1 border-t border-muted/50">
                     <p className="text-muted-foreground">Arc Testnet Wallets:</p>
                     <div className="space-y-1">
-                      {circleDiagnostics.wallets.map(w => (
+                      {circleDiagnostics.wallets.filter(w => w.name).map(w => (
                         <div key={w.id} className="flex items-center justify-between p-1 rounded bg-muted/20">
                           <div className="flex items-center gap-1.5">
                             {w.isTreasury ? (
