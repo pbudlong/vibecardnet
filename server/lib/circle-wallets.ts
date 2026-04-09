@@ -532,6 +532,35 @@ export async function getArcWallets(): Promise<{ treasury: ArcWallet | null; use
   };
 }
 
+// Rename wallet sets that have the wrong name (one-time self-healing fix)
+export async function ensureWalletSetName(correctName: string): Promise<void> {
+  const apiKey = process.env.CIRCLE_API_KEY;
+  if (!apiKey) return;
+
+  try {
+    const response = await fetch(`${CIRCLE_W3S_API_BASE}/walletSets`, {
+      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' }
+    });
+    if (!response.ok) return;
+
+    const data = await response.json();
+    const walletSets: any[] = data.data?.walletSets || [];
+
+    for (const ws of walletSets) {
+      if (ws.name !== correctName) {
+        console.log(`[Circle] Renaming wallet set "${ws.name}" → "${correctName}"`);
+        await fetch(`${CIRCLE_W3S_API_BASE}/walletSets/${ws.id}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: correctName })
+        });
+      }
+    }
+  } catch (err) {
+    console.warn('[Circle] Could not check/rename wallet set:', err);
+  }
+}
+
 // Generate a new entity secret (32 bytes hex)
 export function generateNewEntitySecret(): string {
   const bytes = new Uint8Array(32);

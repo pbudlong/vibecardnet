@@ -1,13 +1,16 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, getAllWalletsWithBalances, createArcTestnetWallets, generateNewEntitySecret, getTransactionStatus, getArcWallets, getArcUsdcBalanceBaseUnits, transferUSDCExact } from "./lib/circle-wallets";
+import { checkIntegrationStatus, getDeveloperWalletBalance, fundFromFaucet, getAllWalletsWithBalances, createArcTestnetWallets, generateNewEntitySecret, getTransactionStatus, getArcWallets, getArcUsdcBalanceBaseUnits, transferUSDCExact, ensureWalletSetName } from "./lib/circle-wallets";
 import { GATEWAY_CONFIG, executeX402Payment, createViralRewardSplits } from "./lib/x402-gateway";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+
+  // Ensure the Circle wallet set has the correct name for this demo
+  ensureWalletSetName('VibeCard Arc Wallets').catch(() => {});
 
   app.get('/api/integrations/status', async (req, res) => {
     try {
