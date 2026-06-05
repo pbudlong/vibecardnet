@@ -27,16 +27,6 @@ GitHub permalinks (branch `main`) jump straight to the exact lines. Open them in
 
 > **Note:** these anchors point to the latest commit pushed to GitHub. If you record from the live Replit editor instead, the same line numbers apply locally — just use the file paths.
 
-### Live Replit editor links
-
-These open the file directly in the workspace editor. Replit can't deep-link to a line, so the line to scroll to is listed next to each.
-
-- [`server/lib/circle-wallets.ts`](https://replit.com/@pete86/workspace#server/lib/circle-wallets.ts) — scroll to **L313–342** (provision), **L57–89** (balanceOf), **L499** (USDC addr), **L567–573** (transfer)
-- [`server/lib/x402-gateway.ts`](https://replit.com/@pete86/workspace#server/lib/x402-gateway.ts) — scroll to **L150–206** (split loop), **L208–262** (ratios), **L4–5** + **L44–66** + **L264–268** (Arc config)
-- [`client/src/components/screens/DemoPlaygroundScreen.tsx`](https://replit.com/@pete86/workspace#client/src/components/screens/DemoPlaygroundScreen.tsx) — scroll to **L533–565** (judge panel)
-
-Tip: in the Replit editor, press <kbd>Ctrl/Cmd+G</kbd> after opening a file to jump straight to a line number.
-
 ---
 
 ## Shot 1 — Intro pan: "Here's where we touch Circle technologies"
