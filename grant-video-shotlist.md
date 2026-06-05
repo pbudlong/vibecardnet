@@ -12,6 +12,8 @@ Every beat is mapped to the exact file and line range to open on screen.
 
 ## Shot 1 — Intro pan: "Here's where we touch Circle technologies"
 
+> **Narration:** "First, our hackathon build, running on Arc Testnet today. Here's where we touch Circle technologies."
+
 Open these two files in tabs ahead of time:
 - `server/lib/circle-wallets.ts` — Circle SDK + Arc RPC code
 - `server/lib/x402-gateway.ts` — split orchestration
@@ -19,6 +21,8 @@ Open these two files in tabs ahead of time:
 ---
 
 ## Shot 2 — USDC + Wallets: "wallets are Circle non-custodial"
+
+> **Narration:** "USDC is our settlement currency; wallets are Circle non-custodial."
 
 **File: `server/lib/circle-wallets.ts`**
 
@@ -32,6 +36,8 @@ Line 337 is the actual SDK provisioning call. Wallet names map directly to the f
 ---
 
 ## Shot 3 — USDC balance read (balanceOf over RPC): "USDC is our settlement currency"
+
+> **Narration:** "We read balances straight off Arc over RPC — a standard ERC-20 balanceOf call against the USDC contract."
 
 **File: `server/lib/circle-wallets.ts`**
 
@@ -47,6 +53,8 @@ Beat: "We read balances straight off Arc over RPC."
 ---
 
 ## Shot 4 — Gateway / x402 split: the honesty point
+
+> **Narration:** "This is our multi-party reward split. Important and honest point: there's no on-chain splitter contract — we deploy no custom contracts. The split is application-level orchestration, firing sequential USDC transfers from the treasury wallet through Circle's SDK. The only contract we touch is the existing USDC token on Arc."
 
 **File: `server/lib/x402-gateway.ts`**
 
@@ -64,6 +72,8 @@ A standard ERC-20 `transfer`, nothing custom.
 
 ## Shot 5 — Arc network config (Chain 5042002 / eip155:5042002)
 
+> **Narration:** "And here's our Arc network config — Chain 5042002, the eip155 identifier baked into every x402 payment request."
+
 **File: `server/lib/x402-gateway.ts`**
 
 | What to show | Lines |
@@ -77,6 +87,8 @@ The `eip155:5042002` strings (lines 59 & 66) are the textbook visual for "Arc Te
 ---
 
 ## Shot 6 (optional) — the live "For Judges" panel
+
+> **Narration:** "And here it is running on Arc today — real Circle wallets, real USDC balances, live on-chain."
 
 Already in the running app:
 - **Code:** `client/src/components/screens/DemoPlaygroundScreen.tsx` — diagnostics query at **line 174** (`/api/circle/diagnostics`), panel render at **533–565**
