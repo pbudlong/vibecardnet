@@ -10,6 +10,25 @@ Every beat is mapped to the exact file and line range to open on screen.
 
 ---
 
+## Quick-access links — open these tabs first
+
+GitHub permalinks (branch `main`) jump straight to the exact lines. Open them in order before you hit record.
+
+1. [Provision wallets — `circle-wallets.ts` L313–342](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/circle-wallets.ts#L313-L342)
+2. [balanceOf over RPC — `circle-wallets.ts` L57–89](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/circle-wallets.ts#L57-L89)
+3. [USDC contract address — `circle-wallets.ts` L499](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/circle-wallets.ts#L499)
+4. [ERC-20 `transfer` (only contract touched) — `circle-wallets.ts` L567–573](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/circle-wallets.ts#L567-L573)
+5. [Sequential split loop — `x402-gateway.ts` L150–206](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L150-L206)
+6. [Split ratios — `x402-gateway.ts` L208–262](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L208-L262)
+7. [Arc chain ID + RPC — `x402-gateway.ts` L4–5](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L4-L5)
+8. [eip155:5042002 in x402 response — `x402-gateway.ts` L44–66](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L44-L66)
+9. [GATEWAY_CONFIG — `x402-gateway.ts` L264–268](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L264-L268)
+10. [Judge panel render — `DemoPlaygroundScreen.tsx` L533–565](https://github.com/pbudlong/vibecardnet/blob/main/client/src/components/screens/DemoPlaygroundScreen.tsx#L533-L565)
+
+> **Note:** these anchors point to the latest commit pushed to GitHub. If you record from the live Replit editor instead, the same line numbers apply locally — just use the file paths.
+
+---
+
 ## Shot 1 — Intro pan: "Here's where we touch Circle technologies"
 
 > **Narration:** "First, our hackathon build, running on Arc Testnet today. Here's where we touch Circle technologies."
