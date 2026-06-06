@@ -35,9 +35,9 @@ Talk to camera (or over a title card). The shots below show the actual code snip
 
 ---
 
-## Shot 1 — USDC + Wallets: "wallets are Circle non-custodial"
+## Shot 1 — Wallets: "wallets are Circle non-custodial"
 
-> **Narration:** "USDC is our settlement currency; wallets are Circle non-custodial."
+> **Narration:** "Our wallets are Circle non-custodial — we provision a wallet set and mint wallets through the Programmable Wallets SDK."
 
 **File: `server/lib/circle-wallets.ts`**
 
@@ -52,7 +52,7 @@ Line 337 is the actual SDK provisioning call. Wallet names map directly to the f
 
 ## Shot 2 — USDC balance read (balanceOf over RPC): "USDC is our settlement currency"
 
-> **Narration:** "We read balances straight off Arc over RPC — a standard ERC-20 balanceOf call against the USDC contract."
+> **Narration:** "USDC is our settlement currency. We read balances straight off Arc over RPC — a standard ERC-20 balanceOf call against the USDC contract."
 
 **File: `server/lib/circle-wallets.ts`**
 
