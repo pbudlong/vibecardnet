@@ -73,7 +73,6 @@ Line 61 builds the `balanceOf(address)` call data; line 71 points `to` at the US
 | What to show | Lines |
 |---|---|
 | `executeX402Payment()` — `for…of` loop firing **sequential** `transferUSDC(…, 'ARC-TESTNET')` with a delay between each | **150–206** (loop 163–196) |
-| `createViralRewardSplits()` — 40/35/20 ratios computed in plain TypeScript | **208–262** |
 
 ---
 
