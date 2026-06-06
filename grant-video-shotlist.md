@@ -27,13 +27,11 @@ Numbered to match the **Suggested scroll order** below — one entry per take st
 
 ---
 
-## Shot 1 — Intro pan: "Here's where we touch Circle technologies"
+## Shot 1 — Intro (talking only, no code on screen)
 
 > **Narration:** "First, our hackathon build, running on Arc Testnet today. Here's where we touch Circle technologies."
 
-Open these two files in tabs ahead of time:
-- `server/lib/circle-wallets.ts` — Circle SDK + Arc RPC code
-- `server/lib/x402-gateway.ts` — split orchestration
+Talk to camera (or over a title card). No files shown — the next shots show the actual code snippets.
 
 ---
 
