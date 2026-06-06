@@ -75,11 +75,6 @@ Line 61 builds the `balanceOf(address)` call data; line 71 points `to` at the US
 | `executeX402Payment()` — `for…of` loop firing **sequential** `transferUSDC(…, 'ARC-TESTNET')` with a delay between each | **150–206** (loop 163–196) |
 | `createViralRewardSplits()` — 40/35/20 ratios computed in plain TypeScript | **208–262** |
 
-**Proof the only contract you touch is USDC** — in `server/lib/circle-wallets.ts`:
-- `transferUSDC()` → `client.createContractExecutionTransaction({ … abiFunctionSignature: 'transfer(address,uint256)' })` — **567–573**
-
-A standard ERC-20 `transfer`, nothing custom.
-
 ---
 
 ## Shot 4 — Arc network config (Chain 5042002 / eip155:5042002)
