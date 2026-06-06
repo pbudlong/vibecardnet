@@ -1,32 +1,5 @@
 # Circle Developer Grant — Video Shot List
 
-ACOA / VibeCard Circle integration walkthrough (script segment 0:25–1:20).
-Every beat is mapped to the exact file and line range to open on screen.
-
-**Verified facts (real, present in this codebase):**
-- Network: Arc Testnet — Chain ID `5042002`
-- USDC contract: `0x3600000000000000000000000000000000000000` (USDC is native gas on Arc)
-- No custom smart contracts deployed — the only contract touched is the existing USDC token
-
----
-
-## Quick-access links — open these tabs first
-
-GitHub permalinks (branch `main`) jump straight to the exact lines. Open them in order before you hit record.
-
-Numbered to match the **Suggested scroll order** below — one entry per take step.
-
-1. [Provision wallets — `circle-wallets.ts` L313–342](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/circle-wallets.ts#L313-L342)
-2. [balanceOf over RPC — `circle-wallets.ts` L57–89](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/circle-wallets.ts#L57-L89) · [USDC contract addr — L499](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/circle-wallets.ts#L499)
-3. [Sequential split loop — `x402-gateway.ts` L150–206](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L150-L206) · [Split ratios — L208–262](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L208-L262)
-4. [ERC-20 `transfer` (only contract touched) — `circle-wallets.ts` L567–573](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/circle-wallets.ts#L567-L573)
-5. [Arc chain ID + RPC — `x402-gateway.ts` L4–5](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L4-L5) · [eip155:5042002 in x402 response — L44–66](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L44-L66) · [GATEWAY_CONFIG — L264–268](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L264-L268)
-6. [Judge panel render — `DemoPlaygroundScreen.tsx` L533–565](https://github.com/pbudlong/vibecardnet/blob/main/client/src/components/screens/DemoPlaygroundScreen.tsx#L533-L565) · live view: `https://VibeCardNet.replit.app/demo`
-
-> **Note:** these anchors point to the latest commit pushed to GitHub. If you record from the live Replit editor instead, the same line numbers apply locally — just use the file paths.
-
----
-
 ## Intro (talking only, no code on screen)
 
 > **Narration:** "First, our hackathon build, running on Arc Testnet today. We touch Circle technologies in two library files — `server/lib/circle-wallets.ts` for wallets and USDC, and `server/lib/x402-gateway.ts` for the payment split."
@@ -104,3 +77,20 @@ The `eip155:5042002` strings (lines 59 & 66) are the textbook visual for "Arc Te
 4. back to `circle-wallets.ts` L567–573 — the ERC-20 `transfer` (only contract)
 5. `x402-gateway.ts` L4–5 + L44/59/66 + L264–268 — Arc config
 6. cut to live `/demo` judge panel
+
+---
+
+## Quick-access links — open these tabs first
+
+GitHub permalinks (branch `main`) jump straight to the exact lines. Open them in order before you hit record.
+
+Numbered to match the **Suggested scroll order** above — one entry per take step.
+
+1. [Provision wallets — `circle-wallets.ts` L313–342](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/circle-wallets.ts#L313-L342)
+2. [balanceOf over RPC — `circle-wallets.ts` L57–89](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/circle-wallets.ts#L57-L89) · [USDC contract addr — L499](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/circle-wallets.ts#L499)
+3. [Sequential split loop — `x402-gateway.ts` L150–206](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L150-L206) · [Split ratios — L208–262](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L208-L262)
+4. [ERC-20 `transfer` (only contract touched) — `circle-wallets.ts` L567–573](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/circle-wallets.ts#L567-L573)
+5. [Arc chain ID + RPC — `x402-gateway.ts` L4–5](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L4-L5) · [eip155:5042002 in x402 response — L44–66](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L44-L66) · [GATEWAY_CONFIG — L264–268](https://github.com/pbudlong/vibecardnet/blob/main/server/lib/x402-gateway.ts#L264-L268)
+6. [Judge panel render — `DemoPlaygroundScreen.tsx` L533–565](https://github.com/pbudlong/vibecardnet/blob/main/client/src/components/screens/DemoPlaygroundScreen.tsx#L533-L565) · live view: `https://VibeCardNet.replit.app/demo`
+
+> **Note:** these anchors point to the latest commit pushed to GitHub. If you record from the live Replit editor instead, the same line numbers apply locally — just use the file paths.
