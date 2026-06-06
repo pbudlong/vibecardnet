@@ -35,9 +35,9 @@ Talk to camera (or over a title card). The shots below show the actual code snip
 
 ---
 
-## Shot 1 — Wallets: "wallets are Circle non-custodial"
+## Shot 1 — Wallets: "Circle non-custodial developer-controlled wallets"
 
-> **Narration:** "Our wallets are Circle non-custodial — we provision a wallet set and mint wallets through the Programmable Wallets SDK."
+> **Narration:** "Our wallets are Circle developer-controlled wallets — non-custodial, secured by MPC. We provision a wallet set and mint wallets through the Programmable Wallets SDK."
 
 **File: `server/lib/circle-wallets.ts`**
 
