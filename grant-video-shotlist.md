@@ -41,10 +41,10 @@ Talk to camera (or over a title card). The shots below show the actual code snip
 
 **File: `server/lib/circle-wallets.ts`**
 
-| What to show | Lines | Narration anchor |
-|---|---|---|
-| `client.createWalletSet({ name: 'VibeCard Arc Wallets' })` | **313–315** | "We provision a Circle wallet set…" |
-| `walletConfigs` (Treasury + Matt/Pete/Manny) + `client.createWallets({ blockchains: ['ARC-TESTNET'], … })` | **325–342** | "…and mint non-custodial wallets via the Programmable Wallets SDK." |
+| What to show | Lines |
+|---|---|
+| `client.createWalletSet({ name: 'VibeCard Arc Wallets' })` | **313–315** |
+| `walletConfigs` (Treasury + Matt/Pete/Manny) + `client.createWallets({ blockchains: ['ARC-TESTNET'], … })` | **325–342** |
 
 Line 337 is the actual SDK provisioning call. Wallet names map directly to the four addresses in the judge panel.
 
@@ -63,7 +63,6 @@ Line 337 is the actual SDK provisioning call. Wallet names map directly to the f
 | USDC contract `'ARC-TESTNET': '0x3600…0000'` (matches judge panel) | **499** |
 
 Line 61 builds the `balanceOf(address)` call data; line 71 points `to` at the USDC contract.
-Beat: "We read balances straight off Arc over RPC."
 
 ---
 
@@ -73,10 +72,10 @@ Beat: "We read balances straight off Arc over RPC."
 
 **File: `server/lib/x402-gateway.ts`**
 
-| What to show | Lines | Narration anchor |
-|---|---|---|
-| `executeX402Payment()` — `for…of` loop firing **sequential** `transferUSDC(…, 'ARC-TESTNET')` with a delay between each | **150–206** (loop 163–196) | "No on-chain splitter contract — application-level orchestration, sequential USDC transfers from treasury through Circle's SDK." |
-| `createViralRewardSplits()` — 40/35/20 ratios computed in plain TypeScript | **208–262** | "The split math is just app logic, not a contract." |
+| What to show | Lines |
+|---|---|
+| `executeX402Payment()` — `for…of` loop firing **sequential** `transferUSDC(…, 'ARC-TESTNET')` with a delay between each | **150–206** (loop 163–196) |
+| `createViralRewardSplits()` — 40/35/20 ratios computed in plain TypeScript | **208–262** |
 
 **Proof the only contract you touch is USDC** — in `server/lib/circle-wallets.ts`:
 - `transferUSDC()` → `client.createContractExecutionTransaction({ … abiFunctionSignature: 'transfer(address,uint256)' })` — **567–573**
