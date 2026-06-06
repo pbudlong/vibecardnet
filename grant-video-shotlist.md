@@ -66,7 +66,7 @@ Line 61 builds the `balanceOf(address)` call data; line 71 points `to` at the US
 
 ## Shot 3 — Gateway / x402 split: the honesty point
 
-> **Narration:** "This is our multi-party reward split. Important and honest point: there's no on-chain splitter contract — we deploy no custom contracts. The split is application-level orchestration, firing sequential USDC transfers from the treasury wallet through Circle's SDK. The only contract we touch is the existing USDC token on Arc."
+> **Narration:** "This is our multi-party reward split — by design, app-level orchestration firing sequential USDC transfers from the treasury through Circle's SDK. The only contract we touch is the USDC token on Arc."
 
 **File: `server/lib/x402-gateway.ts`**
 
