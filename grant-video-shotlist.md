@@ -90,15 +90,9 @@ The `eip155:5042002` strings (lines 59 & 66) are the textbook visual for "Arc Te
 
 ---
 
-## Shot 5 (optional) — the live "For Judges" panel
+## Shot 5 — the live "For Judges" panel
 
 > **Narration:** "And here it is running on Arc today — real Circle wallets, real USDC balances, live on-chain."
-
-Already in the running app:
-- **Code:** `client/src/components/screens/DemoPlaygroundScreen.tsx` — diagnostics query at **line 174** (`/api/circle/diagnostics`), panel render at **533–565**
-- **Live view:** `https://VibeCardNet.replit.app/demo` — shows the wallet set, four Arc wallets with real balances, and explorer links
-
-Cut from the code shots to this live panel (Treasury $35.86, users $0.15) as the "running on Arc today" closer.
 
 ---
 
