@@ -59,8 +59,6 @@ Line 337 is the actual SDK provisioning call. Wallet names map directly to the f
 | What to show | Lines |
 |---|---|
 | `getArcUsdcBalance()` — ERC-20 `balanceOf` selector `0x70a08231`, `eth_call` to Arc RPC | **57–89** |
-| RPC endpoint `ARC_TESTNET_RPC = 'https://arc-testnet.drpc.org'` | **4** |
-| USDC contract `'ARC-TESTNET': '0x3600…0000'` (matches judge panel) | **499** |
 
 Line 61 builds the `balanceOf(address)` call data; line 71 points `to` at the USDC contract.
 
