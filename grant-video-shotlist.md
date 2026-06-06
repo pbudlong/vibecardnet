@@ -27,15 +27,15 @@ Numbered to match the **Suggested scroll order** below — one entry per take st
 
 ---
 
-## Shot 1 — Intro (talking only, no code on screen)
+## Intro (talking only, no code on screen)
 
-> **Narration:** "First, our hackathon build, running on Arc Testnet today. Here's where we touch Circle technologies."
+> **Narration:** "First, our hackathon build, running on Arc Testnet today. We touch Circle technologies in two library files — `server/lib/circle-wallets.ts` for wallets and USDC, and `server/lib/x402-gateway.ts` for the payment split."
 
-Talk to camera (or over a title card). No files shown — the next shots show the actual code snippets.
+Talk to camera (or over a title card). The shots below show the actual code snippets from those two files.
 
 ---
 
-## Shot 2 — USDC + Wallets: "wallets are Circle non-custodial"
+## Shot 1 — USDC + Wallets: "wallets are Circle non-custodial"
 
 > **Narration:** "USDC is our settlement currency; wallets are Circle non-custodial."
 
@@ -50,7 +50,7 @@ Line 337 is the actual SDK provisioning call. Wallet names map directly to the f
 
 ---
 
-## Shot 3 — USDC balance read (balanceOf over RPC): "USDC is our settlement currency"
+## Shot 2 — USDC balance read (balanceOf over RPC): "USDC is our settlement currency"
 
 > **Narration:** "We read balances straight off Arc over RPC — a standard ERC-20 balanceOf call against the USDC contract."
 
@@ -67,7 +67,7 @@ Beat: "We read balances straight off Arc over RPC."
 
 ---
 
-## Shot 4 — Gateway / x402 split: the honesty point
+## Shot 3 — Gateway / x402 split: the honesty point
 
 > **Narration:** "This is our multi-party reward split. Important and honest point: there's no on-chain splitter contract — we deploy no custom contracts. The split is application-level orchestration, firing sequential USDC transfers from the treasury wallet through Circle's SDK. The only contract we touch is the existing USDC token on Arc."
 
@@ -85,7 +85,7 @@ A standard ERC-20 `transfer`, nothing custom.
 
 ---
 
-## Shot 5 — Arc network config (Chain 5042002 / eip155:5042002)
+## Shot 4 — Arc network config (Chain 5042002 / eip155:5042002)
 
 > **Narration:** "And here's our Arc network config — Chain 5042002, the eip155 identifier baked into every x402 payment request."
 
@@ -101,7 +101,7 @@ The `eip155:5042002` strings (lines 59 & 66) are the textbook visual for "Arc Te
 
 ---
 
-## Shot 6 (optional) — the live "For Judges" panel
+## Shot 5 (optional) — the live "For Judges" panel
 
 > **Narration:** "And here it is running on Arc today — real Circle wallets, real USDC balances, live on-chain."
 
