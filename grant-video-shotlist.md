@@ -104,22 +104,3 @@ The `eip155:5042002` strings (lines 59 & 66) are the textbook visual for "Arc Te
 4. back to `circle-wallets.ts` L567–573 — the ERC-20 `transfer` (only contract)
 5. `x402-gateway.ts` L4–5 + L44/59/66 + L264–268 — Arc config
 6. cut to live `/demo` judge panel
-
----
-
-## Circle integration details (for judges)
-
-- **API Key:** `TEST_API_KEY…` (configured)
-- **Entity Secret:** configured
-- **Entity ID / App:** `92264e56-2c0b-529d-9723-4945e2fba3da`
-- **Network:** Arc Testnet (Chain `5042002`)
-- **USDC Contract:** `0x3600000000000000000000000000000000000000`
-
-**Arc Testnet wallets:**
-
-| Wallet | Address | Balance |
-|---|---|---|
-| Matt | `0xa1d984687270ad3b1502cb45c5faa8fcf6097b14` | $0.15 |
-| Pete | `0xc2618c9407d869f77cc3331a73911fb85ec6619f` | $0.15 |
-| Manny | `0x2a4bd48088e09c5b2ba0b31c71244f54e10c1864` | $0.15 |
-| Treasury | `0xb5277158cc64d6ac19e4704c2729e157c2ee12b4` | $35.86 |
