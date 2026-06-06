@@ -84,9 +84,7 @@ Line 61 builds the `balanceOf(address)` call data; line 71 points `to` at the US
 
 | What to show | Lines |
 |---|---|
-| `const ARC_TESTNET_CHAIN_ID = 5042002` + RPC | **4–5** |
 | x402 `accepts` block: `network: 'eip155:5042002'`, `asset: 'eip155:5042002/erc20:usdc'` | **44, 59, 66** |
-| `GATEWAY_CONFIG` (chainId, rpcUrl, arcscan explorer) | **264–268** |
 
 The `eip155:5042002` strings (lines 59 & 66) are the textbook visual for "Arc Testnet, Chain 5042002."
 
